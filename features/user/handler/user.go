@@ -62,8 +62,8 @@ func (uc *UserController) Login() echo.HandlerFunc {
 		}
 
 		var response = new(LoginResponse)
-		response.Email = result.Email
 		response.ID = result.ID
+		response.Email = result.Email
 		response.Password = result.Password
 		response.Token = strToken
 
