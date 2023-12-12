@@ -40,3 +40,21 @@ func (uq *UserQuery) Login(email string) (user.User, error) {
 
 	return *result, nil
 }
+
+// InsertUser implements user.Repository.
+func (uq *UserQuery) InsertUser(newUser user.User) (user.User, error) {
+	var inputDB = new(UserModel)
+	inputDB.Email = newUser.Email
+	inputDB.Name = newUser.Name
+	inputDB.Address = newUser.Address
+	inputDB.PhoneNumber = newUser.PhoneNumber
+	inputDB.Password = newUser.Password
+
+	if err := uq.db.Create(&inputDB).Error; err != nil {
+		return user.User{}, err
+	}
+
+	newUser.ID = inputDB.ID
+
+	return newUser, nil
+}
