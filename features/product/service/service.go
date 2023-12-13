@@ -48,21 +48,3 @@ func (ps *ProductServices) TalkToGpt(newProduct product.Product) (product.Produc
 
 	return result, nil
 }
-
-// func (gpt *AiServices) TalkToGpt(newGpt entity.Gpt) (entity.Gpt, error) {
-// 	client := openai.NewClient(config.InitConfig().OPEN_AI_KEY)
-// 	resp, err := client.CreateCompletion(
-// 		context.Background(),
-// 		openai.CompletionRequest{
-// 			Model:     openai.GPT3Ada,
-// 			MaxTokens: 50,
-// 			Prompt:    "spec of " + newGpt.Name,
-// 		},
-// 	)
-// 	if err != nil {
-// 		fmt.Printf("Completion error: %v\n", err)
-// 		return newGpt, err
-// 	}
-// 	fmt.Println(resp.Choices[0].Text)
-// 	return newGpt, err
-// }
