@@ -3,8 +3,11 @@ package service
 import (
 	"BE-hi-SPEC/features/user"
 	"BE-hi-SPEC/helper/enkrip"
+	"BE-hi-SPEC/helper/jwt"
 	"errors"
 	"strings"
+
+	golangjwt "github.com/golang-jwt/jwt/v5"
 )
 
 type UserService struct {
@@ -77,4 +80,44 @@ func (us *UserService) Register(newUser user.User) (user.User, error) {
 	}
 
 	return result, nil
+}
+
+// UpdateUser implements user.Service.
+func (us *UserService) UpdateUser(token *golangjwt.Token, input user.User) (user.User, error) {
+	userID, err := jwt.ExtractToken(token)
+	if err != nil {
+		return user.User{}, errors.New("harap login")
+	}
+	if userID != input.ID {
+		return user.User{}, errors.New("id tidak cocok")
+	}
+	base, err := us.repo.GetUserByID(userID)
+	if err != nil {
+		return user.User{}, errors.New("user tidak ditemukan")
+	}
+	if input.Password != "" {
+		err = us.hash.Compare(base.Password, input.Password)
+
+		if err != nil {
+			return user.User{}, errors.New("password salah")
+		}
+	}
+
+	if input.NewPassword != "" {
+		if input.Password == "" {
+			return user.User{}, errors.New("masukkan password yang lama ")
+		}
+		newpass, err := us.hash.HashPassword(input.NewPassword)
+		if err != nil {
+			return user.User{}, errors.New("masukkan password baru dengan benar")
+		}
+		input.NewPassword = newpass
+	}
+
+	respons, err := us.repo.UpdateUser(input)
+	if err != nil {
+
+		return user.User{}, errors.New("kesalahan pada database")
+	}
+	return respons, nil
 }
