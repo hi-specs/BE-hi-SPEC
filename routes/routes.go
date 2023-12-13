@@ -23,6 +23,7 @@ func RouteUser(e *echo.Echo, uc user.Handler) {
 	e.POST("/login", uc.Login())
 	e.POST("/register", uc.Register())
 	e.PATCH("/user/:id", uc.Update(), echojwt.JWT([]byte("$!1gnK3yyy!!!")))
+	e.DELETE("/user/:id", uc.Delete(), echojwt.JWT([]byte("$!1gnK3yyy!!!")))
 }
 
 func RouteProduct(e *echo.Echo, ph product.Handler) {
