@@ -17,6 +17,7 @@ type AppConfig struct {
 	CLOUDINARY_KEY    string
 	CLOUDINARY_SECRET string
 	CLOUDINARY_FOLDER string
+	OPEN_AI_KEY       string
 }
 
 func InitConfig() *AppConfig {
@@ -95,6 +96,11 @@ func readEnv() *AppConfig {
 	}
 	if val, found := os.LookupEnv("CLOUDINARY_FOLDER"); found {
 		data.CLOUDINARY_FOLDER = val
+	} else {
+		permit = false
+	}
+	if val, found := os.LookupEnv("OPEN_AI_KEY"); found {
+		data.OPEN_AI_KEY = val
 	} else {
 		permit = false
 	}
