@@ -5,9 +5,15 @@ import (
 	"BE-hi-SPEC/routes"
 	"BE-hi-SPEC/utils/database"
 
+	// "BE-hi-SPEC/features/product"
 	uh "BE-hi-SPEC/features/user/handler"
 	ur "BE-hi-SPEC/features/user/repository"
 	us "BE-hi-SPEC/features/user/service"
+
+	ph "BE-hi-SPEC/features/product/handler"
+	pr "BE-hi-SPEC/features/product/repository"
+	ps "BE-hi-SPEC/features/product/service"
+
 	ek "BE-hi-SPEC/helper/enkrip"
 
 	"github.com/labstack/echo/v4"
@@ -26,7 +32,7 @@ func main() {
 		e.Logger.Fatal("tidak bisa start bro", err.Error())
 	}
 
-	db.AutoMigrate(&ur.UserModel{})
+	db.AutoMigrate(&ur.UserModel{}, &pr.ProductModel{})
 
 	ekrip := ek.New()
 	userRepo := ur.New(db)
@@ -34,6 +40,10 @@ func main() {
 	userHandler := uh.New(userService)
 	// userHandler := uh.New(userService, cld, ctx, param)
 
-	routes.InitRoute(e, userHandler)
+	productRepo := pr.New(db)
+	productService := ps.New(productRepo)
+	productHandler := ph.New(productService)
+
+	routes.InitRoute(e, userHandler, productHandler)
 	e.Logger.Fatal(e.Start(":8000"))
 }
