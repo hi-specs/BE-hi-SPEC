@@ -18,6 +18,7 @@ type ProductModel struct {
 	Bluetooth string
 	HDMI      string
 	Price     string
+	Picture   string
 }
 
 type ProductQuery struct {
@@ -30,7 +31,7 @@ func New(db *gorm.DB) product.Repository {
 	}
 }
 
-func (gq ProductQuery) InsertProduct(newProduct product.Product) (product.Product, error) {
+func (gq ProductQuery) InsertProduct(UserID uint, newProduct product.Product) (product.Product, error) {
 	var inputDB = new(ProductModel)
 	inputDB.Name = newProduct.Name
 	inputDB.CPU = newProduct.CPU
@@ -42,7 +43,9 @@ func (gq ProductQuery) InsertProduct(newProduct product.Product) (product.Produc
 	inputDB.Bluetooth = newProduct.Bluetooth
 	inputDB.HDMI = newProduct.HDMI
 	inputDB.Price = newProduct.Price
+	inputDB.Picture = newProduct.Picture
 
 	gq.db.Create(&inputDB)
+	newProduct.ID = inputDB.ID
 	return newProduct, nil
 }

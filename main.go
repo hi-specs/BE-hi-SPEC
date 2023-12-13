@@ -42,7 +42,7 @@ func main() {
 
 	productRepo := pr.New(db)
 	productService := ps.New(productRepo)
-	productHandler := ph.New(productService)
+	productHandler := ph.New(productService, cld, ctx, param)
 
 	routes.InitRoute(e, userHandler, productHandler)
 	e.Logger.Fatal(e.Start(":8000"))
