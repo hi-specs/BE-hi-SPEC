@@ -277,3 +277,38 @@ func (uc *UserController) Update() echo.HandlerFunc {
 		})
 	}
 }
+
+// Delete implements user.Handler.
+func (uc *UserController) Delete() echo.HandlerFunc {
+	return func(c echo.Context) error {
+		userID, err := strconv.ParseUint(c.Param("id"), 10, 64)
+		if err != nil {
+			return c.JSON(http.StatusBadRequest, map[string]interface{}{
+				"message": "ID user tidak valid",
+			})
+		}
+
+		err = uc.srv.HapusUser(c.Get("user").(*gojwt.Token), uint(userID))
+		if err != nil {
+			c.Logger().Error("ERROR Delete User, explain:", err.Error())
+			var statusCode = http.StatusInternalServerError
+			var message = "terjadi permasalahan ketika menghapus user"
+
+			if strings.Contains(err.Error(), "tidak ditemukan") {
+				statusCode = http.StatusNotFound
+				message = "user tidak ditemukan"
+			} else if strings.Contains(err.Error(), "tidak memiliki izin") {
+				statusCode = http.StatusForbidden
+				message = "Anda tidak memiliki izin untuk menghapus user ini"
+			}
+
+			return c.JSON(statusCode, map[string]interface{}{
+				"message": message,
+			})
+		}
+
+		return c.JSON(http.StatusOK, map[string]interface{}{
+			"message": "success delete user",
+		})
+	}
+}
