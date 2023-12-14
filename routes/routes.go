@@ -26,6 +26,7 @@ func RouteUser(e *echo.Echo, uc user.Handler) {
 	e.PATCH("/user/:id", uc.Update(), echojwt.JWT([]byte("$!1gnK3yyy!!!")))
 	e.DELETE("/user/:id", uc.Delete(), echojwt.JWT([]byte("$!1gnK3yyy!!!")))
 	e.POST("/user/add/fav/:id", uc.AddFavorite(), echojwt.JWT([]byte("$!1gnK3yyy!!!")))
+	e.GET("/user/add/fav/:id", uc.GetAllFavorite())
 }
 
 func RouteProduct(e *echo.Echo, ph product.Handler) {
