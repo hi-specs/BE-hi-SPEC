@@ -30,6 +30,7 @@ type Handler interface {
 	Delete() echo.HandlerFunc
 	All() echo.HandlerFunc
 	AddFavorite() echo.HandlerFunc
+	GetAllFavorite() echo.HandlerFunc
 }
 
 type Service interface {
@@ -39,6 +40,7 @@ type Service interface {
 	HapusUser(token *jwt.Token, userID uint) error
 	GetAllUser() ([]User, error)
 	AddFavorite(token *jwt.Token, productID uint) (Favorite, error)
+	GetAllFavorite(userID uint) (Favorite, error)
 }
 
 type Repository interface {
@@ -49,4 +51,5 @@ type Repository interface {
 	DeleteUser(userID uint) error
 	GetAllUser() ([]User, error)
 	AddFavorite(userID, productID uint) (Favorite, error)
+	GetAllFavorite(userID uint) (Favorite, error)
 }

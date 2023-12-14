@@ -201,3 +201,26 @@ func (uq *UserQuery) AddFavorite(userID, productID uint) (user.Favorite, error) 
 
 	return result, nil
 }
+
+func (uq *UserQuery) GetAllFavorite(userID uint) (user.Favorite, error) {
+	var User user.User
+	uq.db.Table("user_models").Where("id = ?", userID).Find(&User)
+
+	var FavList []uint
+	uq.db.Table("favorite_models").Where("user_id = ?", userID).Select("product_id").Find(&FavList)
+
+	var Favorite []product.Product
+
+	for _, fav := range FavList {
+		tmp := new(product.Product)
+		uq.db.Table("product_models").Where("id = ?", fav).Find(&tmp)
+		Favorite = append(Favorite, *tmp)
+	}
+
+	var result user.Favorite
+
+	result.Favorite = Favorite
+	result.User = User
+
+	return result, nil
+}
