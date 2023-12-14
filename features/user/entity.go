@@ -21,6 +21,7 @@ type Handler interface {
 	Register() echo.HandlerFunc
 	Update() echo.HandlerFunc
 	Delete() echo.HandlerFunc
+	All() echo.HandlerFunc
 }
 
 type Service interface {
@@ -28,6 +29,7 @@ type Service interface {
 	Register(newUser User) (User, error)
 	UpdateUser(token *jwt.Token, input User) (User, error)
 	HapusUser(token *jwt.Token, userID uint) error
+	GetAllUser() ([]User, error)
 }
 
 type Repository interface {
@@ -36,4 +38,5 @@ type Repository interface {
 	UpdateUser(input User) (User, error)
 	GetUserByID(userID uint) (*User, error)
 	DeleteUser(userID uint) error
+	GetAllUser() ([]User, error)
 }

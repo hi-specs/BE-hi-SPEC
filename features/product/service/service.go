@@ -6,7 +6,6 @@ import (
 	"BE-hi-SPEC/helper/jwt"
 	"context"
 	"encoding/json"
-	"fmt"
 
 	golangjwt "github.com/golang-jwt/jwt/v5"
 	openai "github.com/sashabaranov/go-openai"
@@ -46,7 +45,7 @@ func (ps *ProductServices) TalkToGpt(token *golangjwt.Token, newProduct product.
 	// }
 
 	err = json.Unmarshal([]byte(resp.Choices[0].Message.Content), &newProduct)
-	fmt.Println(resp.Choices[0].Message.Content)
+	// fmt.Println(resp.Choices[0].Message.Content)
 	if err != nil {
 		return product.Product{}, err
 	}

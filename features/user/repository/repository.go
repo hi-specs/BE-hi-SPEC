@@ -9,7 +9,7 @@ import (
 
 type UserModel struct {
 	gorm.Model
-	Email       string
+	Email       string `gorm:"unique"`
 	Name        string
 	Address     string
 	PhoneNumber string
@@ -150,4 +150,24 @@ func (uq *UserQuery) DeleteUser(userID uint) error {
 	}
 
 	return nil
+}
+
+func (uq *UserQuery) GetAllUser() ([]user.User, error) {
+	var Users []UserModel
+
+	err := uq.db.Find(&Users).Error
+
+	var result []user.User
+	for _, resp := range Users {
+		results := user.User{
+			ID:          resp.ID,
+			Email:       resp.Email,
+			Name:        resp.Name,
+			Address:     resp.Address,
+			PhoneNumber: resp.PhoneNumber,
+			Avatar:      resp.Avatar,
+		}
+		result = append(result, results)
+	}
+	return result, err
 }

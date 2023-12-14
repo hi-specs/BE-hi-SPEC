@@ -1,12 +1,14 @@
 package handler
 
 type ProductRequest struct {
-	Laptop  string `json:"laptop" form:"laptop"`
-	Picture string `json:"picture" form:"picture"`
+	Laptop   string `json:"laptop" form:"laptop"`
+	Picture  string `json:"picture" form:"picture"`
+	Category string `json:"category" form:"category"`
 }
 
 type ProductResponse struct {
 	ID        uint   `json:"id"`
+	Category  string `json:"category"`
 	Name      string `json:"name"`
 	CPU       string `json:"cpu"`
 	RAM       string `json:"ram"`
