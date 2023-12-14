@@ -22,6 +22,15 @@ func New(r product.Repository) product.Service {
 	}
 }
 
+// SatuProduct implements product.Service.
+func (ps *ProductServices) SatuProduct(productID uint) (product.Product, error) {
+	result, err := ps.repo.GetProductID(productID)
+	if err != nil {
+		return product.Product{}, errors.New("failed get all product")
+	}
+	return *result, nil
+}
+
 func (ps *ProductServices) TalkToGpt(token *golangjwt.Token, newProduct product.Product) (product.Product, error) {
 	userId, err := jwt.ExtractToken(token)
 	if err != nil {

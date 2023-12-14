@@ -79,3 +79,27 @@ func (gq ProductQuery) InsertProduct(UserID uint, newProduct product.Product) (p
 	newProduct.ID = inputDB.ID
 	return newProduct, nil
 }
+
+// GetProductID implements product.Repository.
+func (pq *ProductQuery) GetProductID(productID uint) (*product.Product, error) {
+	var productModel ProductModel
+	if err := pq.db.First(&productModel, productID).Error; err != nil {
+		return nil, err
+	}
+	result := &product.Product{
+		ID:        productModel.ID,
+		Category:  productModel.Category,
+		Name:      productModel.Name,
+		CPU:       productModel.CPU,
+		RAM:       productModel.RAM,
+		Display:   productModel.Display,
+		Storage:   productModel.Storage,
+		Thickness: productModel.Thickness,
+		Weight:    productModel.Weight,
+		Bluetooth: productModel.Bluetooth,
+		HDMI:      productModel.HDMI,
+		Price:     productModel.Price,
+		Picture:   productModel.Picture,
+	}
+	return result, nil
+}

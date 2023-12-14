@@ -31,6 +31,42 @@ func New(s product.Service, cld *cloudinary.Cloudinary, ctx context.Context, upl
 	}
 }
 
+// GetProductDetail implements product.Handler.
+func (ph *ProductHandler) GetProductDetail() echo.HandlerFunc {
+	return func(c echo.Context) error {
+		productID, err := strconv.ParseUint(c.Param("id"), 10, 64)
+		if err != nil {
+			return c.JSON(http.StatusBadRequest, map[string]interface{}{
+				"message": "ID user tidak valid",
+				"data":    nil,
+			})
+		}
+		result, err := ph.s.SatuProduct(uint(productID))
+		if err != nil {
+			c.Logger().Error("Error fetching product: ", err.Error())
+			return c.JSON(http.StatusInternalServerError, map[string]interface{}{
+				"message": "Failed to retrieve product data",
+			})
+		}
+		var response = new(ProductResponse)
+		response.ID = result.ID
+		response.Name = result.Name
+		response.CPU = result.CPU
+		response.RAM = result.RAM
+		response.Display = result.Display
+		response.Storage = result.Storage
+		response.Thickness = result.Thickness
+		response.Weight = result.Weight
+		response.Bluetooth = result.Bluetooth
+		response.HDMI = result.HDMI
+		response.Price = result.Price
+		response.Picture = result.Picture
+		response.Category = result.Category
+
+		return responses.PrintResponse(c, http.StatusCreated, "success create data", response)
+	}
+}
+
 // GetAll implements product.Handler.
 func (ph *ProductHandler) GetAll() echo.HandlerFunc {
 	return func(c echo.Context) error {
@@ -44,9 +80,9 @@ func (ph *ProductHandler) GetAll() echo.HandlerFunc {
 		}
 		results, err := ph.s.SemuaProduct(page, limit)
 		if err != nil {
-			c.Logger().Error("Error fetching coupons: ", err.Error())
+			c.Logger().Error("Error fetching product: ", err.Error())
 			return c.JSON(http.StatusInternalServerError, map[string]interface{}{
-				"message": "Failed to retrieve coupon data",
+				"message": "Failed to retrieve product data",
 			})
 		}
 		var response []ProductResponse

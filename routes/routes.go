@@ -30,4 +30,5 @@ func RouteUser(e *echo.Echo, uc user.Handler) {
 func RouteProduct(e *echo.Echo, ph product.Handler) {
 	e.POST("/product", ph.Add(), echojwt.JWT([]byte("$!1gnK3yyy!!!")))
 	e.GET("/product", ph.GetAll())
+	e.GET("/product/:id", ph.GetProductDetail())
 }
