@@ -25,8 +25,9 @@ func RouteUser(e *echo.Echo, uc user.Handler) {
 	e.POST("/register", uc.Register())
 	e.PATCH("/user/:id", uc.Update(), echojwt.JWT([]byte("$!1gnK3yyy!!!")))
 	e.DELETE("/user/:id", uc.Delete(), echojwt.JWT([]byte("$!1gnK3yyy!!!")))
-	e.POST("/user/add/fav/:id", uc.AddFavorite(), echojwt.JWT([]byte("$!1gnK3yyy!!!")))
-	e.GET("/user/add/fav/:id", uc.GetAllFavorite())
+	e.POST("/user/fav/add/:id", uc.AddFavorite(), echojwt.JWT([]byte("$!1gnK3yyy!!!")))
+	e.GET("/user/fav/list/:id", uc.GetAllFavorite())
+	e.DELETE("/user/fav/del/:id", uc.DelFavorite())
 }
 
 func RouteProduct(e *echo.Echo, ph product.Handler) {
@@ -34,4 +35,5 @@ func RouteProduct(e *echo.Echo, ph product.Handler) {
 	e.GET("/product", ph.GetAll())
 	e.GET("/product/:id", ph.GetProductDetail())
 	e.GET("/product/search", ph.SearchProductByName())
+	e.GET("/product/search/category", ph.SearchProductByCategory())
 }

@@ -11,11 +11,11 @@ import (
 type UserModel struct {
 	gorm.Model
 	Email       string `gorm:"unique"`
-	Name        string
-	Address     string
-	PhoneNumber string
-	Password    string
-	Avatar      string
+	Name        string `json:"name" form:"name"`
+	Address     string `json:"address" form:"address"`
+	PhoneNumber string `json:"phone_number" form:"phone_number"`
+	Password    string `json:"password" form:"password"`
+	Avatar      string `json:"avatar" form:"avatar"`
 }
 
 type FavoriteModel struct {
@@ -223,4 +223,17 @@ func (uq *UserQuery) GetAllFavorite(userID uint) (user.Favorite, error) {
 	result.User = User
 
 	return result, nil
+}
+
+func (uq *UserQuery) DelFavorite(favoriteID uint) error {
+	var Fav FavoriteModel
+	uq.db.Model("favorite_models").Where("id = ?", favoriteID).Find(&Fav)
+
+	err := uq.db.Model("favorite_models").Where("id = ?", favoriteID).Delete(&Fav).Error
+	var Favorite []product.Product
+
+	var result user.Favorite
+
+	result.Favorite = Favorite
+	return err
 }

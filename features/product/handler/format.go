@@ -18,6 +18,21 @@ type ProductResponse struct {
 	Weight    string `json:"weight"`
 	Bluetooth string `json:"bluetooth"`
 	HDMI      string `json:"hdmi"`
-	Price     string `json:"price"`
+	Price     int    `json:"price"`
 	Picture   string `json:"picture"`
+}
+
+type SearchResponse struct {
+	ID      uint   `json:"id"`
+	Name    string `json:"name"`
+	Price   int    `json:"price"`
+	Picture string `json:"picture"`
+}
+
+type AllResponse struct {
+	ID       uint   `json:"id"`
+	Category string `json:"category"`
+	Name     string `json:"name"`
+	Price    int    `json:"price"`
+	Picture  string `json:"picture"`
 }

@@ -8,19 +8,19 @@ import (
 )
 
 type User struct {
-	ID          uint
-	Email       string
-	Name        string
-	Address     string
-	PhoneNumber string
-	Password    string
-	NewPassword string
-	Avatar      string
+	ID          uint   `json:"id"`
+	Email       string `json:"email"`
+	Name        string `json:"name"`
+	Address     string `json:"address"`
+	PhoneNumber string `json:"phone_number"`
+	Password    string `json:"password"`
+	NewPassword string `json:"new_password"`
+	Avatar      string `json:"avatar"`
 }
 
 type Favorite struct {
-	User     User
-	Favorite []product.Product
+	User     User              `json:"user" form:"user"`
+	Favorite []product.Product `json:"favorite" form:"favorite"`
 }
 
 type Handler interface {
@@ -31,6 +31,7 @@ type Handler interface {
 	All() echo.HandlerFunc
 	AddFavorite() echo.HandlerFunc
 	GetAllFavorite() echo.HandlerFunc
+	DelFavorite() echo.HandlerFunc
 }
 
 type Service interface {
@@ -41,6 +42,7 @@ type Service interface {
 	GetAllUser() ([]User, error)
 	AddFavorite(token *jwt.Token, productID uint) (Favorite, error)
 	GetAllFavorite(userID uint) (Favorite, error)
+	DelFavorite(token *jwt.Token, favoriteID uint) error
 }
 
 type Repository interface {
@@ -52,4 +54,5 @@ type Repository interface {
 	GetAllUser() ([]User, error)
 	AddFavorite(userID, productID uint) (Favorite, error)
 	GetAllFavorite(userID uint) (Favorite, error)
+	DelFavorite(favoriteID uint) error
 }

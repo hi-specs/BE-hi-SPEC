@@ -17,7 +17,7 @@ type Product struct {
 	Weight    string `json:"weight"`
 	Bluetooth string `json:"bluetooth"`
 	HDMI      string `json:"hdmi"`
-	Price     string `json:"price"`
+	Price     int    `json:"price"`
 	Picture   string `json:"picture"`
 }
 
@@ -26,12 +26,14 @@ type Handler interface {
 	GetAll() echo.HandlerFunc
 	GetProductDetail() echo.HandlerFunc
 	SearchProductByName() echo.HandlerFunc
+	SearchProductByCategory() echo.HandlerFunc
 }
 type Service interface {
 	TalkToGpt(token *jwt.Token, newProduct Product) (Product, error)
 	SemuaProduct(page, limit int) ([]Product, error)
 	SatuProduct(productID uint) (Product, error)
 	CariProduct(name string) ([]Product, error)
+	CariProductCategory(category string) ([]Product, error)
 }
 
 type Repository interface {
@@ -39,4 +41,5 @@ type Repository interface {
 	GetAllProduct(page, limit int) ([]Product, error)
 	GetProductID(productID uint) (*Product, error)
 	SearchProductByName(name string) ([]Product, error)
+	SearchProductByCategory(category string) ([]Product, error)
 }
