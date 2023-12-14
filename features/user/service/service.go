@@ -153,3 +153,13 @@ func (us *UserService) GetAllUser() ([]user.User, error) {
 	}
 	return Users, nil
 }
+
+func (us *UserService) AddFavorite(token *golangjwt.Token, productID uint) (user.Favorite, error) {
+	userID, err := jwt.ExtractToken(token)
+	if err != nil {
+		return user.Favorite{}, err
+	}
+	favorites, err := us.repo.AddFavorite(userID, productID)
+
+	return favorites, err
+}

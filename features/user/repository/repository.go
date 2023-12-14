@@ -1,6 +1,7 @@
 package repository
 
 import (
+	"BE-hi-SPEC/features/product"
 	"BE-hi-SPEC/features/user"
 	"errors"
 
@@ -15,6 +16,12 @@ type UserModel struct {
 	PhoneNumber string
 	Password    string
 	Avatar      string
+}
+
+type FavoriteModel struct {
+	gorm.Model
+	UserID    uint
+	ProductID uint
 }
 
 type UserQuery struct {
@@ -170,4 +177,27 @@ func (uq *UserQuery) GetAllUser() ([]user.User, error) {
 		result = append(result, results)
 	}
 	return result, err
+}
+
+func (uq *UserQuery) AddFavorite(userID, productID uint) (user.Favorite, error) {
+	var Fav FavoriteModel
+	Fav.UserID = userID
+	Fav.ProductID = productID
+	uq.db.Create(&Fav)
+
+	var User user.User
+	uq.db.Table("user_models").Where("id = ?", userID).Find(&User)
+
+	var FavList []uint
+	uq.db.Table("favorite_models").Where("user_id = ?", userID).Select("product_id").Find(&FavList)
+
+	var Favorite []product.Product
+	uq.db.Table("product_models").Where("id = ?", productID).Find(&Favorite)
+
+	var result user.Favorite
+
+	result.Favorite = Favorite
+	result.User = User
+
+	return result, nil
 }
