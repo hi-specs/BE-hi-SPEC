@@ -32,6 +32,16 @@ func New(db *gorm.DB) product.Repository {
 	}
 }
 
+// SearchProductByCategory implements product.Repository.
+func (pq *ProductQuery) SearchProductByCategory(category string) ([]product.Product, error) {
+	var products []product.Product
+
+	if err := pq.db.Table("product_models").Where("category LIKE ?", "%"+category+"%").Find(&products).Error; err != nil {
+		return nil, err
+	}
+	return products, nil
+}
+
 // GetAllProduct implements product.Repository.
 func (pq *ProductQuery) GetAllProduct(page int, limit int) ([]product.Product, error) {
 	var products []ProductModel
@@ -42,19 +52,10 @@ func (pq *ProductQuery) GetAllProduct(page int, limit int) ([]product.Product, e
 	var result []product.Product
 	for _, s := range products {
 		result = append(result, product.Product{
-			ID:        s.ID,
-			Category:  s.Category,
-			Name:      s.Name,
-			CPU:       s.CPU,
-			RAM:       s.RAM,
-			Display:   s.Display,
-			Storage:   s.Storage,
-			Thickness: s.Thickness,
-			Weight:    s.Weight,
-			Bluetooth: s.Bluetooth,
-			HDMI:      s.HDMI,
-			Price:     s.Price,
-			Picture:   s.Picture,
+			ID:      s.ID,
+			Name:    s.Name,
+			Price:   s.Price,
+			Picture: s.Picture,
 		})
 	}
 	return result, nil

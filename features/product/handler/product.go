@@ -31,6 +31,29 @@ func New(s product.Service, cld *cloudinary.Cloudinary, ctx context.Context, upl
 	}
 }
 
+// SearchProductByCategory implements product.Handler.
+func (ph *ProductHandler) SearchProductByCategory() echo.HandlerFunc {
+	return func(c echo.Context) error {
+		category := c.QueryParam("category")
+
+		products, err := ph.s.CariProductCategory(category)
+		if err != nil {
+			return c.JSON(http.StatusInternalServerError, map[string]string{"error": "Internal Server Error"})
+		}
+		var response []SearchResponse
+		for _, result := range products {
+			response = append(response, SearchResponse{
+				ID:      result.ID,
+				Name:    result.Name,
+				Price:   result.Price,
+				Picture: result.Picture,
+			})
+		}
+
+		return c.JSON(http.StatusOK, response)
+	}
+}
+
 // SearchProductByName implements product.Handler.
 func (ph *ProductHandler) SearchProductByName() echo.HandlerFunc {
 	return func(c echo.Context) error {
@@ -40,8 +63,17 @@ func (ph *ProductHandler) SearchProductByName() echo.HandlerFunc {
 		if err != nil {
 			return c.JSON(http.StatusInternalServerError, map[string]string{"error": "Internal Server Error"})
 		}
+		var response []SearchResponse
+		for _, result := range products {
+			response = append(response, SearchResponse{
+				ID:      result.ID,
+				Name:    result.Name,
+				Price:   result.Price,
+				Picture: result.Picture,
+			})
+		}
 
-		return c.JSON(http.StatusOK, products)
+		return c.JSON(http.StatusOK, response)
 	}
 }
 
@@ -99,22 +131,13 @@ func (ph *ProductHandler) GetAll() echo.HandlerFunc {
 				"message": "Failed to retrieve product data",
 			})
 		}
-		var response []ProductResponse
+		var response []SearchResponse
 		for _, result := range results {
-			response = append(response, ProductResponse{
-				ID:        result.ID,
-				Category:  result.Category,
-				Name:      result.Name,
-				CPU:       result.CPU,
-				RAM:       result.RAM,
-				Display:   result.Display,
-				Storage:   result.Storage,
-				Thickness: result.Thickness,
-				Weight:    result.Weight,
-				Bluetooth: result.Bluetooth,
-				HDMI:      result.HDMI,
-				Price:     result.Price,
-				Picture:   result.Picture,
+			response = append(response, SearchResponse{
+				ID:      result.ID,
+				Name:    result.Name,
+				Price:   result.Price,
+				Picture: result.Picture,
 			})
 		}
 

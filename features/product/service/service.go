@@ -22,6 +22,16 @@ func New(r product.Repository) product.Service {
 	}
 }
 
+// CariProductCategory implements product.Service.
+func (ps *ProductServices) CariProductCategory(category string) ([]product.Product, error) {
+	products, err := ps.repo.SearchProductByCategory(category)
+	if err != nil {
+		return nil, err
+	}
+
+	return products, nil
+}
+
 // CariProduct implements product.Service.
 func (ps *ProductServices) CariProduct(name string) ([]product.Product, error) {
 	products, err := ps.repo.SearchProductByName(name)
