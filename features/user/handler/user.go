@@ -410,3 +410,37 @@ func (uc *UserController) GetAllFavorite() echo.HandlerFunc {
 
 	}
 }
+
+func (uc *UserController) DelFavorite() echo.HandlerFunc {
+	return func(c echo.Context) error {
+		favoriteID, err := strconv.ParseUint(c.Param("id"), 10, 64)
+		if err != nil {
+			return c.JSON(http.StatusBadRequest, map[string]interface{}{
+				"message": "ID favorite tidak valid",
+			})
+		}
+
+		err = uc.srv.DelFavorite(c.Get("user").(*gojwt.Token), uint(favoriteID))
+		if err != nil {
+			c.Logger().Error("ERROR Delete User, explain:", err.Error())
+			var statusCode = http.StatusInternalServerError
+			var message = "terjadi permasalahan ketika menghapus user"
+
+			if strings.Contains(err.Error(), "tidak ditemukan") {
+				statusCode = http.StatusNotFound
+				message = "user tidak ditemukan"
+			} else if strings.Contains(err.Error(), "tidak memiliki izin") {
+				statusCode = http.StatusForbidden
+				message = "Anda tidak memiliki izin untuk menghapus user ini"
+			}
+
+			return c.JSON(statusCode, map[string]interface{}{
+				"message": message,
+			})
+		}
+
+		return c.JSON(http.StatusOK, map[string]interface{}{
+			"message": "success delete user",
+		})
+	}
+}

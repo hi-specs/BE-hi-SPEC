@@ -165,11 +165,15 @@ func (us *UserService) AddFavorite(token *golangjwt.Token, productID uint) (user
 }
 
 func (us *UserService) GetAllFavorite(userID uint) (user.Favorite, error) {
-	// // userID, err := jwt.ExtractToken(userID)
-	// if err != nil {
-	// 	return user.Favorite{}, err
-	// }
 	favorites, err := us.repo.GetAllFavorite(userID)
-
 	return favorites, err
+}
+
+func (us *UserService) DelFavorite(token *golangjwt.Token, favoriteID uint) error {
+	err := us.repo.DelFavorite(favoriteID)
+	if err != nil {
+		return errors.New("failed to delete the favorite")
+	}
+
+	return nil
 }

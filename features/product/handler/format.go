@@ -18,6 +18,6 @@ type ProductResponse struct {
 	Weight    string `json:"weight"`
 	Bluetooth string `json:"bluetooth"`
 	HDMI      string `json:"hdmi"`
-	Price     string `json:"price"`
+	Price     int    `json:"price"`
 	Picture   string `json:"picture"`
 }

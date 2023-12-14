@@ -18,7 +18,7 @@ type ProductModel struct {
 	Weight    string
 	Bluetooth string
 	HDMI      string
-	Price     string
+	Price     int
 	Picture   string
 }
 

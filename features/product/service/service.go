@@ -54,7 +54,7 @@ func (ps *ProductServices) TalkToGpt(token *golangjwt.Token, newProduct product.
 			Messages: []openai.ChatCompletionMessage{
 				{
 					Role:    openai.ChatMessageRoleUser,
-					Content: "specification of" + newProduct.Name + "written as json following this specification {Name, CPU, RAM, Display, Storage, Thickness, Weight, Bluetooth(yes/no), HDMI(yes/no), Price(in Indonesia, with tax, and format Rp.)} without any explanation",
+					Content: "specification of" + newProduct.Name + "written as json following this specification {Name, CPU, RAM, Display, Storage, Thickness, Weight, Bluetooth(yes/no), HDMI(yes/no), Price(in Indonesia integer))} without any explanation",
 				},
 			},
 		},
