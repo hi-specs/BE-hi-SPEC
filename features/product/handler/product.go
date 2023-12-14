@@ -31,6 +31,20 @@ func New(s product.Service, cld *cloudinary.Cloudinary, ctx context.Context, upl
 	}
 }
 
+// SearchProductByName implements product.Handler.
+func (ph *ProductHandler) SearchProductByName() echo.HandlerFunc {
+	return func(c echo.Context) error {
+		name := c.QueryParam("name")
+
+		products, err := ph.s.CariProduct(name)
+		if err != nil {
+			return c.JSON(http.StatusInternalServerError, map[string]string{"error": "Internal Server Error"})
+		}
+
+		return c.JSON(http.StatusOK, products)
+	}
+}
+
 // GetProductDetail implements product.Handler.
 func (ph *ProductHandler) GetProductDetail() echo.HandlerFunc {
 	return func(c echo.Context) error {
