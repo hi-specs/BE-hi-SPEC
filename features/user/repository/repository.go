@@ -183,7 +183,9 @@ func (uq *UserQuery) AddFavorite(userID, productID uint) (user.Favorite, error) 
 	var Fav FavoriteModel
 	Fav.UserID = userID
 	Fav.ProductID = productID
-	uq.db.Create(&Fav)
+	if err := uq.db.Create(&Fav).Error; err != nil {
+		return user.Favorite{}, err
+	}
 
 	var User user.User
 	uq.db.Table("user_models").Where("id = ?", userID).Find(&User)
@@ -227,13 +229,13 @@ func (uq *UserQuery) GetAllFavorite(userID uint) (user.Favorite, error) {
 
 func (uq *UserQuery) DelFavorite(favoriteID uint) error {
 	var Fav FavoriteModel
-	uq.db.Model("favorite_models").Where("id = ?", favoriteID).Find(&Fav)
 
-	err := uq.db.Model("favorite_models").Where("id = ?", favoriteID).Delete(&Fav).Error
-	var Favorite []product.Product
+	if err := uq.db.First(&Fav, favoriteID).Error; err != nil {
+		return err
+	}
+	if err := uq.db.Delete(&Fav).Error; err != nil {
+		return err
+	}
 
-	var result user.Favorite
-
-	result.Favorite = Favorite
-	return err
+	return nil
 }
