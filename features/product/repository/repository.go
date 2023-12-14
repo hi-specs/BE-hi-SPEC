@@ -103,3 +103,14 @@ func (pq *ProductQuery) GetProductID(productID uint) (*product.Product, error) {
 	}
 	return result, nil
 }
+
+// SearchProductByName implements product.Repository.
+func (pq *ProductQuery) SearchProductByName(name string) ([]product.Product, error) {
+	var products []product.Product
+
+	if err := pq.db.Table("product_models").Where("name LIKE ?", "%"+name+"%").Find(&products).Error; err != nil {
+		return nil, err
+	}
+
+	return products, nil
+}

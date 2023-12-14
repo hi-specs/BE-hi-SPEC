@@ -25,15 +25,18 @@ type Handler interface {
 	Add() echo.HandlerFunc
 	GetAll() echo.HandlerFunc
 	GetProductDetail() echo.HandlerFunc
+	SearchProductByName() echo.HandlerFunc
 }
 type Service interface {
 	TalkToGpt(token *jwt.Token, newProduct Product) (Product, error)
 	SemuaProduct(page, limit int) ([]Product, error)
 	SatuProduct(productID uint) (Product, error)
+	CariProduct(name string) ([]Product, error)
 }
 
 type Repository interface {
 	InsertProduct(UserID uint, newProduct Product) (Product, error)
 	GetAllProduct(page, limit int) ([]Product, error)
 	GetProductID(productID uint) (*Product, error)
+	SearchProductByName(name string) ([]Product, error)
 }
