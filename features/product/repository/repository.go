@@ -52,10 +52,11 @@ func (pq *ProductQuery) GetAllProduct(page int, limit int) ([]product.Product, e
 	var result []product.Product
 	for _, s := range products {
 		result = append(result, product.Product{
-			ID:      s.ID,
-			Name:    s.Name,
-			Price:   s.Price,
-			Picture: s.Picture,
+			ID:       s.ID,
+			Name:     s.Name,
+			Price:    s.Price,
+			Category: s.Category,
+			Picture:  s.Picture,
 		})
 	}
 	return result, nil

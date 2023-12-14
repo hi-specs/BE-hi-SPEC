@@ -131,13 +131,14 @@ func (ph *ProductHandler) GetAll() echo.HandlerFunc {
 				"message": "Failed to retrieve product data",
 			})
 		}
-		var response []SearchResponse
+		var response []AllResponse
 		for _, result := range results {
-			response = append(response, SearchResponse{
-				ID:      result.ID,
-				Name:    result.Name,
-				Price:   result.Price,
-				Picture: result.Picture,
+			response = append(response, AllResponse{
+				ID:       result.ID,
+				Name:     result.Name,
+				Category: result.Category,
+				Price:    result.Price,
+				Picture:  result.Picture,
 			})
 		}
 
