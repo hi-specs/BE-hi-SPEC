@@ -20,6 +20,7 @@ func InitRoute(e *echo.Echo, uc user.Handler, ph product.Handler) {
 }
 
 func RouteUser(e *echo.Echo, uc user.Handler) {
+	e.GET("/users", uc.All())
 	e.POST("/login", uc.Login())
 	e.POST("/register", uc.Register())
 	e.PATCH("/user/:id", uc.Update(), echojwt.JWT([]byte("$!1gnK3yyy!!!")))

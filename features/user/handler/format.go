@@ -49,3 +49,15 @@ type PutResponse struct {
 	Address     string `json:"address" form:"address"`
 	PhoneNumber string `json:"phone_number" form:"phone_number"`
 }
+
+type GetUserResponse struct {
+	ID          uint
+	Email       string
+	Name        string
+	Address     string
+	PhoneNumber string
+	Avatar      string
+}
+type GetAllUserResponse struct {
+	Users []GetUserResponse
+}

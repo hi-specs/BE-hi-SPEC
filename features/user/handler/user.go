@@ -105,7 +105,7 @@ func (uc *UserController) Register() echo.HandlerFunc {
 				})
 			}
 			return c.JSON(http.StatusBadRequest, map[string]any{
-				"message": "input tidak sesuai",
+				"message": "email telah terdaftar",
 			})
 		}
 		var response = new(RegisterResponse)
@@ -309,6 +309,36 @@ func (uc *UserController) Delete() echo.HandlerFunc {
 
 		return c.JSON(http.StatusOK, map[string]interface{}{
 			"message": "success delete user",
+		})
+	}
+}
+
+func (uc *UserController) All() echo.HandlerFunc {
+	return func(c echo.Context) error {
+		AllUser, err := uc.srv.GetAllUser()
+		if err != nil {
+			c.Logger().Error("ERROR GetAll, explain:", err.Error())
+			return c.JSON(http.StatusInternalServerError, map[string]interface{}{
+				"message": "terjadi permasalahan ketika memproses data",
+			})
+		}
+
+		var response []GetUserResponse
+
+		for _, result := range AllUser {
+			responses := GetUserResponse{
+				ID:          result.ID,
+				Email:       result.Email,
+				Name:        result.Name,
+				Address:     result.Address,
+				PhoneNumber: result.PhoneNumber,
+				Avatar:      result.Avatar,
+			}
+			response = append(response, responses)
+		}
+		return c.JSON(http.StatusOK, map[string]interface{}{
+			"message": "success get all data",
+			"data":    response,
 		})
 	}
 }

@@ -142,3 +142,14 @@ func (us *UserService) HapusUser(token *golangjwt.Token, userID uint) error {
 
 	return nil
 }
+
+func (us *UserService) GetAllUser() ([]user.User, error) {
+	Users, err := us.repo.GetAllUser()
+	if err != nil {
+		if strings.Contains(err.Error(), "not found") {
+			return Users, errors.New("username tidak ditemukan")
+		}
+		return Users, errors.New("terjadi kesalahan pada sistem")
+	}
+	return Users, nil
+}

@@ -42,8 +42,9 @@ func (ph *ProductHandler) Add() echo.HandlerFunc {
 		if err != nil {
 			if errors.Is(err, http.ErrMissingFile) {
 				inputProcess := &product.Product{
-					Name:    input.Laptop,
-					Picture: "",
+					Name:     input.Laptop,
+					Category: input.Category,
+					Picture:  "",
 				}
 
 				result, err := ph.s.TalkToGpt(c.Get("user").(*golangjwt.Token), *inputProcess)
@@ -76,6 +77,7 @@ func (ph *ProductHandler) Add() echo.HandlerFunc {
 				response.HDMI = result.HDMI
 				response.Price = result.Price
 				response.Picture = result.Picture
+				response.Category = result.Category
 
 				return c.JSON(http.StatusCreated, map[string]any{
 					"message": "success create data",
@@ -114,6 +116,7 @@ func (ph *ProductHandler) Add() echo.HandlerFunc {
 
 		var inputProcess = new(product.Product)
 		inputProcess.Name = input.Laptop
+		inputProcess.Category = input.Category
 		inputProcess.Picture = link
 
 		result, err := ph.s.TalkToGpt(c.Get("user").(*golangjwt.Token), *inputProcess)
@@ -143,6 +146,7 @@ func (ph *ProductHandler) Add() echo.HandlerFunc {
 		response.HDMI = result.HDMI
 		response.Price = result.Price
 		response.Picture = result.Picture
+		response.Category = result.Category
 
 		return responses.PrintResponse(c, http.StatusCreated, "success create data", response)
 	}

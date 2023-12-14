@@ -8,6 +8,7 @@ import (
 
 type ProductModel struct {
 	gorm.Model
+	Category  string
 	Name      string
 	CPU       string
 	RAM       string
@@ -44,6 +45,7 @@ func (gq ProductQuery) InsertProduct(UserID uint, newProduct product.Product) (p
 	inputDB.HDMI = newProduct.HDMI
 	inputDB.Price = newProduct.Price
 	inputDB.Picture = newProduct.Picture
+	inputDB.Category = newProduct.Category
 
 	gq.db.Create(&inputDB)
 	newProduct.ID = inputDB.ID
