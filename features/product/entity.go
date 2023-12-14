@@ -23,11 +23,17 @@ type Product struct {
 
 type Handler interface {
 	Add() echo.HandlerFunc
+	GetAll() echo.HandlerFunc
+	GetProductDetail() echo.HandlerFunc
 }
 type Service interface {
 	TalkToGpt(token *jwt.Token, newProduct Product) (Product, error)
+	SemuaProduct(page, limit int) ([]Product, error)
+	SatuProduct(productID uint) (Product, error)
 }
 
 type Repository interface {
 	InsertProduct(UserID uint, newProduct Product) (Product, error)
+	GetAllProduct(page, limit int) ([]Product, error)
+	GetProductID(productID uint) (*Product, error)
 }

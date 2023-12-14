@@ -7,6 +7,7 @@ import (
 	"context"
 	"errors"
 	"net/http"
+	"strconv"
 	"strings"
 
 	"github.com/cloudinary/cloudinary-go/v2"
@@ -27,6 +28,87 @@ func New(s product.Service, cld *cloudinary.Cloudinary, ctx context.Context, upl
 		cl:     cld,
 		ct:     ctx,
 		folder: uploadparam,
+	}
+}
+
+// GetProductDetail implements product.Handler.
+func (ph *ProductHandler) GetProductDetail() echo.HandlerFunc {
+	return func(c echo.Context) error {
+		productID, err := strconv.ParseUint(c.Param("id"), 10, 64)
+		if err != nil {
+			return c.JSON(http.StatusBadRequest, map[string]interface{}{
+				"message": "ID user tidak valid",
+				"data":    nil,
+			})
+		}
+		result, err := ph.s.SatuProduct(uint(productID))
+		if err != nil {
+			c.Logger().Error("Error fetching product: ", err.Error())
+			return c.JSON(http.StatusInternalServerError, map[string]interface{}{
+				"message": "Failed to retrieve product data",
+			})
+		}
+		var response = new(ProductResponse)
+		response.ID = result.ID
+		response.Name = result.Name
+		response.CPU = result.CPU
+		response.RAM = result.RAM
+		response.Display = result.Display
+		response.Storage = result.Storage
+		response.Thickness = result.Thickness
+		response.Weight = result.Weight
+		response.Bluetooth = result.Bluetooth
+		response.HDMI = result.HDMI
+		response.Price = result.Price
+		response.Picture = result.Picture
+		response.Category = result.Category
+
+		return responses.PrintResponse(c, http.StatusCreated, "success create data", response)
+	}
+}
+
+// GetAll implements product.Handler.
+func (ph *ProductHandler) GetAll() echo.HandlerFunc {
+	return func(c echo.Context) error {
+		page, err := strconv.Atoi(c.QueryParam("page"))
+		if page <= 0 {
+			page = 1
+		}
+		limit, _ := strconv.Atoi(c.QueryParam("limit"))
+		if limit <= 0 {
+			limit = 5
+		}
+		results, err := ph.s.SemuaProduct(page, limit)
+		if err != nil {
+			c.Logger().Error("Error fetching product: ", err.Error())
+			return c.JSON(http.StatusInternalServerError, map[string]interface{}{
+				"message": "Failed to retrieve product data",
+			})
+		}
+		var response []ProductResponse
+		for _, result := range results {
+			response = append(response, ProductResponse{
+				ID:        result.ID,
+				Category:  result.Category,
+				Name:      result.Name,
+				CPU:       result.CPU,
+				RAM:       result.RAM,
+				Display:   result.Display,
+				Storage:   result.Storage,
+				Thickness: result.Thickness,
+				Weight:    result.Weight,
+				Bluetooth: result.Bluetooth,
+				HDMI:      result.HDMI,
+				Price:     result.Price,
+				Picture:   result.Picture,
+			})
+		}
+
+		return c.JSON(http.StatusOK, map[string]interface{}{
+			"message":    "Success fetching all Posts data",
+			"data":       response,
+			"pagination": map[string]interface{}{"page": page, "limit": limit},
+		})
 	}
 }
 

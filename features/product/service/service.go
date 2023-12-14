@@ -6,6 +6,7 @@ import (
 	"BE-hi-SPEC/helper/jwt"
 	"context"
 	"encoding/json"
+	"errors"
 
 	golangjwt "github.com/golang-jwt/jwt/v5"
 	openai "github.com/sashabaranov/go-openai"
@@ -19,6 +20,15 @@ func New(r product.Repository) product.Service {
 	return &ProductServices{
 		repo: r,
 	}
+}
+
+// SatuProduct implements product.Service.
+func (ps *ProductServices) SatuProduct(productID uint) (product.Product, error) {
+	result, err := ps.repo.GetProductID(productID)
+	if err != nil {
+		return product.Product{}, errors.New("failed get all product")
+	}
+	return *result, nil
 }
 
 func (ps *ProductServices) TalkToGpt(token *golangjwt.Token, newProduct product.Product) (product.Product, error) {
@@ -51,5 +61,14 @@ func (ps *ProductServices) TalkToGpt(token *golangjwt.Token, newProduct product.
 	}
 	result, err := ps.repo.InsertProduct(userId, newProduct)
 
+	return result, nil
+}
+
+// SemuaProduct implements product.Service.
+func (ps *ProductServices) SemuaProduct(page int, limit int) ([]product.Product, error) {
+	result, err := ps.repo.GetAllProduct(page, limit)
+	if err != nil {
+		return nil, errors.New("failed get all product")
+	}
 	return result, nil
 }

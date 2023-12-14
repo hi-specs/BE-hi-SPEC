@@ -32,6 +32,34 @@ func New(db *gorm.DB) product.Repository {
 	}
 }
 
+// GetAllProduct implements product.Repository.
+func (pq *ProductQuery) GetAllProduct(page int, limit int) ([]product.Product, error) {
+	var products []ProductModel
+	offset := (page - 1) * limit
+	if err := pq.db.Offset(offset).Limit(limit).Find(&products).Error; err != nil {
+		return nil, err
+	}
+	var result []product.Product
+	for _, s := range products {
+		result = append(result, product.Product{
+			ID:        s.ID,
+			Category:  s.Category,
+			Name:      s.Name,
+			CPU:       s.CPU,
+			RAM:       s.RAM,
+			Display:   s.Display,
+			Storage:   s.Storage,
+			Thickness: s.Thickness,
+			Weight:    s.Weight,
+			Bluetooth: s.Bluetooth,
+			HDMI:      s.HDMI,
+			Price:     s.Price,
+			Picture:   s.Picture,
+		})
+	}
+	return result, nil
+}
+
 func (gq ProductQuery) InsertProduct(UserID uint, newProduct product.Product) (product.Product, error) {
 	var inputDB = new(ProductModel)
 	inputDB.Name = newProduct.Name
@@ -50,4 +78,28 @@ func (gq ProductQuery) InsertProduct(UserID uint, newProduct product.Product) (p
 	gq.db.Create(&inputDB)
 	newProduct.ID = inputDB.ID
 	return newProduct, nil
+}
+
+// GetProductID implements product.Repository.
+func (pq *ProductQuery) GetProductID(productID uint) (*product.Product, error) {
+	var productModel ProductModel
+	if err := pq.db.First(&productModel, productID).Error; err != nil {
+		return nil, err
+	}
+	result := &product.Product{
+		ID:        productModel.ID,
+		Category:  productModel.Category,
+		Name:      productModel.Name,
+		CPU:       productModel.CPU,
+		RAM:       productModel.RAM,
+		Display:   productModel.Display,
+		Storage:   productModel.Storage,
+		Thickness: productModel.Thickness,
+		Weight:    productModel.Weight,
+		Bluetooth: productModel.Bluetooth,
+		HDMI:      productModel.HDMI,
+		Price:     productModel.Price,
+		Picture:   productModel.Picture,
+	}
+	return result, nil
 }
