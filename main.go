@@ -33,7 +33,7 @@ func main() {
 		e.Logger.Fatal("tidak bisa start bro", err.Error())
 	}
 
-	db.AutoMigrate(&ur.UserModel{}, &pr.ProductModel{})
+	db.AutoMigrate(&ur.UserModel{}, &pr.ProductModel{}, &ur.FavoriteModel{})
 
 	ekrip := ek.New()
 	userRepo := ur.New(db)

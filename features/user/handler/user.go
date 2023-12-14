@@ -6,6 +6,7 @@ import (
 	cld "BE-hi-SPEC/utils/cld"
 	"context"
 	"errors"
+	"fmt"
 	"net/http"
 	"strconv"
 	"strings"
@@ -420,18 +421,19 @@ func (uc *UserController) DelFavorite() echo.HandlerFunc {
 			})
 		}
 
+		fmt.Println(favoriteID)
 		err = uc.srv.DelFavorite(c.Get("user").(*gojwt.Token), uint(favoriteID))
 		if err != nil {
 			c.Logger().Error("ERROR Delete User, explain:", err.Error())
 			var statusCode = http.StatusInternalServerError
-			var message = "terjadi permasalahan ketika menghapus user"
+			var message = "terjadi permasalahan ketika menghapus favorite"
 
 			if strings.Contains(err.Error(), "tidak ditemukan") {
 				statusCode = http.StatusNotFound
-				message = "user tidak ditemukan"
+				message = "favorite tidak ditemukan"
 			} else if strings.Contains(err.Error(), "tidak memiliki izin") {
 				statusCode = http.StatusForbidden
-				message = "Anda tidak memiliki izin untuk menghapus user ini"
+				message = "Anda tidak memiliki izin untuk menghapus favorite ini"
 			}
 
 			return c.JSON(statusCode, map[string]interface{}{
@@ -440,7 +442,7 @@ func (uc *UserController) DelFavorite() echo.HandlerFunc {
 		}
 
 		return c.JSON(http.StatusOK, map[string]interface{}{
-			"message": "success delete user",
+			"message": "success delete favorite",
 		})
 	}
 }

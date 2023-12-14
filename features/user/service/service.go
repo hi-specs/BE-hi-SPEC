@@ -160,7 +160,12 @@ func (us *UserService) AddFavorite(token *golangjwt.Token, productID uint) (user
 		return user.Favorite{}, err
 	}
 	favorites, err := us.repo.AddFavorite(userID, productID)
-
+	if err != nil {
+		if strings.Contains(err.Error(), "duplicate") {
+			return user.Favorite{}, errors.New("favorite telah ditambahkan")
+		}
+		return user.Favorite{}, errors.New("terjadi kesalahan pada sistem")
+	}
 	return favorites, err
 }
 
@@ -175,5 +180,12 @@ func (us *UserService) DelFavorite(token *golangjwt.Token, favoriteID uint) erro
 		return errors.New("failed to delete the favorite")
 	}
 
-	return nil
+	// if err != nil {
+	// 	return err
+	// }
+	// // exitingUser, err := us.repo.GetUserByID(userID)
+	if err != nil {
+		return errors.New("failed to retrieve the user for deletion")
+	}
+	return err
 }
