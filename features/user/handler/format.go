@@ -61,3 +61,7 @@ type GetUserResponse struct {
 type GetAllUserResponse struct {
 	Users []GetUserResponse
 }
+
+type FavoriteRequest struct {
+	ProductID uint `json:"product_id" form:"product_id"`
+}

@@ -342,3 +342,38 @@ func (uc *UserController) All() echo.HandlerFunc {
 		})
 	}
 }
+
+func (uc *UserController) AddFavorite() echo.HandlerFunc {
+	return func(c echo.Context) error {
+
+		productID, err := strconv.ParseUint(c.Param("id"), 10, 64)
+		if err != nil {
+			return c.JSON(http.StatusBadRequest, map[string]interface{}{
+				"message": "Product ID tidak valid",
+			})
+		}
+
+		result, err := uc.srv.AddFavorite(c.Get("user").(*gojwt.Token), uint(productID))
+
+		if err != nil {
+			c.Logger().Error("ERROR Register, explain:", err.Error())
+			var statusCode = http.StatusInternalServerError
+			var message = "terjadi permasalahan ketika memproses data"
+
+			if strings.Contains(err.Error(), "terdaftar") {
+				statusCode = http.StatusBadRequest
+				message = "data yang diinputkan sudah terdaftar ada sistem"
+			}
+
+			return c.JSON(statusCode, map[string]any{
+				"message": message,
+			})
+		}
+
+		return c.JSON(http.StatusOK, map[string]interface{}{
+			"message": "success get all data",
+			"data":    result,
+		})
+
+	}
+}
