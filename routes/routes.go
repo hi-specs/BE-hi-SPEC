@@ -37,6 +37,7 @@ func RouteProduct(e *echo.Echo, ph product.Handler) {
 	e.GET("/product", ph.GetAll())
 	e.GET("/product/:id", ph.GetProductDetail())
 	e.GET("/product/search", ph.SearchAll())
+	e.PATCH("/product/:id", ph.UpdateProduct())
 	e.DELETE("/product/:id", ph.DelProduct())
 }
 
