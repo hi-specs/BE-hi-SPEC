@@ -14,9 +14,9 @@ type AllProduct struct {
 	Picture  string `json:"picture"`
 }
 
-type TransactionDashboard struct {
-	TotalProduct     int `json:"total_product"`
-	TotalUser        int `json:"total_user"`
-	TotalTransaction int `json:"total_transaction"`
-	Product          []AllProduct
+type AdminDashboard struct {
+	TotalProduct     int          `json:"total_product"`
+	TotalUser        int          `json:"total_user"`
+	TotalTransaction int          `json:"total_transaction"`
+	Product          []AllProduct `json:"product"`
 }

@@ -23,7 +23,7 @@ type ProductResponse struct {
 }
 
 type SearchResponse struct {
-	ID      uint   `json:"id"`
+	ID      uint   `json:"product_id"`
 	Name    string `json:"name"`
 	Price   int    `json:"price"`
 	Picture string `json:"picture"`

@@ -12,8 +12,8 @@ func New(r transaction.Repository) transaction.Service {
 	}
 }
 
-func (ts *TransactionServices) TransactionDashboard() (transaction.TransactionDashboard, error) {
-	result, err := ts.repo.TransactionDashboard()
+func (ts *TransactionServices) AdminDashboard() (transaction.TransactionDashboard, error) {
+	result, err := ts.repo.AdminDashboard()
 
 	return result, err
 }

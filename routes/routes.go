@@ -41,5 +41,5 @@ func RouteProduct(e *echo.Echo, ph product.Handler) {
 }
 
 func RouteTransaction(e *echo.Echo, th transaction.Handler) {
-	e.GET("/transaction", th.TransactionDashboard())
+	e.GET("/dashboard", th.AdminDashboard())
 }
