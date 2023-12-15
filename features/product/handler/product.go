@@ -31,6 +31,40 @@ func New(s product.Service, cld *cloudinary.Cloudinary, ctx context.Context, upl
 	}
 }
 
+// SearchProductByRangePrice implements product.Handler.
+func (ph *ProductHandler) SearchProductByRangePrice() echo.HandlerFunc {
+	return func(c echo.Context) error {
+		minPrice := c.QueryParam("minPrice")
+		maxPrice := c.QueryParam("maxPrice")
+
+		minPriceUint, err := strconv.ParseUint(minPrice, 10, 64)
+		if err != nil {
+			return c.JSON(http.StatusBadRequest, map[string]string{"error": "Invalid minPrice"})
+		}
+
+		maxPriceUint, err := strconv.ParseUint(maxPrice, 10, 64)
+		if err != nil {
+			return c.JSON(http.StatusBadRequest, map[string]string{"error": "Invalid maxPrice"})
+		}
+
+		products, err := ph.s.CariProductPrice(uint(minPriceUint), uint(maxPriceUint))
+		if err != nil {
+			return c.JSON(http.StatusInternalServerError, map[string]string{"error": "Internal Server Error"})
+		}
+		var response []SearchResponse
+		for _, result := range products {
+			response = append(response, SearchResponse{
+				ID:      result.ID,
+				Name:    result.Name,
+				Price:   result.Price,
+				Picture: result.Picture,
+			})
+		}
+
+		return c.JSON(http.StatusOK, response)
+	}
+}
+
 // SearchProductByCategory implements product.Handler.
 func (ph *ProductHandler) SearchProductByCategory() echo.HandlerFunc {
 	return func(c echo.Context) error {
@@ -271,4 +305,27 @@ func (ph *ProductHandler) Add() echo.HandlerFunc {
 		return responses.PrintResponse(c, http.StatusCreated, "success create data", response)
 	}
 
+}
+
+func (ph *ProductHandler) DelProduct() echo.HandlerFunc {
+	return func(c echo.Context) error {
+		productID, err := strconv.ParseUint(c.Param("id"), 10, 64)
+		if err != nil {
+			return c.JSON(http.StatusBadRequest, map[string]interface{}{
+				"message": "ID product tidak valid",
+				"data":    nil,
+			})
+		}
+
+		errDel := ph.s.DelProduct(uint(productID))
+
+		if errDel != nil {
+			return c.JSON(http.StatusBadRequest, map[string]any{
+				"message": "product tidak ditemukan",
+			})
+		}
+		return c.JSON(http.StatusOK, map[string]any{
+			"message": "delete product successful",
+		})
+	}
 }

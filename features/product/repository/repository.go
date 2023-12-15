@@ -32,6 +32,16 @@ func New(db *gorm.DB) product.Repository {
 	}
 }
 
+// SearchProductPrice implements product.Repository.
+func (pq *ProductQuery) SearchProductPrice(minPrice uint, maxPrice uint) ([]product.Product, error) {
+	var products []product.Product
+	if err := pq.db.Table("product_models").Where("price BETWEEN ? AND ?", minPrice, maxPrice).Find(&products).Error; err != nil {
+		return nil, err
+	}
+
+	return products, nil
+}
+
 // SearchProductByCategory implements product.Repository.
 func (pq *ProductQuery) SearchProductByCategory(category string) ([]product.Product, error) {
 	var products []product.Product
@@ -115,4 +125,14 @@ func (pq *ProductQuery) SearchProductByName(name string) ([]product.Product, err
 	}
 
 	return products, nil
+}
+
+func (pq *ProductQuery) DelProduct(productID uint) error {
+	var prod = new(ProductModel)
+	if err := pq.db.Where("id", productID).Find(&prod).Error; err != nil {
+		return err
+	}
+
+	pq.db.Where("id", productID).Delete(&prod)
+	return nil
 }

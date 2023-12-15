@@ -22,6 +22,16 @@ func New(r product.Repository) product.Service {
 	}
 }
 
+// CariProductPrice implements product.Service.
+func (ps *ProductServices) CariProductPrice(minPrice uint, maxPrice uint) ([]product.Product, error) {
+	products, err := ps.repo.SearchProductPrice(minPrice, maxPrice)
+	if err != nil {
+		return nil, err
+	}
+
+	return products, nil
+}
+
 // CariProductCategory implements product.Service.
 func (ps *ProductServices) CariProductCategory(category string) ([]product.Product, error) {
 	products, err := ps.repo.SearchProductByCategory(category)
@@ -91,4 +101,9 @@ func (ps *ProductServices) SemuaProduct(page int, limit int) ([]product.Product,
 		return nil, errors.New("failed get all product")
 	}
 	return result, nil
+}
+
+func (ps *ProductServices) DelProduct(productID uint) error {
+	err := ps.repo.DelProduct(productID)
+	return err
 }
