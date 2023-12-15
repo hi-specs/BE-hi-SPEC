@@ -1,6 +1,8 @@
 package handler
 
-import "mime/multipart"
+import (
+	"mime/multipart"
+)
 
 type LoginRequest struct {
 	Email    string `json:"email" form:"email"`
@@ -65,4 +67,17 @@ type GetAllUserResponse struct {
 
 type FavoriteRequest struct {
 	ProductID uint `json:"product_id" form:"product_id"`
+}
+
+type GetAllFavoriteUser struct {
+	Name  string `json:"name"`
+	Email string `json:"email"`
+}
+type GetAllFavoriteProduct struct {
+	Name  string `json:"name"`
+	Price int    `json:"price"`
+}
+type GetAllFavoriteResponse struct {
+	User    GetAllFavoriteUser
+	Product []GetAllFavoriteProduct
 }

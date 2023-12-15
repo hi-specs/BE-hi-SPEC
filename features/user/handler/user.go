@@ -404,9 +404,22 @@ func (uc *UserController) GetAllFavorite() echo.HandlerFunc {
 			})
 		}
 
+		var responses GetAllFavoriteResponse
+		responses.User.Email = result.User.Email
+		responses.User.Name = result.User.Name
+
+		var prod []GetAllFavoriteProduct
+		for _, result := range result.Favorite {
+			prod = append(prod, GetAllFavoriteProduct{
+				Name:  result.Name,
+				Price: result.Price,
+			})
+		}
+		responses.Product = prod
+
 		return c.JSON(http.StatusOK, map[string]interface{}{
 			"message": "success get all data",
-			"data":    result,
+			"data":    responses,
 		})
 
 	}
