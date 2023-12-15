@@ -31,46 +31,18 @@ func New(s product.Service, cld *cloudinary.Cloudinary, ctx context.Context, upl
 	}
 }
 
-// SearchProductByRangePrice implements product.Handler.
-func (ph *ProductHandler) SearchProductByRangePrice() echo.HandlerFunc {
+// SearchAll implements product.Handler.
+func (ph *ProductHandler) SearchAll() echo.HandlerFunc {
 	return func(c echo.Context) error {
-		minPrice := c.QueryParam("minPrice")
-		maxPrice := c.QueryParam("maxPrice")
-
-		minPriceUint, err := strconv.ParseUint(minPrice, 10, 64)
-		if err != nil {
-			return c.JSON(http.StatusBadRequest, map[string]string{"error": "Invalid minPrice"})
-		}
-
-		maxPriceUint, err := strconv.ParseUint(maxPrice, 10, 64)
-		if err != nil {
-			return c.JSON(http.StatusBadRequest, map[string]string{"error": "Invalid maxPrice"})
-		}
-
-		products, err := ph.s.CariProductPrice(uint(minPriceUint), uint(maxPriceUint))
-		if err != nil {
-			return c.JSON(http.StatusInternalServerError, map[string]string{"error": "Internal Server Error"})
-		}
-		var response []SearchResponse
-		for _, result := range products {
-			response = append(response, SearchResponse{
-				ID:      result.ID,
-				Name:    result.Name,
-				Price:   result.Price,
-				Picture: result.Picture,
-			})
-		}
-
-		return c.JSON(http.StatusOK, response)
-	}
-}
-
-// SearchProductByCategory implements product.Handler.
-func (ph *ProductHandler) SearchProductByCategory() echo.HandlerFunc {
-	return func(c echo.Context) error {
+		var minPrice int
+		var maxPrice int
+		name := c.QueryParam("name")
 		category := c.QueryParam("category")
 
-		products, err := ph.s.CariProductCategory(category)
+		minPrice, _ = strconv.Atoi(c.QueryParam("minPrice"))
+		maxPrice, _ = strconv.Atoi(c.QueryParam("maxPrice"))
+
+		products, err := ph.s.CariProduct(name, category, uint(minPrice), uint(maxPrice))
 		if err != nil {
 			return c.JSON(http.StatusInternalServerError, map[string]string{"error": "Internal Server Error"})
 		}
@@ -83,30 +55,6 @@ func (ph *ProductHandler) SearchProductByCategory() echo.HandlerFunc {
 				Picture: result.Picture,
 			})
 		}
-
-		return c.JSON(http.StatusOK, response)
-	}
-}
-
-// SearchProductByName implements product.Handler.
-func (ph *ProductHandler) SearchProductByName() echo.HandlerFunc {
-	return func(c echo.Context) error {
-		name := c.QueryParam("name")
-
-		products, err := ph.s.CariProduct(name)
-		if err != nil {
-			return c.JSON(http.StatusInternalServerError, map[string]string{"error": "Internal Server Error"})
-		}
-		var response []SearchResponse
-		for _, result := range products {
-			response = append(response, SearchResponse{
-				ID:      result.ID,
-				Name:    result.Name,
-				Price:   result.Price,
-				Picture: result.Picture,
-			})
-		}
-
 		return c.JSON(http.StatusOK, response)
 	}
 }

@@ -32,21 +32,29 @@ func New(db *gorm.DB) product.Repository {
 	}
 }
 
-// SearchProductPrice implements product.Repository.
-func (pq *ProductQuery) SearchProductPrice(minPrice uint, maxPrice uint) ([]product.Product, error) {
+// SearchProduct implements product.Repository.
+func (pq *ProductQuery) SearchProduct(name string, category string, minPrice uint, maxPrice uint) ([]product.Product, error) {
 	var products []product.Product
-	if err := pq.db.Table("product_models").Where("price BETWEEN ? AND ?", minPrice, maxPrice).Find(&products).Error; err != nil {
-		return nil, err
+
+	qry := pq.db.Table("product_models")
+
+	if name != "" {
+		qry = qry.Where("name like ?", "%"+name+"%")
 	}
 
-	return products, nil
-}
+	if category != "" {
+		qry = qry.Where("category like ?", "%"+category+"%")
+	}
 
-// SearchProductByCategory implements product.Repository.
-func (pq *ProductQuery) SearchProductByCategory(category string) ([]product.Product, error) {
-	var products []product.Product
+	if minPrice != 0 {
+		qry = qry.Where("price >= ?", minPrice)
+	}
 
-	if err := pq.db.Table("product_models").Where("category LIKE ?", "%"+category+"%").Find(&products).Error; err != nil {
+	if maxPrice != 0 {
+		qry = qry.Where("price <= ?", maxPrice)
+	}
+
+	if err := qry.Find(&products).Error; err != nil {
 		return nil, err
 	}
 	return products, nil
@@ -114,17 +122,6 @@ func (pq *ProductQuery) GetProductID(productID uint) (*product.Product, error) {
 		Picture:   productModel.Picture,
 	}
 	return result, nil
-}
-
-// SearchProductByName implements product.Repository.
-func (pq *ProductQuery) SearchProductByName(name string) ([]product.Product, error) {
-	var products []product.Product
-
-	if err := pq.db.Table("product_models").Where("name LIKE ?", "%"+name+"%").Find(&products).Error; err != nil {
-		return nil, err
-	}
-
-	return products, nil
 }
 
 func (pq *ProductQuery) DelProduct(productID uint) error {

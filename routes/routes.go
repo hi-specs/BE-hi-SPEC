@@ -36,9 +36,7 @@ func RouteProduct(e *echo.Echo, ph product.Handler) {
 	e.POST("/product", ph.Add(), echojwt.JWT([]byte("$!1gnK3yyy!!!")))
 	e.GET("/product", ph.GetAll())
 	e.GET("/product/:id", ph.GetProductDetail())
-	e.GET("/product/search", ph.SearchProductByName())
-	e.GET("/product/search/category", ph.SearchProductByCategory())
-	e.GET("/product/search/price", ph.SearchProductByRangePrice())
+	e.GET("/product/search", ph.SearchAll())
 	e.DELETE("/product/:id", ph.DelProduct())
 }
 

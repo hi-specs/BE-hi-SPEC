@@ -22,29 +22,9 @@ func New(r product.Repository) product.Service {
 	}
 }
 
-// CariProductPrice implements product.Service.
-func (ps *ProductServices) CariProductPrice(minPrice uint, maxPrice uint) ([]product.Product, error) {
-	products, err := ps.repo.SearchProductPrice(minPrice, maxPrice)
-	if err != nil {
-		return nil, err
-	}
-
-	return products, nil
-}
-
-// CariProductCategory implements product.Service.
-func (ps *ProductServices) CariProductCategory(category string) ([]product.Product, error) {
-	products, err := ps.repo.SearchProductByCategory(category)
-	if err != nil {
-		return nil, err
-	}
-
-	return products, nil
-}
-
 // CariProduct implements product.Service.
-func (ps *ProductServices) CariProduct(name string) ([]product.Product, error) {
-	products, err := ps.repo.SearchProductByName(name)
+func (ps *ProductServices) CariProduct(name string, category string, minPrice uint, maxPrice uint) ([]product.Product, error) {
+	products, err := ps.repo.SearchProduct(name, category, minPrice, maxPrice)
 	if err != nil {
 		return nil, err
 	}
