@@ -22,6 +22,16 @@ func New(r product.Repository) product.Service {
 	}
 }
 
+// UpdateProduct implements product.Service.
+func (ps *ProductServices) UpdateProduct(productID uint, input product.Product) (product.Product, error) {
+	result, err := ps.repo.UpdateProduct(productID, input)
+	if err != nil {
+		return product.Product{}, errors.New("failed to update the product")
+	}
+
+	return result, nil
+}
+
 // CariProduct implements product.Service.
 func (ps *ProductServices) CariProduct(name string, category string, minPrice uint, maxPrice uint) ([]product.Product, error) {
 	products, err := ps.repo.SearchProduct(name, category, minPrice, maxPrice)

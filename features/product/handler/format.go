@@ -1,5 +1,20 @@
 package handler
 
+type PutProductRequest struct {
+	Category  string `json:"category" form:"category"`
+	Name      string `json:"name" form:"name"`
+	CPU       string `json:"cpu" form:"cpu"`
+	RAM       string `json:"ram" form:"ram"`
+	Display   string `json:"display" form:"display"`
+	Storage   string `json:"storage" form:"storage"`
+	Thickness string `json:"thickness" form:"thickness"`
+	Weight    string `json:"weight" form:"weight"`
+	Bluetooth string `json:"bluetooth" form:"bluetooth"`
+	HDMI      string `json:"hdmi" form:"hdmi"`
+	Price     int    `json:"price" form:"price"`
+	Picture   string `json:"picture" form:"picture"`
+}
+
 type ProductRequest struct {
 	Laptop   string `json:"laptop" form:"laptop"`
 	Picture  string `json:"picture" form:"picture"`

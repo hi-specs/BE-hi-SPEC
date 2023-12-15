@@ -27,12 +27,14 @@ type Handler interface {
 	GetProductDetail() echo.HandlerFunc
 	SearchAll() echo.HandlerFunc
 	DelProduct() echo.HandlerFunc
+	UpdateProduct() echo.HandlerFunc
 }
 type Service interface {
 	TalkToGpt(token *jwt.Token, newProduct Product) (Product, error)
 	SemuaProduct(page, limit int) ([]Product, error)
 	SatuProduct(productID uint) (Product, error)
 	CariProduct(name string, category string, minPrice uint, maxPrice uint) ([]Product, error)
+	UpdateProduct(productID uint, input Product) (Product, error)
 	DelProduct(productID uint) error
 }
 
@@ -40,6 +42,7 @@ type Repository interface {
 	InsertProduct(UserID uint, newProduct Product) (Product, error)
 	GetAllProduct(page, limit int) ([]Product, error)
 	GetProductID(productID uint) (*Product, error)
+	UpdateProduct(productID uint, input Product) (Product, error)
 	SearchProduct(name string, category string, minPrice uint, maxPrice uint) ([]Product, error)
 	DelProduct(productID uint) error
 }

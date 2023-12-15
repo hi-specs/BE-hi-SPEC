@@ -32,6 +32,36 @@ func New(db *gorm.DB) product.Repository {
 	}
 }
 
+// UpdateProduct implements product.Repository.
+func (pq *ProductQuery) UpdateProduct(productID uint, input product.Product) (product.Product, error) {
+	var exitingProduct ProductModel
+
+	if err := pq.db.First(&exitingProduct, productID).Error; err != nil {
+		return product.Product{}, err
+	}
+
+	exitingProduct.Category = input.Category
+	exitingProduct.Name = input.Name
+	exitingProduct.CPU = input.CPU
+	exitingProduct.RAM = input.RAM
+	exitingProduct.Display = input.Display
+	exitingProduct.Storage = input.Storage
+	exitingProduct.Thickness = input.Thickness
+	exitingProduct.Weight = input.Weight
+	exitingProduct.Bluetooth = input.Bluetooth
+	exitingProduct.HDMI = input.HDMI
+	exitingProduct.Price = input.Price
+	exitingProduct.Picture = input.Picture
+
+	if err := pq.db.Save(&exitingProduct).Error; err != nil {
+		return product.Product{}, err
+	}
+
+	input.ID = exitingProduct.ID
+
+	return input, nil
+}
+
 // SearchProduct implements product.Repository.
 func (pq *ProductQuery) SearchProduct(name string, category string, minPrice uint, maxPrice uint) ([]product.Product, error) {
 	var products []product.Product
