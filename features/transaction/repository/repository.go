@@ -28,7 +28,7 @@ func New(db *gorm.DB) transaction.Repository {
 	}
 }
 
-func (tq *TransactionQuery) TransactionDashboard() (transaction.TransactionDashboard, error) {
+func (tq *TransactionQuery) AdminDashboard() (transaction.TransactionDashboard, error) {
 	// mendapatkan nilai total product
 	var productCount int
 	tableName := "product_models"

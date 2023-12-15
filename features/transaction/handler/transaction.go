@@ -27,9 +27,9 @@ func New(s transaction.Service, cld *cloudinary.Cloudinary, ctx context.Context,
 	}
 }
 
-func (th *TransactionHandler) TransactionDashboard() echo.HandlerFunc {
+func (th *TransactionHandler) AdminDashboard() echo.HandlerFunc {
 	return func(c echo.Context) error {
-		result, err := th.s.TransactionDashboard()
+		result, err := th.s.AdminDashboard()
 
 		if err != nil {
 			c.Logger().Error("Error fetching product: ", err.Error())
@@ -38,7 +38,7 @@ func (th *TransactionHandler) TransactionDashboard() echo.HandlerFunc {
 			})
 		}
 
-		var response TransactionDashboard
+		var response AdminDashboard
 		response.TotalProduct = result.TotalProduct
 		response.TotalTransaction = result.TotalTransaction
 		response.TotalUser = result.TotalUser

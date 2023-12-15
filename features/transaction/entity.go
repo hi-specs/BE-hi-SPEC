@@ -14,13 +14,13 @@ type TransactionDashboard struct {
 }
 
 type Handler interface {
-	TransactionDashboard() echo.HandlerFunc
+	AdminDashboard() echo.HandlerFunc
 }
 
 type Repository interface {
-	TransactionDashboard() (TransactionDashboard, error)
+	AdminDashboard() (TransactionDashboard, error)
 }
 
 type Service interface {
-	TransactionDashboard() (TransactionDashboard, error)
+	AdminDashboard() (TransactionDashboard, error)
 }
