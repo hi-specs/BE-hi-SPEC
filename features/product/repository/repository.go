@@ -126,3 +126,13 @@ func (pq *ProductQuery) SearchProductByName(name string) ([]product.Product, err
 
 	return products, nil
 }
+
+func (pq *ProductQuery) DelProduct(productID uint) error {
+	var prod = new(ProductModel)
+	if err := pq.db.Where("id", productID).Find(&prod).Error; err != nil {
+		return err
+	}
+
+	pq.db.Where("id", productID).Delete(&prod)
+	return nil
+}

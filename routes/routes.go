@@ -39,6 +39,7 @@ func RouteProduct(e *echo.Echo, ph product.Handler) {
 	e.GET("/product/search", ph.SearchProductByName())
 	e.GET("/product/search/category", ph.SearchProductByCategory())
 	e.GET("/product/search/price", ph.SearchProductByRangePrice())
+	e.DELETE("/product/:id", ph.DelProduct())
 }
 
 func RouteTransaction(e *echo.Echo, th transaction.Handler) {

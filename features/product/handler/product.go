@@ -306,3 +306,26 @@ func (ph *ProductHandler) Add() echo.HandlerFunc {
 	}
 
 }
+
+func (ph *ProductHandler) DelProduct() echo.HandlerFunc {
+	return func(c echo.Context) error {
+		productID, err := strconv.ParseUint(c.Param("id"), 10, 64)
+		if err != nil {
+			return c.JSON(http.StatusBadRequest, map[string]interface{}{
+				"message": "ID product tidak valid",
+				"data":    nil,
+			})
+		}
+
+		errDel := ph.s.DelProduct(uint(productID))
+
+		if errDel != nil {
+			return c.JSON(http.StatusBadRequest, map[string]any{
+				"message": "product tidak ditemukan",
+			})
+		}
+		return c.JSON(http.StatusOK, map[string]any{
+			"message": "delete product successful",
+		})
+	}
+}

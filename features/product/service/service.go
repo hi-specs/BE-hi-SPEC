@@ -102,3 +102,8 @@ func (ps *ProductServices) SemuaProduct(page int, limit int) ([]product.Product,
 	}
 	return result, nil
 }
+
+func (ps *ProductServices) DelProduct(productID uint) error {
+	err := ps.repo.DelProduct(productID)
+	return err
+}

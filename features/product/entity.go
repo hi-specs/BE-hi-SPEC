@@ -28,6 +28,7 @@ type Handler interface {
 	SearchProductByName() echo.HandlerFunc
 	SearchProductByCategory() echo.HandlerFunc
 	SearchProductByRangePrice() echo.HandlerFunc
+	DelProduct() echo.HandlerFunc
 }
 type Service interface {
 	TalkToGpt(token *jwt.Token, newProduct Product) (Product, error)
@@ -36,6 +37,7 @@ type Service interface {
 	CariProduct(name string) ([]Product, error)
 	CariProductCategory(category string) ([]Product, error)
 	CariProductPrice(minPrice, maxPrice uint) ([]Product, error)
+	DelProduct(productID uint) error
 }
 
 type Repository interface {
@@ -45,4 +47,5 @@ type Repository interface {
 	SearchProductByName(name string) ([]Product, error)
 	SearchProductByCategory(category string) ([]Product, error)
 	SearchProductPrice(minPrice, maxPrice uint) ([]Product, error)
+	DelProduct(productID uint) error
 }
