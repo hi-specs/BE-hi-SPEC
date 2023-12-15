@@ -19,7 +19,8 @@ type User struct {
 }
 
 type Favorite struct {
-	User     User              `json:"user" form:"user"`
+	User     User `json:"user" form:"user"`
+	FavID    []uint
 	Favorite []product.Product `json:"favorite" form:"favorite"`
 }
 
@@ -30,7 +31,7 @@ type Handler interface {
 	Delete() echo.HandlerFunc
 	All() echo.HandlerFunc
 	AddFavorite() echo.HandlerFunc
-	GetAllFavorite() echo.HandlerFunc
+	GetUser() echo.HandlerFunc
 	DelFavorite() echo.HandlerFunc
 }
 
@@ -41,7 +42,7 @@ type Service interface {
 	HapusUser(token *jwt.Token, userID uint) error
 	GetAllUser() ([]User, error)
 	AddFavorite(token *jwt.Token, productID uint) (Favorite, error)
-	GetAllFavorite(userID uint) (Favorite, error)
+	GetUser(userID uint) (Favorite, error)
 	DelFavorite(token *jwt.Token, favoriteID uint) error
 }
 
@@ -53,6 +54,6 @@ type Repository interface {
 	DeleteUser(userID uint) error
 	GetAllUser() ([]User, error)
 	AddFavorite(userID, productID uint) (Favorite, error)
-	GetAllFavorite(userID uint) (Favorite, error)
+	GetUser(userID uint) (Favorite, error)
 	DelFavorite(favoriteID uint) error
 }

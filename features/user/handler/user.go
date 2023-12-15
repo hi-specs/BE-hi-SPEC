@@ -371,15 +371,32 @@ func (uc *UserController) AddFavorite() echo.HandlerFunc {
 			})
 		}
 
+		var responses GetAllFavoriteResponse
+		responses.User.Email = result.User.Email
+		responses.User.Name = result.User.Name
+		responses.User.ID = result.User.ID
+		responses.User.Avatar = result.User.Avatar
+
+		var prod []GetAllFavoriteProduct
+		for _, result := range result.Favorite {
+			prod = append(prod, GetAllFavoriteProduct{
+				ID:      result.ID,
+				Name:    result.Name,
+				Price:   result.Price,
+				Picture: result.Picture,
+			})
+		}
+		responses.Product = prod
+
 		return c.JSON(http.StatusOK, map[string]interface{}{
 			"message": "success get all data",
-			"data":    result,
+			"data":    responses,
 		})
 
 	}
 }
 
-func (uc *UserController) GetAllFavorite() echo.HandlerFunc {
+func (uc *UserController) GetUser() echo.HandlerFunc {
 	return func(c echo.Context) error {
 		userID, err := strconv.ParseUint(c.Param("id"), 10, 64)
 		if err != nil {
@@ -387,7 +404,7 @@ func (uc *UserController) GetAllFavorite() echo.HandlerFunc {
 				"message": "ID user tidak valid",
 			})
 		}
-		result, err := uc.srv.GetAllFavorite(uint(userID))
+		result, err := uc.srv.GetUser(uint(userID))
 
 		if err != nil {
 			c.Logger().Error("ERROR Register, explain:", err.Error())
@@ -404,17 +421,24 @@ func (uc *UserController) GetAllFavorite() echo.HandlerFunc {
 			})
 		}
 
+		var favID = result.FavID
 		var responses GetAllFavoriteResponse
 		responses.User.Email = result.User.Email
 		responses.User.Name = result.User.Name
+		responses.User.ID = result.User.ID
+		responses.User.Avatar = result.User.Avatar
 
 		var prod []GetAllFavoriteProduct
-		for _, result := range result.Favorite {
+		for x, result := range result.Favorite {
 			prod = append(prod, GetAllFavoriteProduct{
-				Name:  result.Name,
-				Price: result.Price,
+				FavID:   favID[x],
+				ID:      result.ID,
+				Name:    result.Name,
+				Price:   result.Price,
+				Picture: result.Picture,
 			})
 		}
+
 		responses.Product = prod
 
 		return c.JSON(http.StatusOK, map[string]interface{}{

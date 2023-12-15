@@ -10,7 +10,7 @@ type LoginRequest struct {
 }
 
 type LoginResponse struct {
-	ID       uint   `json:"id"`
+	ID       uint   `json:"user_id"`
 	Email    string `json:"email"`
 	Password string `json:"password"`
 	Token    string `json:"token"`
@@ -25,7 +25,7 @@ type RegisterRequest struct {
 }
 
 type RegisterResponse struct {
-	ID          uint   `json:"id"`
+	ID          uint   `json:"user_id"`
 	Name        string `json:"name"`
 	Email       string `json:"email" form:"email"`
 	Address     string `json:"address"`
@@ -33,7 +33,7 @@ type RegisterResponse struct {
 }
 
 type PutRequest struct {
-	ID          uint           `json:"id" form:"id"`
+	ID          uint           `json:"user_id" form:"user_id"`
 	Name        string         `json:"name" form:"name"`
 	Email       string         `json:"email" form:"email"`
 	Avatar      multipart.File `json:"avatar" form:"avatar"`
@@ -44,7 +44,7 @@ type PutRequest struct {
 }
 
 type PutResponse struct {
-	ID          uint   `json:"id" form:"id"`
+	ID          uint   `json:"user_id" form:"user_id"`
 	Name        string `json:"name" form:"name"`
 	Email       string `json:"email" form:"email"`
 	Avatar      string `json:"avatar" form:"avatar"`
@@ -53,7 +53,7 @@ type PutResponse struct {
 }
 
 type GetUserResponse struct {
-	ID          uint   `json:"id" form:"id"`
+	ID          uint   `json:"user_id" form:"user_id"`
 	Email       string `json:"email" form:"email"`
 	Name        string `json:"name" form:"name"`
 	Address     string `json:"address" form:"address"`
@@ -69,15 +69,20 @@ type FavoriteRequest struct {
 	ProductID uint `json:"product_id" form:"product_id"`
 }
 
-type GetAllFavoriteUser struct {
-	Name  string `json:"name"`
-	Email string `json:"email"`
+type GetUser struct {
+	ID     uint   `json:"user_id"`
+	Name   string `json:"name"`
+	Email  string `json:"email"`
+	Avatar string `json:"avatar"`
 }
 type GetAllFavoriteProduct struct {
-	Name  string `json:"name"`
-	Price int    `json:"price"`
+	FavID   uint   `json:"favorite_id"`
+	ID      uint   `json:"product_id"`
+	Name    string `json:"name"`
+	Price   int    `json:"price"`
+	Picture string `json:"picture"`
 }
 type GetAllFavoriteResponse struct {
-	User    GetAllFavoriteUser
-	Product []GetAllFavoriteProduct
+	User    GetUser                 `json:"user"`
+	Product []GetAllFavoriteProduct `json:"my_favorite"`
 }
