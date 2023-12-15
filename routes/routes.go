@@ -25,10 +25,10 @@ func RouteUser(e *echo.Echo, uc user.Handler) {
 	e.GET("/users", uc.All())
 	e.POST("/login", uc.Login())
 	e.POST("/register", uc.Register())
+	e.GET("/user/:id", uc.GetUser())
 	e.PATCH("/user/:id", uc.Update(), echojwt.JWT([]byte("$!1gnK3yyy!!!")))
 	e.DELETE("/user/:id", uc.Delete(), echojwt.JWT([]byte("$!1gnK3yyy!!!")))
 	e.POST("/user/fav/:id", uc.AddFavorite(), echojwt.JWT([]byte("$!1gnK3yyy!!!")))
-	e.GET("/user/fav/:id", uc.GetAllFavorite())
 	e.DELETE("/user/fav/:id", uc.DelFavorite(), echojwt.JWT([]byte("$!1gnK3yyy!!!")))
 }
 

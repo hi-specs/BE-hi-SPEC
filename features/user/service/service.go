@@ -169,8 +169,8 @@ func (us *UserService) AddFavorite(token *golangjwt.Token, productID uint) (user
 	return favorites, err
 }
 
-func (us *UserService) GetAllFavorite(userID uint) (user.Favorite, error) {
-	favorites, err := us.repo.GetAllFavorite(userID)
+func (us *UserService) GetUser(userID uint) (user.Favorite, error) {
+	favorites, err := us.repo.GetUser(userID)
 	return favorites, err
 }
 

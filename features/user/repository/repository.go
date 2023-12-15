@@ -4,6 +4,7 @@ import (
 	"BE-hi-SPEC/features/product"
 	"BE-hi-SPEC/features/user"
 	"errors"
+	"fmt"
 
 	"gorm.io/gorm"
 )
@@ -193,24 +194,25 @@ func (uq *UserQuery) AddFavorite(userID, productID uint) (user.Favorite, error) 
 	var FavList []uint
 	uq.db.Table("favorite_models").Where("user_id = ?", userID).Select("product_id").Find(&FavList)
 
+	fmt.Println(FavList)
 	var Favorite []product.Product
 	uq.db.Table("product_models").Where("id = ?", productID).Find(&Favorite)
 
 	var result user.Favorite
 
+	result.FavID = FavList
 	result.Favorite = Favorite
 	result.User = User
 
 	return result, nil
 }
 
-func (uq *UserQuery) GetAllFavorite(userID uint) (user.Favorite, error) {
+func (uq *UserQuery) GetUser(userID uint) (user.Favorite, error) {
 	var User user.User
 	uq.db.Table("user_models").Where("id = ?", userID).Find(&User)
 
 	var FavList []uint
 	uq.db.Table("favorite_models").Where("user_id = ?", userID).Select("product_id").Find(&FavList)
-
 	var Favorite []product.Product
 
 	for _, fav := range FavList {
@@ -219,8 +221,11 @@ func (uq *UserQuery) GetAllFavorite(userID uint) (user.Favorite, error) {
 		Favorite = append(Favorite, *tmp)
 	}
 
-	var result user.Favorite
+	var FavID []uint
+	uq.db.Table("favorite_models").Where("user_id = ?", userID).Select("id").Find(&FavID)
 
+	var result user.Favorite
+	result.FavID = FavID
 	result.Favorite = Favorite
 	result.User = User
 
