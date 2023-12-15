@@ -51,8 +51,17 @@ func (ph *ProductHandler) SearchProductByRangePrice() echo.HandlerFunc {
 		if err != nil {
 			return c.JSON(http.StatusInternalServerError, map[string]string{"error": "Internal Server Error"})
 		}
+		var response []SearchResponse
+		for _, result := range products {
+			response = append(response, SearchResponse{
+				ID:      result.ID,
+				Name:    result.Name,
+				Price:   result.Price,
+				Picture: result.Picture,
+			})
+		}
 
-		return c.JSON(http.StatusOK, products)
+		return c.JSON(http.StatusOK, response)
 	}
 }
 
