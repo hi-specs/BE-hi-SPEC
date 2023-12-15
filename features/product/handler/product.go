@@ -31,6 +31,31 @@ func New(s product.Service, cld *cloudinary.Cloudinary, ctx context.Context, upl
 	}
 }
 
+// SearchProductByRangePrice implements product.Handler.
+func (ph *ProductHandler) SearchProductByRangePrice() echo.HandlerFunc {
+	return func(c echo.Context) error {
+		minPrice := c.QueryParam("minPrice")
+		maxPrice := c.QueryParam("maxPrice")
+
+		minPriceUint, err := strconv.ParseUint(minPrice, 10, 64)
+		if err != nil {
+			return c.JSON(http.StatusBadRequest, map[string]string{"error": "Invalid minPrice"})
+		}
+
+		maxPriceUint, err := strconv.ParseUint(maxPrice, 10, 64)
+		if err != nil {
+			return c.JSON(http.StatusBadRequest, map[string]string{"error": "Invalid maxPrice"})
+		}
+
+		products, err := ph.s.CariProductPrice(uint(minPriceUint), uint(maxPriceUint))
+		if err != nil {
+			return c.JSON(http.StatusInternalServerError, map[string]string{"error": "Internal Server Error"})
+		}
+
+		return c.JSON(http.StatusOK, products)
+	}
+}
+
 // SearchProductByCategory implements product.Handler.
 func (ph *ProductHandler) SearchProductByCategory() echo.HandlerFunc {
 	return func(c echo.Context) error {
