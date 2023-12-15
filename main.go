@@ -15,6 +15,10 @@ import (
 	pr "BE-hi-SPEC/features/product/repository"
 	ps "BE-hi-SPEC/features/product/service"
 
+	th "BE-hi-SPEC/features/transaction/handler"
+	tr "BE-hi-SPEC/features/transaction/repository"
+	ts "BE-hi-SPEC/features/transaction/service"
+
 	ek "BE-hi-SPEC/helper/enkrip"
 
 	"github.com/labstack/echo/v4"
@@ -33,7 +37,7 @@ func main() {
 		e.Logger.Fatal("tidak bisa start bro", err.Error())
 	}
 
-	db.AutoMigrate(&ur.UserModel{}, &pr.ProductModel{}, &ur.FavoriteModel{})
+	db.AutoMigrate(&ur.UserModel{}, &pr.ProductModel{}, &ur.FavoriteModel{}, &tr.TransactionModel{})
 
 	ekrip := ek.New()
 	userRepo := ur.New(db)
@@ -44,6 +48,9 @@ func main() {
 	productService := ps.New(productRepo)
 	productHandler := ph.New(productService, cld, ctx, param)
 
-	routes.InitRoute(e, userHandler, productHandler)
+	transactionRepo := tr.New(db)
+	transactionService := ts.New(transactionRepo)
+	transactionHandler := th.New(transactionService, cld, ctx, param)
+	routes.InitRoute(e, userHandler, productHandler, transactionHandler)
 	e.Logger.Fatal(e.Start(":8000"))
 }

@@ -2,6 +2,7 @@ package routes
 
 import (
 	"BE-hi-SPEC/features/product"
+	"BE-hi-SPEC/features/transaction"
 	"BE-hi-SPEC/features/user"
 
 	echojwt "github.com/labstack/echo-jwt/v4"
@@ -9,7 +10,7 @@ import (
 	"github.com/labstack/echo/v4/middleware"
 )
 
-func InitRoute(e *echo.Echo, uc user.Handler, ph product.Handler) {
+func InitRoute(e *echo.Echo, uc user.Handler, ph product.Handler, th transaction.Handler) {
 	e.Pre(middleware.RemoveTrailingSlash())
 
 	e.Use(middleware.CORS())
@@ -17,6 +18,7 @@ func InitRoute(e *echo.Echo, uc user.Handler, ph product.Handler) {
 
 	RouteUser(e, uc)
 	RouteProduct(e, ph)
+	RouteTransaction(e, th)
 }
 
 func RouteUser(e *echo.Echo, uc user.Handler) {
@@ -36,4 +38,8 @@ func RouteProduct(e *echo.Echo, ph product.Handler) {
 	e.GET("/product/:id", ph.GetProductDetail())
 	e.GET("/product/search", ph.SearchProductByName())
 	e.GET("/product/search/category", ph.SearchProductByCategory())
+}
+
+func RouteTransaction(e *echo.Echo, th transaction.Handler) {
+	e.GET("/transaction", th.TransactionDashboard())
 }
