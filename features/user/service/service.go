@@ -189,3 +189,11 @@ func (us *UserService) DelFavorite(token *golangjwt.Token, favoriteID uint) erro
 	}
 	return err
 }
+
+func (us *UserService) SearchUser(name string) ([]user.User, error) {
+	result, err := us.repo.SearchUser(name)
+	if err != nil {
+		return nil, errors.New("failed get all product")
+	}
+	return result, nil
+}

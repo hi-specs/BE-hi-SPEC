@@ -244,3 +244,19 @@ func (uq *UserQuery) DelFavorite(favoriteID uint) error {
 
 	return nil
 }
+
+func (uq *UserQuery) SearchUser(name string) ([]user.User, error) {
+	var users []user.User
+
+	qry := uq.db.Table("user_models")
+
+	if name != "" {
+		qry = qry.Where("name like ?", "%"+name+"%")
+	}
+
+	if err := qry.Find(&users).Error; err != nil {
+		return nil, err
+	}
+	fmt.Println(users)
+	return users, nil
+}

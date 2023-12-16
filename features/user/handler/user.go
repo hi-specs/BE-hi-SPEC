@@ -483,3 +483,26 @@ func (uc *UserController) DelFavorite() echo.HandlerFunc {
 		})
 	}
 }
+
+func (uc *UserController) SearchUser() echo.HandlerFunc {
+	return func(c echo.Context) error {
+		name := c.QueryParam("name")
+
+		users, err := uc.srv.SearchUser(name)
+		if err != nil {
+			return c.JSON(http.StatusInternalServerError, map[string]string{"error": "Internal Server Error"})
+		}
+		var response []SearchUserResponse
+		for _, result := range users {
+			response = append(response, SearchUserResponse{
+				ID:      result.ID,
+				Name:    result.Name,
+				Email:   result.Email,
+				Avatar:  result.Avatar,
+				Address: result.Address,
+				Time:    result.CreatedAt,
+			})
+		}
+		return c.JSON(http.StatusOK, response)
+	}
+}

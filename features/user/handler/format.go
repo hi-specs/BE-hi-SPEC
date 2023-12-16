@@ -2,6 +2,7 @@ package handler
 
 import (
 	"mime/multipart"
+	"time"
 )
 
 type LoginRequest struct {
@@ -82,7 +83,18 @@ type GetAllFavoriteProduct struct {
 	Price   int    `json:"price"`
 	Picture string `json:"picture"`
 }
+
 type GetAllFavoriteResponse struct {
 	User    GetUser                 `json:"user"`
 	Product []GetAllFavoriteProduct `json:"my_favorite"`
+}
+
+type SearchUserResponse struct {
+	ID          uint      `json:"user_id" form:"user_id"`
+	Name        string    `json:"name" form:"name"`
+	Email       string    `json:"email" form:"email"`
+	Avatar      string    `json:"avatar" form:"avatar"`
+	Address     string    `json:"address" form:"address"`
+	Time        time.Time `json:"time" form:"time"`
+	PhoneNumber string    `json:"phone_number" form:"phone_number"`
 }
