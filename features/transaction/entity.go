@@ -34,16 +34,19 @@ type Handler interface {
 	AdminDashboard() echo.HandlerFunc
 	Checkout() echo.HandlerFunc
 	TransactionList() echo.HandlerFunc
+	GetTransaction() echo.HandlerFunc
 }
 
 type Repository interface {
 	AdminDashboard() (TransactionDashboard, error)
 	Checkout(userID uint, ProductID int, ProductPrice int) (Transaction, error)
 	TransactionList() ([]TransactionList, error)
+	GetTransaction(transactionID uint) (*TransactionList, error)
 }
 
 type Service interface {
 	AdminDashboard() (TransactionDashboard, error)
 	Checkout(token *jwt.Token, ProductID int, ProductPrice int) (Transaction, error)
 	TransactionList() ([]TransactionList, error)
+	GetTransaction(transactionID uint) (TransactionList, error)
 }

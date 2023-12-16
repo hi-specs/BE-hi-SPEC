@@ -6,6 +6,7 @@ import (
 	"BE-hi-SPEC/helper/responses"
 	"context"
 	"net/http"
+	"strconv"
 	"strings"
 
 	"github.com/cloudinary/cloudinary-go/v2"
@@ -110,5 +111,34 @@ func (th *TransactionHandler) TransactionList() echo.HandlerFunc {
 			})
 		}
 		return responses.PrintResponse(c, http.StatusOK, "list of transaction", result)
+	}
+}
+
+func (th *TransactionHandler) GetTransaction() echo.HandlerFunc {
+	return func(c echo.Context) error {
+		transactionID, err := strconv.ParseUint(c.Param("id"), 10, 64)
+		if err != nil {
+			return c.JSON(http.StatusBadRequest, map[string]interface{}{
+				"message": "ID user tidak valid",
+			})
+		}
+		result, err := th.s.GetTransaction(uint(transactionID))
+
+		if err != nil {
+			c.Logger().Error("Error fetching product: ", err.Error())
+			return c.JSON(http.StatusInternalServerError, map[string]interface{}{
+				"message": "Failed to retrieve product data",
+			})
+		}
+
+		var response = new(TransactionDetail)
+		response.ProductID = result.ProductID
+		response.Status = result.Status
+		response.Timestamp = result.Timestamp
+		response.TotalPrice = result.TotalPrice
+		response.TransactionID = result.TransactionID
+
+		return responses.PrintResponse(c, http.StatusOK, "detail of transaction", response)
+
 	}
 }

@@ -3,6 +3,7 @@ package repository
 import (
 	p "BE-hi-SPEC/features/product"
 	pr "BE-hi-SPEC/features/product/repository"
+	"errors"
 
 	"BE-hi-SPEC/features/transaction"
 	"fmt"
@@ -121,6 +122,29 @@ func (tq *TransactionQuery) TransactionList() ([]transaction.TransactionList, er
 			Status:        tl.Status,
 			Timestamp:     tl.CreatedAt,
 		})
+	}
+
+	return result, nil
+}
+
+func (tq *TransactionQuery) GetTransaction(transactionID uint) (*transaction.TransactionList, error) {
+	var tm TransactionModel
+	if err := tq.db.First(&tm, transactionID).Error; err != nil {
+		return nil, err
+	}
+
+	// transaksi tidak ditemukan
+	if tm.ID == 0 {
+		err := errors.New("transaction doesnt exist")
+		return nil, err
+	}
+
+	result := &transaction.TransactionList{
+		TransactionID: int(tm.ID),
+		ProductID:     int(tm.ProductID),
+		TotalPrice:    int(tm.TotalPrice),
+		Status:        tm.Status,
+		Timestamp:     tm.CreatedAt,
 	}
 
 	return result, nil
