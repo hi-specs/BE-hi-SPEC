@@ -16,6 +16,7 @@ type TransactionModel struct {
 	ProductID  uint
 	UserID     uint
 	TotalPrice uint
+	Status     string
 }
 
 type TransactionQuery struct {
@@ -89,6 +90,7 @@ func (tq *TransactionQuery) Checkout(userID uint, ProductID int, TotalPrice int)
 	inputDB.ProductID = uint(ProductID)
 	inputDB.TotalPrice = uint(TotalPrice)
 	inputDB.UserID = userID
+	inputDB.Status = "Pending"
 
 	if err := tq.db.Create(&inputDB).Error; err != nil {
 		return transaction.Transaction{}, err
@@ -98,6 +100,28 @@ func (tq *TransactionQuery) Checkout(userID uint, ProductID int, TotalPrice int)
 	result.ID = int(inputDB.ID)
 	result.ProductID = int(inputDB.ProductID)
 	result.TotalPrice = int(inputDB.TotalPrice)
+	result.Status = inputDB.Status
+
+	return result, nil
+}
+
+func (tq *TransactionQuery) TransactionList() ([]transaction.TransactionList, error) {
+	var tm []TransactionModel
+	if err := tq.db.Find(&tm).Error; err != nil {
+		return nil, err
+	}
+
+	var result []transaction.TransactionList
+
+	for _, tl := range tm {
+		result = append(result, transaction.TransactionList{
+			ProductID:     int(tl.ProductID),
+			TransactionID: int(tl.ID),
+			TotalPrice:    int(tl.TotalPrice),
+			Status:        tl.Status,
+			Timestamp:     tl.CreatedAt,
+		})
+	}
 
 	return result, nil
 }
