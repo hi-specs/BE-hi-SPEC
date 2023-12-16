@@ -22,7 +22,7 @@ type ProductRequest struct {
 }
 
 type ProductResponse struct {
-	ID        uint   `json:"id"`
+	ID        uint   `json:"product_id"`
 	Category  string `json:"category"`
 	Name      string `json:"name"`
 	CPU       string `json:"cpu"`
@@ -45,7 +45,7 @@ type SearchResponse struct {
 }
 
 type AllResponse struct {
-	ID       uint   `json:"id"`
+	ID       uint   `json:"product_id"`
 	Category string `json:"category"`
 	Name     string `json:"name"`
 	Price    int    `json:"price"`

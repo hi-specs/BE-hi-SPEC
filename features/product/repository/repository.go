@@ -2,6 +2,7 @@ package respository
 
 import (
 	"BE-hi-SPEC/features/product"
+	"errors"
 
 	"gorm.io/gorm"
 )
@@ -34,32 +35,79 @@ func New(db *gorm.DB) product.Repository {
 
 // UpdateProduct implements product.Repository.
 func (pq *ProductQuery) UpdateProduct(productID uint, input product.Product) (product.Product, error) {
-	var exitingProduct ProductModel
-
-	if err := pq.db.First(&exitingProduct, productID).Error; err != nil {
+	var proses ProductModel
+	if err := pq.db.First(&proses, input.ID).Error; err != nil {
 		return product.Product{}, err
 	}
 
-	exitingProduct.Category = input.Category
-	exitingProduct.Name = input.Name
-	exitingProduct.CPU = input.CPU
-	exitingProduct.RAM = input.RAM
-	exitingProduct.Display = input.Display
-	exitingProduct.Storage = input.Storage
-	exitingProduct.Thickness = input.Thickness
-	exitingProduct.Weight = input.Weight
-	exitingProduct.Bluetooth = input.Bluetooth
-	exitingProduct.HDMI = input.HDMI
-	exitingProduct.Price = input.Price
-	exitingProduct.Picture = input.Picture
-
-	if err := pq.db.Save(&exitingProduct).Error; err != nil {
+	// Jika tidak ada buku ditemukan
+	if proses.ID == 0 {
+		err := errors.New("user tidak ditemukan")
 		return product.Product{}, err
 	}
+	if input.Category != "" {
+		proses.Category = input.Category
+	}
+	if input.Name != "" {
+		proses.Name = input.Name
+	}
+	if input.CPU != "" {
+		proses.CPU = input.CPU
+	}
+	if input.RAM != "" {
+		proses.RAM = input.RAM
+	}
+	if input.Display != "" {
+		proses.Display = input.Display
+	}
+	if input.Name != "" {
+		proses.Name = input.Name
+	}
+	if input.Storage != "" {
+		proses.Storage = input.Storage
+	}
+	if input.Thickness != "" {
+		proses.Thickness = input.Thickness
+	}
+	if input.Weight != "" {
+		proses.Weight = input.Weight
+	}
 
-	input.ID = exitingProduct.ID
+	if input.Bluetooth != "" {
+		proses.Bluetooth = input.Bluetooth
+	}
 
-	return input, nil
+	if input.HDMI != "" {
+		proses.HDMI = input.HDMI
+	}
+
+	if input.Price != 0 {
+		proses.Price = input.Price
+	}
+
+	if input.Picture != "" {
+		proses.Picture = input.Picture
+	}
+	if err := pq.db.Save(&proses).Error; err != nil {
+
+		return product.Product{}, err
+	}
+	result := product.Product{
+		ID:        proses.ID,
+		Category:  proses.Category,
+		Name:      proses.Name,
+		CPU:       proses.CPU,
+		RAM:       proses.RAM,
+		Display:   proses.Display,
+		Storage:   proses.Storage,
+		Thickness: proses.Thickness,
+		Weight:    proses.Weight,
+		Bluetooth: proses.Bluetooth,
+		HDMI:      proses.HDMI,
+		Price:     proses.Price,
+		Picture:   proses.Picture,
+	}
+	return result, nil
 }
 
 // SearchProduct implements product.Repository.
