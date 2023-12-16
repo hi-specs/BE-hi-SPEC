@@ -1,4 +1,4 @@
-FROM golang:1.21.4-alphine
+FROM golang:1.21.0-alphine
 
 COPY . /app
 
