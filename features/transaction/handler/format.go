@@ -20,3 +20,14 @@ type AdminDashboard struct {
 	TotalTransaction int          `json:"total_transaction"`
 	Product          []AllProduct `json:"product"`
 }
+
+type TransactionRequest struct {
+	ProductID  int `json:"product_id"`
+	TotalPrice int `json:"total_price"`
+}
+
+type TransactionResponse struct {
+	ID         int `json:"transaction_id"`
+	ProductID  int `json:"product_id"`
+	TotalPrice int `json:"total_price"`
+}
