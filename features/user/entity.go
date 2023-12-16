@@ -5,9 +5,11 @@ import (
 
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/labstack/echo/v4"
+	"gorm.io/gorm"
 )
 
 type User struct {
+	gorm.Model
 	ID          uint   `json:"id"`
 	Email       string `json:"email"`
 	Name        string `json:"name"`
@@ -33,6 +35,7 @@ type Handler interface {
 	AddFavorite() echo.HandlerFunc
 	GetUser() echo.HandlerFunc
 	DelFavorite() echo.HandlerFunc
+	SearchUser() echo.HandlerFunc
 }
 
 type Service interface {
@@ -44,6 +47,7 @@ type Service interface {
 	AddFavorite(token *jwt.Token, productID uint) (Favorite, error)
 	GetUser(userID uint) (Favorite, error)
 	DelFavorite(token *jwt.Token, favoriteID uint) error
+	SearchUser(name string) ([]User, error)
 }
 
 type Repository interface {
@@ -56,4 +60,5 @@ type Repository interface {
 	AddFavorite(userID, productID uint) (Favorite, error)
 	GetUser(userID uint) (Favorite, error)
 	DelFavorite(favoriteID uint) error
+	SearchUser(name string) ([]User, error)
 }
