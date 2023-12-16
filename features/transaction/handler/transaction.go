@@ -3,6 +3,7 @@ package handler
 import (
 	"BE-hi-SPEC/features/product"
 	"BE-hi-SPEC/features/transaction"
+	"BE-hi-SPEC/helper/responses"
 	"context"
 	"net/http"
 	"strings"
@@ -90,10 +91,24 @@ func (th *TransactionHandler) Checkout() echo.HandlerFunc {
 		response.ID = result.ID
 		response.ProductID = result.ProductID
 		response.TotalPrice = result.TotalPrice
+		response.Status = result.Status
 
 		return c.JSON(http.StatusCreated, map[string]any{
-			"message": "success",
+			"message": "Transaction created successfully",
 			"data":    response,
 		})
+	}
+}
+
+func (th *TransactionHandler) TransactionList() echo.HandlerFunc {
+	return func(c echo.Context) error {
+		result, err := th.s.TransactionList()
+		if err != nil {
+			c.Logger().Error("Error fetching transaction: ", err.Error())
+			return c.JSON(http.StatusInternalServerError, map[string]interface{}{
+				"message": "Failed to retrieve product data",
+			})
+		}
+		return responses.PrintResponse(c, http.StatusOK, "list of transaction", result)
 	}
 }

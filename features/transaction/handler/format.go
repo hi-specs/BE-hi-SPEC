@@ -27,7 +27,8 @@ type TransactionRequest struct {
 }
 
 type TransactionResponse struct {
-	ID         int `json:"transaction_id"`
-	ProductID  int `json:"product_id"`
-	TotalPrice int `json:"total_price"`
+	ID         int    `json:"transaction_id"`
+	ProductID  int    `json:"product_id"`
+	TotalPrice int    `json:"total_price"`
+	Status     string `json:"status"`
 }

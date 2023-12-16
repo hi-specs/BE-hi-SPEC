@@ -32,3 +32,8 @@ func (ts *TransactionServices) Checkout(token *golangjwt.Token, ProductID int, T
 	result, err := ts.repo.Checkout(userID, int(ProductID), TotalPrice)
 	return result, err
 }
+
+func (ts *TransactionServices) TransactionList() ([]transaction.TransactionList, error) {
+	result, err := ts.repo.TransactionList()
+	return result, err
+}
