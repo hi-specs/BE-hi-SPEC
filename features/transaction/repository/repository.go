@@ -13,9 +13,9 @@ import (
 
 type TransactionModel struct {
 	gorm.Model
-	ProductID  int
-	UserID     int
-	TotalPrice int
+	ProductID  uint
+	UserID     uint
+	TotalPrice uint
 }
 
 type TransactionQuery struct {
@@ -82,4 +82,22 @@ func (tq *TransactionQuery) AdminDashboard() (transaction.TransactionDashboard, 
 	result.Product = prod
 
 	return *result, err
+}
+
+func (tq *TransactionQuery) Checkout(userID uint, ProductID int, TotalPrice int) (transaction.Transaction, error) {
+	var inputDB TransactionModel
+	inputDB.ProductID = uint(ProductID)
+	inputDB.TotalPrice = uint(TotalPrice)
+	inputDB.UserID = userID
+
+	if err := tq.db.Create(&inputDB).Error; err != nil {
+		return transaction.Transaction{}, err
+	}
+
+	var result transaction.Transaction
+	result.ID = int(inputDB.ID)
+	result.ProductID = int(inputDB.ProductID)
+	result.TotalPrice = int(inputDB.TotalPrice)
+
+	return result, nil
 }

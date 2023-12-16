@@ -5,8 +5,10 @@ import (
 	"BE-hi-SPEC/features/transaction"
 	"context"
 	"net/http"
+	"strings"
 
 	"github.com/cloudinary/cloudinary-go/v2"
+	gojwt "github.com/golang-jwt/jwt/v5"
 	"github.com/labstack/echo/v4"
 )
 
@@ -57,6 +59,40 @@ func (th *TransactionHandler) AdminDashboard() echo.HandlerFunc {
 
 		return c.JSON(http.StatusOK, map[string]interface{}{
 			"message": "Success fetching all data for transaction dashboard",
+			"data":    response,
+		})
+	}
+}
+
+func (th *TransactionHandler) Checkout() echo.HandlerFunc {
+	return func(c echo.Context) error {
+		var input = new(TransactionRequest)
+		if err := c.Bind(input); err != nil {
+			return c.JSON(http.StatusBadRequest, map[string]any{
+				"message": "input yang diberikan tidak sesuai",
+			})
+		}
+
+		result, err := th.s.Checkout(c.Get("user").(*gojwt.Token), input.ProductID, input.TotalPrice)
+
+		if err != nil {
+			c.Logger().Error("terjadi kesalahan", err.Error())
+			if strings.Contains(err.Error(), "duplicate") {
+				return c.JSON(http.StatusBadRequest, map[string]any{
+					"message": "dobel input nama",
+				})
+			}
+			return c.JSON(http.StatusBadRequest, map[string]any{
+				"message": "transaction duplicate",
+			})
+		}
+		var response = new(TransactionResponse)
+		response.ID = result.ID
+		response.ProductID = result.ProductID
+		response.TotalPrice = result.TotalPrice
+
+		return c.JSON(http.StatusCreated, map[string]any{
+			"message": "success",
 			"data":    response,
 		})
 	}
