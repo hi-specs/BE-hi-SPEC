@@ -37,3 +37,8 @@ func (ts *TransactionServices) TransactionList() ([]transaction.TransactionList,
 	result, err := ts.repo.TransactionList()
 	return result, err
 }
+
+func (ts *TransactionServices) GetTransaction(transactionID uint) (transaction.TransactionList, error) {
+	result, err := ts.repo.GetTransaction(transactionID)
+	return *result, err
+}

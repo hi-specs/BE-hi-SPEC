@@ -1,5 +1,7 @@
 package handler
 
+import "time"
+
 type Total struct {
 	TotalProduct     int `json:"total_product"`
 	TotalUser        int `json:"total_user"`
@@ -31,4 +33,12 @@ type TransactionResponse struct {
 	ProductID  int    `json:"product_id"`
 	TotalPrice int    `json:"total_price"`
 	Status     string `json:"status"`
+}
+
+type TransactionDetail struct {
+	TransactionID int       `json:"transaction_id"`
+	ProductID     int       `json:"product_id"`
+	TotalPrice    int       `json:"total_price"`
+	Status        string    `json:"status"`
+	Timestamp     time.Time `json:"timestamp"`
 }
