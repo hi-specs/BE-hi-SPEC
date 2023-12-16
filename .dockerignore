@@ -1,4 +1,4 @@
-. git
+.git
 .vscode
-. env
-. env.example
+.env
+.env.example
