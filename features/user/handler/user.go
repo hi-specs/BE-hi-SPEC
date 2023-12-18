@@ -75,7 +75,7 @@ func (uc *UserController) Login() echo.HandlerFunc {
 		response.Token = strToken
 
 		return c.JSON(http.StatusOK, map[string]any{
-			"message": "success login data",
+			"message": "Success Login Data",
 			"data":    response,
 		})
 	}
@@ -117,7 +117,7 @@ func (uc *UserController) Register() echo.HandlerFunc {
 		response.PhoneNumber = result.PhoneNumber
 
 		return c.JSON(http.StatusCreated, map[string]any{
-			"message": "success",
+			"message": "Success Register Data",
 			"data":    response,
 		})
 	}
@@ -196,7 +196,7 @@ func (uc *UserController) Update() echo.HandlerFunc {
 				response.Avatar = result.Avatar
 
 				return c.JSON(http.StatusCreated, map[string]any{
-					"message": "success create data",
+					"message": "Success Updated Data User",
 					"data":    response,
 				})
 			}
@@ -273,7 +273,7 @@ func (uc *UserController) Update() echo.HandlerFunc {
 		response.Avatar = result.Avatar
 
 		return c.JSON(http.StatusCreated, map[string]any{
-			"message": "success create data",
+			"message": "Success Updated Data User",
 			"data":    response,
 		})
 	}
@@ -309,7 +309,7 @@ func (uc *UserController) Delete() echo.HandlerFunc {
 		}
 
 		return c.JSON(http.StatusOK, map[string]interface{}{
-			"message": "success delete user",
+			"message": "Success Deleted Data User",
 		})
 	}
 }
@@ -338,7 +338,7 @@ func (uc *UserController) All() echo.HandlerFunc {
 			response = append(response, responses)
 		}
 		return c.JSON(http.StatusOK, map[string]interface{}{
-			"message": "success get all data",
+			"message": "Success Get All Data User",
 			"data":    response,
 		})
 	}
@@ -389,7 +389,7 @@ func (uc *UserController) AddFavorite() echo.HandlerFunc {
 		responses.Product = prod
 
 		return c.JSON(http.StatusOK, map[string]interface{}{
-			"message": "success get all data",
+			"message": "Success Adding Favourite Data",
 			"data":    responses,
 		})
 
@@ -425,6 +425,8 @@ func (uc *UserController) GetUser() echo.HandlerFunc {
 		var responses GetAllFavoriteResponse
 		responses.User.Email = result.User.Email
 		responses.User.Name = result.User.Name
+		responses.User.PhoneNumber = result.User.PhoneNumber
+		responses.User.Address = result.User.Address
 		responses.User.ID = result.User.ID
 		responses.User.Avatar = result.User.Avatar
 
@@ -442,7 +444,7 @@ func (uc *UserController) GetUser() echo.HandlerFunc {
 		responses.Product = prod
 
 		return c.JSON(http.StatusOK, map[string]interface{}{
-			"message": "success get all data",
+			"message": "Success Get All data User",
 			"data":    responses,
 		})
 
@@ -479,7 +481,7 @@ func (uc *UserController) DelFavorite() echo.HandlerFunc {
 		}
 
 		return c.JSON(http.StatusOK, map[string]interface{}{
-			"message": "success delete favorite",
+			"message": "Success Deleted Favourite data",
 		})
 	}
 }
@@ -495,12 +497,13 @@ func (uc *UserController) SearchUser() echo.HandlerFunc {
 		var response []SearchUserResponse
 		for _, result := range users {
 			response = append(response, SearchUserResponse{
-				ID:      result.ID,
-				Name:    result.Name,
-				Email:   result.Email,
-				Avatar:  result.Avatar,
-				Address: result.Address,
-				Time:    result.CreatedAt,
+				ID:          result.ID,
+				Name:        result.Name,
+				Email:       result.Email,
+				PhoneNumber: result.PhoneNumber,
+				Avatar:      result.Avatar,
+				Address:     result.Address,
+				Time:        result.CreatedAt,
 			})
 		}
 		return c.JSON(http.StatusOK, response)

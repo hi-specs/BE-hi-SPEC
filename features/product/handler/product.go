@@ -231,10 +231,11 @@ func (ph *ProductHandler) SearchAll() echo.HandlerFunc {
 		var response []SearchResponse
 		for _, result := range products {
 			response = append(response, SearchResponse{
-				ID:      result.ID,
-				Name:    result.Name,
-				Price:   result.Price,
-				Picture: result.Picture,
+				ID:       result.ID,
+				Category: result.Category,
+				Name:     result.Name,
+				Price:    result.Price,
+				Picture:  result.Picture,
 			})
 		}
 		return c.JSON(http.StatusOK, map[string]interface{}{
@@ -277,7 +278,7 @@ func (ph *ProductHandler) GetProductDetail() echo.HandlerFunc {
 		response.Picture = result.Picture
 		response.Category = result.Category
 
-		return responses.PrintResponse(c, http.StatusCreated, "success create data", response)
+		return responses.PrintResponse(c, http.StatusOK, "Success Get Product Detail", response)
 	}
 }
 
@@ -368,7 +369,7 @@ func (ph *ProductHandler) Add() echo.HandlerFunc {
 				response.Category = result.Category
 
 				return c.JSON(http.StatusCreated, map[string]any{
-					"message": "success create data",
+					"message": "Success Create Product Data",
 					"data":    response,
 				})
 
@@ -436,7 +437,7 @@ func (ph *ProductHandler) Add() echo.HandlerFunc {
 		response.Picture = result.Picture
 		response.Category = result.Category
 
-		return responses.PrintResponse(c, http.StatusCreated, "success create data", response)
+		return responses.PrintResponse(c, http.StatusCreated, "Success Create Product Data", response)
 	}
 
 }
