@@ -71,10 +71,12 @@ type FavoriteRequest struct {
 }
 
 type GetUser struct {
-	ID     uint   `json:"user_id"`
-	Name   string `json:"name"`
-	Email  string `json:"email"`
-	Avatar string `json:"avatar"`
+	ID          uint   `json:"user_id"`
+	Name        string `json:"name"`
+	Email       string `json:"email"`
+	Avatar      string `json:"avatar"`
+	PhoneNumber string `json:"phone_number"`
+	Address     string `json:"address"`
 }
 type GetAllFavoriteProduct struct {
 	FavID   uint   `json:"favorite_id"`

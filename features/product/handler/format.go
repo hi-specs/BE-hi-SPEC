@@ -38,10 +38,11 @@ type ProductResponse struct {
 }
 
 type SearchResponse struct {
-	ID      uint   `json:"product_id"`
-	Name    string `json:"name"`
-	Price   int    `json:"price"`
-	Picture string `json:"picture"`
+	ID       uint   `json:"product_id"`
+	Category string `json:"category"`
+	Name     string `json:"name"`
+	Price    int    `json:"price"`
+	Picture  string `json:"picture"`
 }
 
 type AllResponse struct {
