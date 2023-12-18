@@ -111,10 +111,10 @@ func (pq *ProductQuery) UpdateProduct(productID uint, input product.Product) (pr
 }
 
 // SearchProduct implements product.Repository.
-func (pq *ProductQuery) SearchProduct(name string, category string, minPrice uint, maxPrice uint) ([]product.Product, error) {
+func (pq *ProductQuery) SearchProduct(name string, category string, minPrice uint, maxPrice uint, page int, limit int) ([]product.Product, error) {
 	var products []product.Product
-
-	qry := pq.db.Table("product_models")
+	offset := (page - 1) * limit
+	qry := pq.db.Table("product_models").Offset(offset).Limit(limit)
 
 	if name != "" {
 		qry = qry.Where("name like ?", "%"+name+"%")
