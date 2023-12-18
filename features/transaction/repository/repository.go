@@ -120,19 +120,37 @@ func (tq *TransactionQuery) Checkout(userID uint, ProductID int, TotalPrice int)
 }
 
 func (tq *TransactionQuery) TransactionList() ([]transaction.TransactionList, error) {
+	// ambil data dari database
 	var tm []TransactionModel
 	if err := tq.db.Find(&tm).Error; err != nil {
 		return nil, err
 	}
 
-	var result []transaction.TransactionList
+	// ambil list transaction id
+	var temp []int
+	tq.db.Table("transaction_models").Select("id").Find(&temp)
 
-	for _, tl := range tm {
+	// ambil lis status dari midtrans
+	var verify []string
+	for _, check := range temp {
+		ms := midtrans.MidtransStatus(int(check))
+		verify = append(verify, ms)
+	}
+
+	// simpan status kedalam database
+	for x, in := range tm {
+		in.Status = verify[x]
+		tq.db.Save(&in)
+	}
+
+	// slicing for response
+	var result []transaction.TransactionList
+	for x, tl := range tm {
 		result = append(result, transaction.TransactionList{
 			ProductID:     int(tl.ProductID),
 			TransactionID: int(tl.ID),
 			TotalPrice:    int(tl.TotalPrice),
-			Status:        tl.Status,
+			Status:        verify[x],
 			Timestamp:     tl.CreatedAt,
 		})
 	}
@@ -159,7 +177,6 @@ func (tq *TransactionQuery) GetTransaction(transactionID uint) (*transaction.Tra
 		return nil, err
 	}
 
-	fmt.Println(ms)
 	result := &transaction.TransactionList{
 		TransactionID: int(tm.ID),
 		ProductID:     int(tm.ProductID),
