@@ -118,18 +118,22 @@ func (pq *ProductQuery) SearchProduct(name string, category string, minPrice uin
 
 	if name != "" {
 		qry = qry.Where("name like ?", "%"+name+"%")
+		qry = qry.Where("deleted_at IS NULL")
 	}
 
 	if category != "" {
 		qry = qry.Where("category like ?", "%"+category+"%")
+		qry = qry.Where("deleted_at IS NULL")
 	}
 
 	if minPrice != 0 {
 		qry = qry.Where("price >= ?", minPrice)
+		qry = qry.Where("deleted_at IS NULL")
 	}
 
 	if maxPrice != 0 {
 		qry = qry.Where("price <= ?", maxPrice)
+		qry = qry.Where("deleted_at IS NULL")
 	}
 
 	if err := qry.Find(&products).Error; err != nil {

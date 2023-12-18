@@ -33,6 +33,8 @@ type TransactionResponse struct {
 	ProductID  int    `json:"product_id"`
 	TotalPrice int    `json:"total_price"`
 	Status     string `json:"status"`
+	Token      string `json:"token"`
+	Url        string `json:"url"`
 }
 
 type TransactionDetail struct {

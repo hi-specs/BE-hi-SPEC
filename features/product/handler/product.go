@@ -213,8 +213,8 @@ func (ph *ProductHandler) SearchAll() echo.HandlerFunc {
 		name := c.QueryParam("name")
 		category := c.QueryParam("category")
 
-		minPrice, _ = strconv.Atoi(c.QueryParam("minPrice"))
-		maxPrice, _ = strconv.Atoi(c.QueryParam("maxPrice"))
+		minPrice, _ = strconv.Atoi(c.QueryParam("minprice"))
+		maxPrice, _ = strconv.Atoi(c.QueryParam("maxprice"))
 
 		products, err := ph.s.CariProduct(name, category, uint(minPrice), uint(maxPrice))
 		if err != nil {
