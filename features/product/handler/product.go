@@ -208,6 +208,14 @@ func (ph *ProductHandler) UpdateProduct() echo.HandlerFunc {
 // SearchAll implements product.Handler.
 func (ph *ProductHandler) SearchAll() echo.HandlerFunc {
 	return func(c echo.Context) error {
+		page, err := strconv.Atoi(c.QueryParam("page"))
+		if page <= 0 {
+			page = 1
+		}
+		limit, _ := strconv.Atoi(c.QueryParam("limit"))
+		if limit <= 0 {
+			limit = 5
+		}
 		var minPrice int
 		var maxPrice int
 		name := c.QueryParam("name")
@@ -216,7 +224,7 @@ func (ph *ProductHandler) SearchAll() echo.HandlerFunc {
 		minPrice, _ = strconv.Atoi(c.QueryParam("minprice"))
 		maxPrice, _ = strconv.Atoi(c.QueryParam("maxprice"))
 
-		products, err := ph.s.CariProduct(name, category, uint(minPrice), uint(maxPrice))
+		products, err := ph.s.CariProduct(name, category, uint(minPrice), uint(maxPrice), page, limit)
 		if err != nil {
 			return c.JSON(http.StatusInternalServerError, map[string]string{"error": "Internal Server Error"})
 		}
@@ -229,7 +237,11 @@ func (ph *ProductHandler) SearchAll() echo.HandlerFunc {
 				Picture: result.Picture,
 			})
 		}
-		return c.JSON(http.StatusOK, response)
+		return c.JSON(http.StatusOK, map[string]interface{}{
+			"message":    "Success fetching all Search data",
+			"data":       response,
+			"pagination": map[string]interface{}{"page": page, "limit": limit},
+		})
 	}
 }
 
@@ -278,7 +290,7 @@ func (ph *ProductHandler) GetAll() echo.HandlerFunc {
 		}
 		limit, _ := strconv.Atoi(c.QueryParam("limit"))
 		if limit <= 0 {
-			limit = 5
+			limit = 10
 		}
 		results, err := ph.s.SemuaProduct(page, limit)
 		if err != nil {

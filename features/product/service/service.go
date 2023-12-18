@@ -33,8 +33,8 @@ func (ps *ProductServices) UpdateProduct(productID uint, input product.Product) 
 }
 
 // CariProduct implements product.Service.
-func (ps *ProductServices) CariProduct(name string, category string, minPrice uint, maxPrice uint) ([]product.Product, error) {
-	products, err := ps.repo.SearchProduct(name, category, minPrice, maxPrice)
+func (ps *ProductServices) CariProduct(name string, category string, minPrice uint, maxPrice uint, page, limit int) ([]product.Product, error) {
+	products, err := ps.repo.SearchProduct(name, category, minPrice, maxPrice, page, limit)
 	if err != nil {
 		return nil, err
 	}

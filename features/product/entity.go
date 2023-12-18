@@ -33,7 +33,7 @@ type Service interface {
 	TalkToGpt(token *jwt.Token, newProduct Product) (Product, error)
 	SemuaProduct(page, limit int) ([]Product, error)
 	SatuProduct(productID uint) (Product, error)
-	CariProduct(name string, category string, minPrice uint, maxPrice uint) ([]Product, error)
+	CariProduct(name string, category string, minPrice uint, maxPrice uint, page int, limit int) ([]Product, error)
 	UpdateProduct(productID uint, input Product) (Product, error)
 	DelProduct(productID uint) error
 }
@@ -43,6 +43,6 @@ type Repository interface {
 	GetAllProduct(page, limit int) ([]Product, error)
 	GetProductID(productID uint) (*Product, error)
 	UpdateProduct(productID uint, input Product) (Product, error)
-	SearchProduct(name string, category string, minPrice uint, maxPrice uint) ([]Product, error)
+	SearchProduct(name string, category string, minPrice uint, maxPrice uint, page int, limit int) ([]Product, error)
 	DelProduct(productID uint) error
 }
