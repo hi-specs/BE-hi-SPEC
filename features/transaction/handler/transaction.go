@@ -88,11 +88,14 @@ func (th *TransactionHandler) Checkout() echo.HandlerFunc {
 				"message": "transaction duplicate",
 			})
 		}
+
 		var response = new(TransactionResponse)
 		response.ID = result.ID
 		response.ProductID = result.ProductID
 		response.TotalPrice = result.TotalPrice
 		response.Status = result.Status
+		response.Url = result.Url
+		response.Token = result.Token
 
 		return c.JSON(http.StatusCreated, map[string]any{
 			"message": "Transaction created successfully",

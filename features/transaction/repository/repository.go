@@ -3,6 +3,7 @@ package repository
 import (
 	p "BE-hi-SPEC/features/product"
 	pr "BE-hi-SPEC/features/product/repository"
+	"BE-hi-SPEC/helper/midtrans"
 	"errors"
 
 	"BE-hi-SPEC/features/transaction"
@@ -18,6 +19,8 @@ type TransactionModel struct {
 	UserID     uint
 	TotalPrice uint
 	Status     string
+	Token      string
+	Url        string
 }
 
 type TransactionQuery struct {
@@ -97,11 +100,21 @@ func (tq *TransactionQuery) Checkout(userID uint, ProductID int, TotalPrice int)
 		return transaction.Transaction{}, err
 	}
 
+	midtrans := midtrans.MidtransCreateToken(int(inputDB.ID), TotalPrice)
+
+	inputDB.Url = midtrans.RedirectURL
+	inputDB.Token = midtrans.Token
+	if err := tq.db.Save(&inputDB).Error; err != nil {
+		return transaction.Transaction{}, err
+	}
+
 	var result transaction.Transaction
 	result.ID = int(inputDB.ID)
 	result.ProductID = int(inputDB.ProductID)
 	result.TotalPrice = int(inputDB.TotalPrice)
 	result.Status = inputDB.Status
+	result.Token = midtrans.Token
+	result.Url = midtrans.RedirectURL
 
 	return result, nil
 }
@@ -139,11 +152,19 @@ func (tq *TransactionQuery) GetTransaction(transactionID uint) (*transaction.Tra
 		return nil, err
 	}
 
+	ms := midtrans.MidtransStatus(int(transactionID))
+	tm.Status = ms
+
+	if err := tq.db.Save(&tm).Error; err != nil {
+		return nil, err
+	}
+
+	fmt.Println(ms)
 	result := &transaction.TransactionList{
 		TransactionID: int(tm.ID),
 		ProductID:     int(tm.ProductID),
 		TotalPrice:    int(tm.TotalPrice),
-		Status:        tm.Status,
+		Status:        ms,
 		Timestamp:     tm.CreatedAt,
 	}
 
