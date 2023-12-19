@@ -114,7 +114,7 @@ func (pq *ProductQuery) UpdateProduct(productID uint, input product.Product) (pr
 
 // SearchProduct implements product.Repository.
 func (pq *ProductQuery) SearchProduct(name string, category string, minPrice uint, maxPrice uint, page int, limit int) ([]product.Product, int, error) {
-	var products []product.Product
+	var products []ProductModel
 	offset := (page - 1) * limit
 	qry := pq.db.Table("product_models").Offset(offset).Limit(limit)
 
@@ -159,7 +159,18 @@ func (pq *ProductQuery) SearchProduct(name string, category string, minPrice uin
 		totalPage++
 	}
 
-	return products, totalPage, err
+	var result []product.Product
+	for _, s := range products {
+		result = append(result, product.Product{
+			ID:       s.ID,
+			Name:     s.Name,
+			Price:    s.Price,
+			Category: s.Category,
+			Picture:  s.Picture,
+		})
+	}
+
+	return result, totalPage, err
 }
 
 // GetAllProduct implements product.Repository.

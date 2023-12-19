@@ -214,7 +214,7 @@ func (ph *ProductHandler) SearchAll() echo.HandlerFunc {
 		}
 		limit, _ := strconv.Atoi(c.QueryParam("limit"))
 		if limit <= 0 {
-			limit = 5
+			limit = 10
 		}
 		var minPrice int
 		var maxPrice int

@@ -22,8 +22,8 @@ type AdminDashboard struct {
 }
 
 type TransactionRequest struct {
-	ProductID  int `json:"product_id"`
-	TotalPrice int `json:"total_price"`
+	ProductID  int `json:"product_id" form:"product_id"`
+	TotalPrice int `json:"total_price" form:"total_price"`
 }
 
 type TransactionResponse struct {
