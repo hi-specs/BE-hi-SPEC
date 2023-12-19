@@ -224,7 +224,7 @@ func (ph *ProductHandler) SearchAll() echo.HandlerFunc {
 		minPrice, _ = strconv.Atoi(c.QueryParam("minprice"))
 		maxPrice, _ = strconv.Atoi(c.QueryParam("maxprice"))
 
-		products, err := ph.s.CariProduct(name, category, uint(minPrice), uint(maxPrice), page, limit)
+		products, totalPage, err := ph.s.CariProduct(name, category, uint(minPrice), uint(maxPrice), page, limit)
 		if err != nil {
 			return c.JSON(http.StatusInternalServerError, map[string]string{"error": "Internal Server Error"})
 		}
@@ -241,7 +241,7 @@ func (ph *ProductHandler) SearchAll() echo.HandlerFunc {
 		return c.JSON(http.StatusOK, map[string]interface{}{
 			"message":    "Success fetching all Search data",
 			"data":       response,
-			"pagination": map[string]interface{}{"page": page, "limit": limit},
+			"pagination": map[string]interface{}{"page": page, "limit": limit, "total_page": totalPage},
 		})
 	}
 }
@@ -293,7 +293,7 @@ func (ph *ProductHandler) GetAll() echo.HandlerFunc {
 		if limit <= 0 {
 			limit = 10
 		}
-		results, err := ph.s.SemuaProduct(page, limit)
+		results, totalPage, err := ph.s.SemuaProduct(page, limit)
 		if err != nil {
 			c.Logger().Error("Error fetching product: ", err.Error())
 			return c.JSON(http.StatusInternalServerError, map[string]interface{}{
@@ -314,7 +314,7 @@ func (ph *ProductHandler) GetAll() echo.HandlerFunc {
 		return c.JSON(http.StatusOK, map[string]interface{}{
 			"message":    "Success fetching all Posts data",
 			"data":       response,
-			"pagination": map[string]interface{}{"page": page, "limit": limit},
+			"pagination": map[string]interface{}{"page": page, "limit": limit, "total_page": totalPage},
 		})
 	}
 }

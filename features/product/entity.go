@@ -31,18 +31,18 @@ type Handler interface {
 }
 type Service interface {
 	TalkToGpt(token *jwt.Token, newProduct Product) (Product, error)
-	SemuaProduct(page, limit int) ([]Product, error)
+	SemuaProduct(page, limit int) ([]Product, int, error)
 	SatuProduct(productID uint) (Product, error)
-	CariProduct(name string, category string, minPrice uint, maxPrice uint, page int, limit int) ([]Product, error)
+	CariProduct(name string, category string, minPrice uint, maxPrice uint, page int, limit int) ([]Product, int, error)
 	UpdateProduct(productID uint, input Product) (Product, error)
 	DelProduct(productID uint) error
 }
 
 type Repository interface {
 	InsertProduct(UserID uint, newProduct Product) (Product, error)
-	GetAllProduct(page, limit int) ([]Product, error)
+	GetAllProduct(page, limit int) ([]Product, int, error)
 	GetProductID(productID uint) (*Product, error)
 	UpdateProduct(productID uint, input Product) (Product, error)
-	SearchProduct(name string, category string, minPrice uint, maxPrice uint, page int, limit int) ([]Product, error)
+	SearchProduct(name string, category string, minPrice uint, maxPrice uint, page int, limit int) ([]Product, int, error)
 	DelProduct(productID uint) error
 }
