@@ -46,7 +46,7 @@ func (ps *ProductServices) CariProduct(name string, category string, minPrice ui
 func (ps *ProductServices) SatuProduct(productID uint) (product.Product, error) {
 	result, err := ps.repo.GetProductID(productID)
 	if err != nil {
-		return product.Product{}, errors.New("failed get all product")
+		return product.Product{}, errors.New("failed get product")
 	}
 	return *result, nil
 }
