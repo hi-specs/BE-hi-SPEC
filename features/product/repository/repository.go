@@ -115,8 +115,7 @@ func (pq *ProductQuery) UpdateProduct(productID uint, input product.Product) (pr
 // SearchProduct implements product.Repository.
 func (pq *ProductQuery) SearchProduct(name string, category string, minPrice uint, maxPrice uint, page int, limit int) ([]product.Product, int, error) {
 	var products []ProductModel
-	offset := (page - 1) * limit
-	qry := pq.db.Table("product_models").Offset(offset).Limit(limit)
+	qry := pq.db.Table("product_models")
 
 	if name != "" {
 		qry = qry.Where("name like ?", "%"+name+"%")
@@ -142,21 +141,39 @@ func (pq *ProductQuery) SearchProduct(name string, category string, minPrice uin
 		return nil, 0, err
 	}
 
-	// mendapatkan nilai total user
-	var totalPage int
-	tableNameUser := "product_models"
-	columnNameUser := "deleted_at"
-	queryuser := fmt.Sprintf("SELECT COUNT(*) AS null_count FROM %s WHERE %s IS NULL", tableNameUser, columnNameUser)
-	err := pq.db.Raw(queryuser).Scan(&totalPage).Error
-	if err != nil {
-		log.Fatal(err)
+	// mendapatkan nilai total product
+	var totalProduct int
+	totalProduct = len(products)
+
+	offset := (page - 1) * limit
+	qry2 := pq.db.Table("product_models").Offset(offset).Limit(limit)
+
+	if name != "" {
+		qry2 = qry2.Where("name like ?", "%"+name+"%")
+		qry2 = qry2.Where("deleted_at IS NULL")
 	}
 
-	if totalPage/limit == 0 {
-		totalPage = totalPage / limit
-	} else {
-		totalPage = totalPage / limit
-		totalPage++
+	if category != "" {
+		qry2 = qry2.Where("category like ?", "%"+category+"%")
+		qry2 = qry2.Where("deleted_at IS NULL")
+	}
+
+	if minPrice != 0 {
+		qry2 = qry2.Where("price >= ?", minPrice)
+		qry2 = qry2.Where("deleted_at IS NULL")
+	}
+
+	if maxPrice != 0 {
+		qry2 = qry2.Where("price <= ?", maxPrice)
+		qry2 = qry2.Where("deleted_at IS NULL")
+	}
+
+	if err := qry2.Find(&products).Error; err != nil {
+		return nil, 0, err
+	}
+
+	if totalProduct == 0 {
+		totalProduct++
 	}
 
 	var result []product.Product
@@ -170,7 +187,7 @@ func (pq *ProductQuery) SearchProduct(name string, category string, minPrice uin
 		})
 	}
 
-	return result, totalPage, err
+	return result, totalProduct, nil
 }
 
 // GetAllProduct implements product.Repository.
@@ -207,6 +224,11 @@ func (pq *ProductQuery) GetAllProduct(page int, limit int) ([]product.Product, i
 		totalPage = totalPage / limit
 		totalPage++
 	}
+
+	if totalPage == 0 {
+		totalPage++
+	}
+
 	return result, totalPage, err
 }
 

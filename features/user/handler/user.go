@@ -316,7 +316,15 @@ func (uc *UserController) Delete() echo.HandlerFunc {
 
 func (uc *UserController) All() echo.HandlerFunc {
 	return func(c echo.Context) error {
-		AllUser, err := uc.srv.GetAllUser()
+		page, err := strconv.Atoi(c.QueryParam("page"))
+		if page <= 0 {
+			page = 1
+		}
+		limit, _ := strconv.Atoi(c.QueryParam("limit"))
+		if limit <= 0 {
+			limit = 10
+		}
+		AllUser, totalPage, err := uc.srv.GetAllUser(page, limit)
 		if err != nil {
 			c.Logger().Error("ERROR GetAll, explain:", err.Error())
 			return c.JSON(http.StatusInternalServerError, map[string]interface{}{
@@ -334,12 +342,14 @@ func (uc *UserController) All() echo.HandlerFunc {
 				Address:     result.Address,
 				PhoneNumber: result.PhoneNumber,
 				Avatar:      result.Avatar,
+				Time:        result.CreatedAt,
 			}
 			response = append(response, responses)
 		}
 		return c.JSON(http.StatusOK, map[string]interface{}{
-			"message": "Success Get All Data User",
-			"data":    response,
+			"message":    "Success Get All Data User",
+			"data":       response,
+			"pagination": map[string]interface{}{"page": page, "limit": limit, "total_page": totalPage},
 		})
 	}
 }
@@ -488,9 +498,16 @@ func (uc *UserController) DelFavorite() echo.HandlerFunc {
 
 func (uc *UserController) SearchUser() echo.HandlerFunc {
 	return func(c echo.Context) error {
+		page, err := strconv.Atoi(c.QueryParam("page"))
+		if page <= 0 {
+			page = 1
+		}
+		limit, _ := strconv.Atoi(c.QueryParam("limit"))
+		if limit <= 0 {
+			limit = 10
+		}
 		name := c.QueryParam("name")
-
-		users, err := uc.srv.SearchUser(name)
+		users, totalPage, err := uc.srv.SearchUser(name, page, limit)
 		if err != nil {
 			return c.JSON(http.StatusInternalServerError, map[string]string{"error": "Internal Server Error"})
 		}
@@ -506,6 +523,10 @@ func (uc *UserController) SearchUser() echo.HandlerFunc {
 				Time:        result.CreatedAt,
 			})
 		}
-		return c.JSON(http.StatusOK, response)
+		return c.JSON(http.StatusOK, map[string]interface{}{
+			"message":    "Success fetching all Search data",
+			"data":       response,
+			"pagination": map[string]interface{}{"page": page, "limit": limit, "total_page": totalPage},
+		})
 	}
 }

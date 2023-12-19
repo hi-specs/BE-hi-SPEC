@@ -109,8 +109,8 @@ func (ph *ProductHandler) UpdateProduct() echo.HandlerFunc {
 				response.Price = result.Price
 				response.Picture = result.Picture
 
-				return c.JSON(http.StatusCreated, map[string]any{
-					"message": "success create data",
+				return c.JSON(http.StatusOK, map[string]any{
+					"message": "Success Updated data",
 					"data":    response,
 				})
 			}
@@ -199,7 +199,7 @@ func (ph *ProductHandler) UpdateProduct() echo.HandlerFunc {
 		response.Picture = result.Picture
 
 		return c.JSON(http.StatusCreated, map[string]any{
-			"message": "success updated data",
+			"message": "Success Updated Data",
 			"data":    response,
 		})
 	}
@@ -222,6 +222,9 @@ func (ph *ProductHandler) SearchAll() echo.HandlerFunc {
 		category := c.QueryParam("category")
 
 		minPrice, _ = strconv.Atoi(c.QueryParam("minprice"))
+		if minPrice <= 0 {
+			minPrice = 1
+		}
 		maxPrice, _ = strconv.Atoi(c.QueryParam("maxprice"))
 
 		products, totalPage, err := ph.s.CariProduct(name, category, uint(minPrice), uint(maxPrice), page, limit)
