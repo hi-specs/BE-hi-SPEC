@@ -109,8 +109,8 @@ func (ph *ProductHandler) UpdateProduct() echo.HandlerFunc {
 				response.Price = result.Price
 				response.Picture = result.Picture
 
-				return c.JSON(http.StatusCreated, map[string]any{
-					"message": "success create data",
+				return c.JSON(http.StatusOK, map[string]any{
+					"message": "Success Updated data",
 					"data":    response,
 				})
 			}
@@ -199,7 +199,7 @@ func (ph *ProductHandler) UpdateProduct() echo.HandlerFunc {
 		response.Picture = result.Picture
 
 		return c.JSON(http.StatusCreated, map[string]any{
-			"message": "success updated data",
+			"message": "Success Updated Data",
 			"data":    response,
 		})
 	}
