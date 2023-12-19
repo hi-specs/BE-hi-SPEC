@@ -231,7 +231,7 @@ func (uq *UserQuery) GetUser(userID uint) (user.Favorite, error) {
 	uq.db.Table("user_models").Where("id = ?", userID).Find(&User)
 
 	var FavList []uint
-	uq.db.Table("favorite_models").Where("user_id = ?", userID).Select("product_id").Find(&FavList)
+	uq.db.Table("favorite_models").Where("user_id = ? AND deleted_at IS NULL", userID).Select("product_id").Find(&FavList)
 	var Favorite []product.Product
 
 	for _, fav := range FavList {
@@ -241,7 +241,7 @@ func (uq *UserQuery) GetUser(userID uint) (user.Favorite, error) {
 	}
 
 	var FavID []uint
-	uq.db.Table("favorite_models").Where("user_id = ?", userID).Select("id").Find(&FavID)
+	uq.db.Table("favorite_models").Where("user_id = ? AND deleted_at IS NULL", userID).Select("id").Find(&FavID)
 
 	var result user.Favorite
 	result.FavID = FavID

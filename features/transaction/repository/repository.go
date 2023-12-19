@@ -39,8 +39,8 @@ func (tq *TransactionQuery) AdminDashboard() (transaction.TransactionDashboard, 
 	// mendapatkan nilai total product
 	var productCount int
 	tableName := "product_models"
-	columnName := "created_at"
-	query := fmt.Sprintf("SELECT COUNT(*) AS null_count FROM %s WHERE %s IS NOT NULL", tableName, columnName)
+	columnName := "deleted_at"
+	query := fmt.Sprintf("SELECT COUNT(*) AS null_count FROM %s WHERE %s IS NULL", tableName, columnName)
 	err := tq.db.Raw(query).Scan(&productCount).Error
 	if err != nil {
 		log.Fatal(err)
@@ -49,8 +49,8 @@ func (tq *TransactionQuery) AdminDashboard() (transaction.TransactionDashboard, 
 	// mendapatkan nilai total user
 	var userCount int
 	tableNameUser := "user_models"
-	columnNameUser := "created_at"
-	queryuser := fmt.Sprintf("SELECT COUNT(*) AS null_count FROM %s WHERE %s IS NOT NULL", tableNameUser, columnNameUser)
+	columnNameUser := "deleted_at"
+	queryuser := fmt.Sprintf("SELECT COUNT(*) AS null_count FROM %s WHERE %s IS NULL", tableNameUser, columnNameUser)
 	err2 := tq.db.Raw(queryuser).Scan(&userCount).Error
 	if err2 != nil {
 		log.Fatal(err)
