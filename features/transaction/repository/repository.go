@@ -59,8 +59,9 @@ func (tq *TransactionQuery) AdminDashboard() (transaction.TransactionDashboard, 
 	// mendapatkan nilai total transaksi yang sukses
 	var transactionCount int
 	tableNameTransaction := "transaction_models"
-	columnNameTransaction := "deleted_at"
-	querytransaction := fmt.Sprintf("SELECT COUNT(*) AS null_count FROM %s WHERE %s IS NOT NULL", tableNameTransaction, columnNameTransaction)
+	columnNameTransaction := "status"
+	Status := "Success"
+	querytransaction := fmt.Sprintf("SELECT COUNT(*) AS null_count FROM %s WHERE %s = '%s'", tableNameTransaction, columnNameTransaction, Status)
 	err3 := tq.db.Raw(querytransaction).Scan(&transactionCount).Error
 	if err3 != nil {
 		log.Fatal(err)
@@ -103,7 +104,7 @@ func (tq *TransactionQuery) Checkout(userID uint, ProductID int, TotalPrice int)
 	}
 
 	var id = strconv.Itoa(int(inputDB.ID))
-	inputDB.Nota = "TESTING-ORDER-" + id
+	inputDB.Nota = "HI-SPEC-" + id
 
 	midtrans := midtrans.MidtransCreateToken(int(inputDB.ID), TotalPrice)
 
