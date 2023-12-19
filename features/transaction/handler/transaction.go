@@ -107,14 +107,28 @@ func (th *TransactionHandler) Checkout() echo.HandlerFunc {
 
 func (th *TransactionHandler) TransactionList() echo.HandlerFunc {
 	return func(c echo.Context) error {
-		result, err := th.s.TransactionList()
+		page, err := strconv.Atoi(c.QueryParam("page"))
+		if page <= 0 {
+			page = 1
+		}
+		limit, _ := strconv.Atoi(c.QueryParam("limit"))
+		if limit <= 0 {
+			limit = 10
+		}
+		result, totalPage, err := th.s.TransactionList(page, limit)
 		if err != nil {
 			c.Logger().Error("Error fetching transaction: ", err.Error())
 			return c.JSON(http.StatusInternalServerError, map[string]interface{}{
 				"message": "Failed to retrieve product data",
 			})
 		}
-		return responses.PrintResponse(c, http.StatusOK, "list of transaction", result)
+
+		return c.JSON(http.StatusOK, map[string]interface{}{
+			"message":    "Get All Transaction Successful",
+			"data":       result,
+			"pagination": map[string]interface{}{"page": page, "limit": limit, "total_page": totalPage},
+		})
+
 	}
 }
 

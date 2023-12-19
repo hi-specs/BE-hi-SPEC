@@ -172,7 +172,10 @@ func (pq *ProductQuery) SearchProduct(name string, category string, minPrice uin
 		return nil, 0, err
 	}
 
-	if totalProduct == 0 {
+	if totalProduct%limit == 0 {
+		totalProduct = totalProduct / limit
+	} else {
+		totalProduct = totalProduct / limit
 		totalProduct++
 	}
 
@@ -218,14 +221,10 @@ func (pq *ProductQuery) GetAllProduct(page int, limit int) ([]product.Product, i
 		log.Fatal(err)
 	}
 
-	if totalPage/limit == 0 {
+	if totalPage%limit == 0 {
 		totalPage = totalPage / limit
 	} else {
 		totalPage = totalPage / limit
-		totalPage++
-	}
-
-	if totalPage == 0 {
 		totalPage++
 	}
 

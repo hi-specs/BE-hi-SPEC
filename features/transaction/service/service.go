@@ -33,9 +33,9 @@ func (ts *TransactionServices) Checkout(token *golangjwt.Token, ProductID int, T
 	return result, err
 }
 
-func (ts *TransactionServices) TransactionList() ([]transaction.TransactionList, error) {
-	result, err := ts.repo.TransactionList()
-	return result, err
+func (ts *TransactionServices) TransactionList(page, limit int) ([]transaction.TransactionList, int, error) {
+	result, totalPage, err := ts.repo.TransactionList(page, limit)
+	return result, totalPage, err
 }
 
 func (ts *TransactionServices) GetTransaction(transactionID uint) (transaction.TransactionList, error) {

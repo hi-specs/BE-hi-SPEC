@@ -190,14 +190,10 @@ func (uq *UserQuery) GetAllUser(page int, limit int) ([]user.User, int, error) {
 		log.Fatal(err)
 	}
 
-	if totalPage/limit == 0 {
+	if totalPage%limit == 0 {
 		totalPage = totalPage / limit
 	} else {
 		totalPage = totalPage / limit
-		totalPage++
-	}
-
-	if totalPage == 0 {
 		totalPage++
 	}
 
@@ -288,14 +284,10 @@ func (uq *UserQuery) SearchUser(name string, page int, limit int) ([]user.User, 
 		log.Fatal(err)
 	}
 
-	if totalPage/limit == 0 {
+	if totalPage%limit == 0 {
 		totalPage = totalPage / limit
 	} else {
 		totalPage = totalPage / limit
-		totalPage++
-	}
-
-	if totalPage == 0 {
 		totalPage++
 	}
 
