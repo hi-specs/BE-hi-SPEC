@@ -5,6 +5,7 @@ import (
 	"BE-hi-SPEC/features/user"
 	"errors"
 	"fmt"
+	"log"
 
 	"gorm.io/gorm"
 )
@@ -160,11 +161,12 @@ func (uq *UserQuery) DeleteUser(userID uint) error {
 	return nil
 }
 
-func (uq *UserQuery) GetAllUser() ([]user.User, error) {
+func (uq *UserQuery) GetAllUser(page int, limit int) ([]user.User, int, error) {
 	var Users []UserModel
-
-	err := uq.db.Find(&Users).Error
-
+	offset := (page - 1) * limit
+	if err := uq.db.Offset(offset).Limit(limit).Find(&Users).Error; err != nil {
+		return nil, 0, err
+	}
 	var result []user.User
 	for _, resp := range Users {
 		results := user.User{
@@ -174,10 +176,27 @@ func (uq *UserQuery) GetAllUser() ([]user.User, error) {
 			Address:     resp.Address,
 			PhoneNumber: resp.PhoneNumber,
 			Avatar:      resp.Avatar,
+			Model:       resp.Model,
 		}
 		result = append(result, results)
 	}
-	return result, err
+
+	var totalPage int
+	tableNameUser := "user_models"
+	columnNameUser := "deleted_at"
+	queryuser := fmt.Sprintf("SELECT COUNT(*) AS null_count FROM %s WHERE %s IS NULL", tableNameUser, columnNameUser)
+	err := uq.db.Raw(queryuser).Scan(&totalPage).Error
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	if totalPage/limit == 0 {
+		totalPage = totalPage / limit
+	} else {
+		totalPage = totalPage / limit
+		totalPage++
+	}
+	return result, totalPage, err
 }
 
 func (uq *UserQuery) AddFavorite(userID, productID uint) (user.Favorite, error) {
@@ -245,18 +264,34 @@ func (uq *UserQuery) DelFavorite(favoriteID uint) error {
 	return nil
 }
 
-func (uq *UserQuery) SearchUser(name string) ([]user.User, error) {
+func (uq *UserQuery) SearchUser(name string, page int, limit int) ([]user.User, int, error) {
 	var users []user.User
-
-	qry := uq.db.Table("user_models")
+	offset := (page - 1) * limit
+	qry := uq.db.Table("user_models").Offset(offset).Limit(limit)
 
 	if name != "" {
 		qry = qry.Where("name like ?", "%"+name+"%")
+		qry = qry.Where("deleted_at IS NULL")
 	}
 
+	var totalPage int
+	tableNameUser := "user_models"
+	columnNameUser := "deleted_at"
+	queryuser := fmt.Sprintf("SELECT COUNT(*) AS null_count FROM %s WHERE %s IS NULL", tableNameUser, columnNameUser)
+	err := uq.db.Raw(queryuser).Scan(&totalPage).Error
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	if totalPage/limit == 0 {
+		totalPage = totalPage / limit
+	} else {
+		totalPage = totalPage / limit
+		totalPage++
+	}
 	if err := qry.Find(&users).Error; err != nil {
-		return nil, err
+		return nil, totalPage, err
 	}
 	fmt.Println(users)
-	return users, nil
+	return users, totalPage, nil
 }

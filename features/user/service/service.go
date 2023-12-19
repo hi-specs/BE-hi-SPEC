@@ -143,15 +143,15 @@ func (us *UserService) HapusUser(token *golangjwt.Token, userID uint) error {
 	return nil
 }
 
-func (us *UserService) GetAllUser() ([]user.User, error) {
-	Users, err := us.repo.GetAllUser()
+func (us *UserService) GetAllUser(page int, limit int) ([]user.User, int, error) {
+	Users, totalPage, err := us.repo.GetAllUser(page, limit)
 	if err != nil {
 		if strings.Contains(err.Error(), "not found") {
-			return Users, errors.New("username tidak ditemukan")
+			return Users, 0, errors.New("username tidak ditemukan")
 		}
-		return Users, errors.New("terjadi kesalahan pada sistem")
+		return Users, 0, errors.New("terjadi kesalahan pada sistem")
 	}
-	return Users, nil
+	return Users, totalPage, nil
 }
 
 func (us *UserService) AddFavorite(token *golangjwt.Token, productID uint) (user.Favorite, error) {
@@ -186,10 +186,10 @@ func (us *UserService) DelFavorite(token *golangjwt.Token, favoriteID uint) erro
 	return err
 }
 
-func (us *UserService) SearchUser(name string) ([]user.User, error) {
-	result, err := us.repo.SearchUser(name)
+func (us *UserService) SearchUser(name string, page int, limit int) ([]user.User, int, error) {
+	result, totalPage, err := us.repo.SearchUser(name, page, limit)
 	if err != nil {
-		return nil, errors.New("failed get all product")
+		return nil, 0, errors.New("failed get all user")
 	}
-	return result, nil
+	return result, totalPage, nil
 }

@@ -54,12 +54,13 @@ type PutResponse struct {
 }
 
 type GetUserResponse struct {
-	ID          uint   `json:"user_id" form:"user_id"`
-	Email       string `json:"email" form:"email"`
-	Name        string `json:"name" form:"name"`
-	Address     string `json:"address" form:"address"`
-	PhoneNumber string `json:"phone_number" form:"phone_number"`
-	Avatar      string `json:"avatar" form:"avatar"`
+	ID          uint      `json:"user_id" form:"user_id"`
+	Email       string    `json:"email" form:"email"`
+	Name        string    `json:"name" form:"name"`
+	Address     string    `json:"address" form:"address"`
+	PhoneNumber string    `json:"phone_number" form:"phone_number"`
+	Avatar      string    `json:"avatar" form:"avatar"`
+	Time        time.Time `json:"time" form:"time"`
 }
 
 type GetAllUserResponse struct {

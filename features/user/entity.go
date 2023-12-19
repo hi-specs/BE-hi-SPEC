@@ -43,11 +43,11 @@ type Service interface {
 	Register(newUser User) (User, error)
 	UpdateUser(token *jwt.Token, input User) (User, error)
 	HapusUser(token *jwt.Token, userID uint) error
-	GetAllUser() ([]User, error)
+	GetAllUser(page int, limit int) ([]User, int, error)
 	AddFavorite(token *jwt.Token, productID uint) (Favorite, error)
 	GetUser(userID uint) (Favorite, error)
 	DelFavorite(token *jwt.Token, favoriteID uint) error
-	SearchUser(name string) ([]User, error)
+	SearchUser(name string, page int, limit int) ([]User, int, error)
 }
 
 type Repository interface {
@@ -56,9 +56,9 @@ type Repository interface {
 	UpdateUser(input User) (User, error)
 	GetUserByID(userID uint) (*User, error)
 	DeleteUser(userID uint) error
-	GetAllUser() ([]User, error)
+	GetAllUser(page int, limit int) ([]User, int, error)
 	AddFavorite(userID, productID uint) (Favorite, error)
 	GetUser(userID uint) (Favorite, error)
 	DelFavorite(favoriteID uint) error
-	SearchUser(name string) ([]User, error)
+	SearchUser(name string, page int, limit int) ([]User, int, error)
 }
