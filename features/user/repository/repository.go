@@ -196,6 +196,11 @@ func (uq *UserQuery) GetAllUser(page int, limit int) ([]user.User, int, error) {
 		totalPage = totalPage / limit
 		totalPage++
 	}
+
+	if totalPage == 0 {
+		totalPage++
+	}
+
 	return result, totalPage, err
 }
 
@@ -289,9 +294,14 @@ func (uq *UserQuery) SearchUser(name string, page int, limit int) ([]user.User, 
 		totalPage = totalPage / limit
 		totalPage++
 	}
+
+	if totalPage == 0 {
+		totalPage++
+	}
+
 	if err := qry.Find(&users).Error; err != nil {
 		return nil, totalPage, err
 	}
-	fmt.Println(users)
+
 	return users, totalPage, nil
 }

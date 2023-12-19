@@ -214,7 +214,7 @@ func (ph *ProductHandler) SearchAll() echo.HandlerFunc {
 		}
 		limit, _ := strconv.Atoi(c.QueryParam("limit"))
 		if limit <= 0 {
-			limit = 5
+			limit = 10
 		}
 		var minPrice int
 		var maxPrice int
@@ -222,6 +222,9 @@ func (ph *ProductHandler) SearchAll() echo.HandlerFunc {
 		category := c.QueryParam("category")
 
 		minPrice, _ = strconv.Atoi(c.QueryParam("minprice"))
+		if minPrice <= 0 {
+			minPrice = 1
+		}
 		maxPrice, _ = strconv.Atoi(c.QueryParam("maxprice"))
 
 		products, totalPage, err := ph.s.CariProduct(name, category, uint(minPrice), uint(maxPrice), page, limit)
