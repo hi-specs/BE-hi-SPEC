@@ -159,13 +159,6 @@ func (tq *TransactionQuery) GetTransaction(transactionID uint) (*transaction.Tra
 		return nil, err
 	}
 
-	// ms := midtrans.MidtransStatus(tm.Nota)
-	// tm.Status = ms
-
-	// if err := tq.db.Save(&tm).Error; err != nil {
-	// 	return nil, err
-	// }
-
 	result := &transaction.TransactionList{
 		TransactionID: int(tm.ID),
 		ProductID:     int(tm.ProductID),
@@ -187,6 +180,7 @@ func (tq *TransactionQuery) MidtransCallback(transactionID string) (*transaction
 		fmt.Println(tm)
 		return nil, err
 	}
+
 	// transaksi tidak ditemukan
 	if tm.ID == 0 {
 		err := errors.New("transaction doesnt exist")

@@ -142,10 +142,13 @@ func (th *TransactionHandler) GetTransaction() echo.HandlerFunc {
 
 func (th *TransactionHandler) MidtransCallback() echo.HandlerFunc {
 	return func(c echo.Context) error {
-		transactionID := c.QueryParam("order_id")
-
-		result, err := th.s.MidtransCallback(transactionID)
-
+		var input = new(MidtransCallBack)
+		if err := c.Bind(input); err != nil {
+			return c.JSON(http.StatusBadRequest, map[string]any{
+				"message": "input yang diberikan tidak sesuai",
+			})
+		}
+		result, err := th.s.MidtransCallback(input.OrderID)
 		if err != nil {
 			c.Logger().Error("Error fetching product: ", err.Error())
 			return c.JSON(http.StatusInternalServerError, map[string]interface{}{
