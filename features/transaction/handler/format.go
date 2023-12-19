@@ -35,3 +35,7 @@ type TransactionResponse struct {
 	Token      string `json:"token"`
 	Url        string `json:"url"`
 }
+
+type MidtransCallBack struct {
+	OrderID string `json:"order_id"`
+}
