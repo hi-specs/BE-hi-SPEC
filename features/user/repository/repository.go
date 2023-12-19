@@ -212,9 +212,8 @@ func (uq *UserQuery) AddFavorite(userID, productID uint) (user.Favorite, error) 
 	uq.db.Table("user_models").Where("id = ?", userID).Find(&User)
 
 	var FavList []uint
-	uq.db.Table("favorite_models").Where("user_id = ?", userID).Select("product_id").Find(&FavList)
+	uq.db.Table("favorite_models").Where("user_id = ?", userID).Select("id").Find(&FavList)
 
-	fmt.Println(FavList)
 	var Favorite []product.Product
 	uq.db.Table("product_models").Where("id = ?", productID).Find(&Favorite)
 

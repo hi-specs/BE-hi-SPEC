@@ -242,7 +242,7 @@ func (ph *ProductHandler) SearchAll() echo.HandlerFunc {
 			})
 		}
 		return c.JSON(http.StatusOK, map[string]interface{}{
-			"message":    "Success fetching all Search data",
+			"message":    "Search Product Successful",
 			"data":       response,
 			"pagination": map[string]interface{}{"page": page, "limit": limit, "total_page": totalPage},
 		})
@@ -315,7 +315,7 @@ func (ph *ProductHandler) GetAll() echo.HandlerFunc {
 		}
 
 		return c.JSON(http.StatusOK, map[string]interface{}{
-			"message":    "Success fetching all Posts data",
+			"message":    "Get All Product Successful",
 			"data":       response,
 			"pagination": map[string]interface{}{"page": page, "limit": limit, "total_page": totalPage},
 		})

@@ -381,6 +381,9 @@ func (uc *UserController) AddFavorite() echo.HandlerFunc {
 			})
 		}
 
+		FavList := result.FavID
+		sl := FavList[len(FavList)-1]
+
 		var responses GetAllFavoriteResponse
 		responses.User.Email = result.User.Email
 		responses.User.Name = result.User.Name
@@ -394,6 +397,7 @@ func (uc *UserController) AddFavorite() echo.HandlerFunc {
 				Name:    result.Name,
 				Price:   result.Price,
 				Picture: result.Picture,
+				FavID:   sl,
 			})
 		}
 		responses.Product = prod
