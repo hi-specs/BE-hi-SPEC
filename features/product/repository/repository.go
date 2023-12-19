@@ -172,13 +172,6 @@ func (pq *ProductQuery) SearchProduct(name string, category string, minPrice uin
 		return nil, 0, err
 	}
 
-	if totalProduct/limit == 0 {
-		totalProduct = totalProduct / limit
-	} else {
-		totalProduct = totalProduct / limit
-		totalProduct++
-	}
-
 	if totalProduct == 0 {
 		totalProduct++
 	}
