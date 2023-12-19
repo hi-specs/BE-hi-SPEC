@@ -96,6 +96,7 @@ func (th *TransactionHandler) Checkout() echo.HandlerFunc {
 		response.Status = result.Status
 		response.Url = result.Url
 		response.Token = result.Token
+		response.Nota = result.Nota
 
 		return c.JSON(http.StatusCreated, map[string]any{
 			"message": "Transaction created successfully",
@@ -134,14 +135,25 @@ func (th *TransactionHandler) GetTransaction() echo.HandlerFunc {
 			})
 		}
 
-		var response = new(TransactionDetail)
-		response.ProductID = result.ProductID
-		response.Status = result.Status
-		response.Timestamp = result.Timestamp
-		response.TotalPrice = result.TotalPrice
-		response.TransactionID = result.TransactionID
+		return responses.PrintResponse(c, http.StatusOK, "Detail Of Transaction", result)
 
-		return responses.PrintResponse(c, http.StatusOK, "detail of transaction", response)
+	}
+}
+
+func (th *TransactionHandler) MidtransCallback() echo.HandlerFunc {
+	return func(c echo.Context) error {
+		transactionID := c.QueryParam("order_id")
+
+		result, err := th.s.MidtransCallback(transactionID)
+
+		if err != nil {
+			c.Logger().Error("Error fetching product: ", err.Error())
+			return c.JSON(http.StatusInternalServerError, map[string]interface{}{
+				"message": "Failed to retrieve product data",
+			})
+		}
+
+		return responses.PrintResponse(c, http.StatusOK, "Detail Of Midtrans Callback", result)
 
 	}
 }

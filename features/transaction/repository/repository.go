@@ -5,6 +5,7 @@ import (
 	pr "BE-hi-SPEC/features/product/repository"
 	"BE-hi-SPEC/helper/midtrans"
 	"errors"
+	"strconv"
 
 	"BE-hi-SPEC/features/transaction"
 	"fmt"
@@ -15,6 +16,7 @@ import (
 
 type TransactionModel struct {
 	gorm.Model
+	Nota       string
 	ProductID  uint
 	UserID     uint
 	TotalPrice uint
@@ -100,6 +102,9 @@ func (tq *TransactionQuery) Checkout(userID uint, ProductID int, TotalPrice int)
 		return transaction.Transaction{}, err
 	}
 
+	var id = strconv.Itoa(int(inputDB.ID))
+	inputDB.Nota = "TESTING-ORDER-" + id
+
 	midtrans := midtrans.MidtransCreateToken(int(inputDB.ID), TotalPrice)
 
 	inputDB.Url = midtrans.RedirectURL
@@ -113,6 +118,7 @@ func (tq *TransactionQuery) Checkout(userID uint, ProductID int, TotalPrice int)
 	result.ProductID = int(inputDB.ProductID)
 	result.TotalPrice = int(inputDB.TotalPrice)
 	result.Status = inputDB.Status
+	result.Nota = inputDB.Nota
 	result.Token = midtrans.Token
 	result.Url = midtrans.RedirectURL
 
@@ -120,42 +126,25 @@ func (tq *TransactionQuery) Checkout(userID uint, ProductID int, TotalPrice int)
 }
 
 func (tq *TransactionQuery) TransactionList() ([]transaction.TransactionList, error) {
-	// ambil data dari database
 	var tm []TransactionModel
-	if err := tq.db.Find(&tm).Error; err != nil {
-		return nil, err
-	}
 
-	// ambil list transaction id
-	var temp []int
-	tq.db.Table("transaction_models").Select("id").Find(&temp)
+	err := tq.db.Find(&tm).Error
 
-	// ambil lis status dari midtrans
-	var verify []string
-	for _, check := range temp {
-		ms := midtrans.MidtransStatus(int(check))
-		verify = append(verify, ms)
-	}
-
-	// simpan status kedalam database
-	for x, in := range tm {
-		in.Status = verify[x]
-		tq.db.Save(&in)
-	}
-
-	// slicing for response
 	var result []transaction.TransactionList
-	for x, tl := range tm {
-		result = append(result, transaction.TransactionList{
-			ProductID:     int(tl.ProductID),
-			TransactionID: int(tl.ID),
-			TotalPrice:    int(tl.TotalPrice),
-			Status:        verify[x],
-			Timestamp:     tl.CreatedAt,
-		})
+	for _, resp := range tm {
+		results := transaction.TransactionList{
+			TransactionID: int(resp.ID),
+			ProductID:     int(resp.ProductID),
+			TotalPrice:    int(resp.TotalPrice),
+			Status:        resp.Status,
+			Timestamp:     resp.CreatedAt,
+			Token:         resp.Token,
+			Url:           resp.Url,
+			Nota:          resp.Nota,
+		}
+		result = append(result, results)
 	}
-
-	return result, nil
+	return result, err
 }
 
 func (tq *TransactionQuery) GetTransaction(transactionID uint) (*transaction.TransactionList, error) {
@@ -170,7 +159,41 @@ func (tq *TransactionQuery) GetTransaction(transactionID uint) (*transaction.Tra
 		return nil, err
 	}
 
-	ms := midtrans.MidtransStatus(int(transactionID))
+	// ms := midtrans.MidtransStatus(tm.Nota)
+	// tm.Status = ms
+
+	// if err := tq.db.Save(&tm).Error; err != nil {
+	// 	return nil, err
+	// }
+
+	result := &transaction.TransactionList{
+		TransactionID: int(tm.ID),
+		ProductID:     int(tm.ProductID),
+		TotalPrice:    int(tm.TotalPrice),
+		Status:        tm.Status,
+		Timestamp:     tm.CreatedAt,
+		Token:         tm.Token,
+		Url:           tm.Url,
+		Nota:          tm.Nota,
+	}
+
+	return result, nil
+}
+
+func (tq *TransactionQuery) MidtransCallback(transactionID string) (*transaction.TransactionList, error) {
+	var tm TransactionModel
+	if err := tq.db.Table("transaction_models").Where("Nota = ?", transactionID).Find(&tm).Error; err != nil {
+
+		fmt.Println(tm)
+		return nil, err
+	}
+	// transaksi tidak ditemukan
+	if tm.ID == 0 {
+		err := errors.New("transaction doesnt exist")
+		return nil, err
+	}
+
+	ms := midtrans.MidtransStatus(transactionID)
 	tm.Status = ms
 
 	if err := tq.db.Save(&tm).Error; err != nil {
@@ -183,6 +206,9 @@ func (tq *TransactionQuery) GetTransaction(transactionID uint) (*transaction.Tra
 		TotalPrice:    int(tm.TotalPrice),
 		Status:        ms,
 		Timestamp:     tm.CreatedAt,
+		Token:         tm.Token,
+		Url:           tm.Url,
+		Nota:          tm.Nota,
 	}
 
 	return result, nil

@@ -10,6 +10,7 @@ import (
 
 type Transaction struct {
 	ID         int    `json:"transaction_id"`
+	Nota       string `json:"nota"`
 	ProductID  int    `json:"product_id"`
 	TotalPrice int    `json:"total_price"`
 	Status     string `json:"status"`
@@ -26,10 +27,13 @@ type TransactionDashboard struct {
 
 type TransactionList struct {
 	TransactionID int       `json:"transaction_id"`
+	Nota          string    `json:"nota"`
 	ProductID     int       `json:"product_id"`
 	TotalPrice    int       `json:"total_price"`
 	Status        string    `json:"status"`
 	Timestamp     time.Time `json:"timestamp"`
+	Token         string    `json:"token"`
+	Url           string    `json:"url"`
 }
 
 type Handler interface {
@@ -37,6 +41,7 @@ type Handler interface {
 	Checkout() echo.HandlerFunc
 	TransactionList() echo.HandlerFunc
 	GetTransaction() echo.HandlerFunc
+	MidtransCallback() echo.HandlerFunc
 }
 
 type Repository interface {
@@ -44,6 +49,7 @@ type Repository interface {
 	Checkout(userID uint, ProductID int, ProductPrice int) (Transaction, error)
 	TransactionList() ([]TransactionList, error)
 	GetTransaction(transactionID uint) (*TransactionList, error)
+	MidtransCallback(transactionID string) (*TransactionList, error)
 }
 
 type Service interface {
@@ -51,4 +57,5 @@ type Service interface {
 	Checkout(token *jwt.Token, ProductID int, ProductPrice int) (Transaction, error)
 	TransactionList() ([]TransactionList, error)
 	GetTransaction(transactionID uint) (TransactionList, error)
+	MidtransCallback(transactionID string) (TransactionList, error)
 }

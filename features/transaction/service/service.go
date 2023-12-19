@@ -42,3 +42,8 @@ func (ts *TransactionServices) GetTransaction(transactionID uint) (transaction.T
 	result, err := ts.repo.GetTransaction(transactionID)
 	return *result, err
 }
+
+func (ts *TransactionServices) MidtransCallback(transactionID string) (transaction.TransactionList, error) {
+	result, err := ts.repo.MidtransCallback(transactionID)
+	return *result, err
+}
