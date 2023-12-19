@@ -33,20 +33,20 @@ func (ps *ProductServices) UpdateProduct(productID uint, input product.Product) 
 }
 
 // CariProduct implements product.Service.
-func (ps *ProductServices) CariProduct(name string, category string, minPrice uint, maxPrice uint, page, limit int) ([]product.Product, error) {
-	products, err := ps.repo.SearchProduct(name, category, minPrice, maxPrice, page, limit)
+func (ps *ProductServices) CariProduct(name string, category string, minPrice uint, maxPrice uint, page, limit int) ([]product.Product, int, error) {
+	products, totalPage, err := ps.repo.SearchProduct(name, category, minPrice, maxPrice, page, limit)
 	if err != nil {
-		return nil, err
+		return nil, 0, err
 	}
 
-	return products, nil
+	return products, totalPage, err
 }
 
 // SatuProduct implements product.Service.
 func (ps *ProductServices) SatuProduct(productID uint) (product.Product, error) {
 	result, err := ps.repo.GetProductID(productID)
 	if err != nil {
-		return product.Product{}, errors.New("failed get all product")
+		return product.Product{}, errors.New("failed get product")
 	}
 	return *result, nil
 }
@@ -85,12 +85,12 @@ func (ps *ProductServices) TalkToGpt(token *golangjwt.Token, newProduct product.
 }
 
 // SemuaProduct implements product.Service.
-func (ps *ProductServices) SemuaProduct(page int, limit int) ([]product.Product, error) {
-	result, err := ps.repo.GetAllProduct(page, limit)
+func (ps *ProductServices) SemuaProduct(page int, limit int) ([]product.Product, int, error) {
+	result, totalPage, err := ps.repo.GetAllProduct(page, limit)
 	if err != nil {
-		return nil, errors.New("failed get all product")
+		return nil, 0, errors.New("failed get all product")
 	}
-	return result, nil
+	return result, totalPage, err
 }
 
 func (ps *ProductServices) DelProduct(productID uint) error {

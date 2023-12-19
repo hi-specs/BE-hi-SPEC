@@ -3,6 +3,8 @@ package respository
 import (
 	"BE-hi-SPEC/features/product"
 	"errors"
+	"fmt"
+	"log"
 
 	"gorm.io/gorm"
 )
@@ -111,8 +113,8 @@ func (pq *ProductQuery) UpdateProduct(productID uint, input product.Product) (pr
 }
 
 // SearchProduct implements product.Repository.
-func (pq *ProductQuery) SearchProduct(name string, category string, minPrice uint, maxPrice uint, page int, limit int) ([]product.Product, error) {
-	var products []product.Product
+func (pq *ProductQuery) SearchProduct(name string, category string, minPrice uint, maxPrice uint, page int, limit int) ([]product.Product, int, error) {
+	var products []ProductModel
 	offset := (page - 1) * limit
 	qry := pq.db.Table("product_models").Offset(offset).Limit(limit)
 
@@ -137,17 +139,46 @@ func (pq *ProductQuery) SearchProduct(name string, category string, minPrice uin
 	}
 
 	if err := qry.Find(&products).Error; err != nil {
-		return nil, err
+		return nil, 0, err
 	}
-	return products, nil
+
+	// mendapatkan nilai total user
+	var totalPage int
+	tableNameUser := "product_models"
+	columnNameUser := "deleted_at"
+	queryuser := fmt.Sprintf("SELECT COUNT(*) AS null_count FROM %s WHERE %s IS NULL", tableNameUser, columnNameUser)
+	err := pq.db.Raw(queryuser).Scan(&totalPage).Error
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	if totalPage/limit == 0 {
+		totalPage = totalPage / limit
+	} else {
+		totalPage = totalPage / limit
+		totalPage++
+	}
+
+	var result []product.Product
+	for _, s := range products {
+		result = append(result, product.Product{
+			ID:       s.ID,
+			Name:     s.Name,
+			Price:    s.Price,
+			Category: s.Category,
+			Picture:  s.Picture,
+		})
+	}
+
+	return result, totalPage, err
 }
 
 // GetAllProduct implements product.Repository.
-func (pq *ProductQuery) GetAllProduct(page int, limit int) ([]product.Product, error) {
+func (pq *ProductQuery) GetAllProduct(page int, limit int) ([]product.Product, int, error) {
 	var products []ProductModel
 	offset := (page - 1) * limit
 	if err := pq.db.Offset(offset).Limit(limit).Find(&products).Error; err != nil {
-		return nil, err
+		return nil, 0, err
 	}
 	var result []product.Product
 	for _, s := range products {
@@ -159,7 +190,24 @@ func (pq *ProductQuery) GetAllProduct(page int, limit int) ([]product.Product, e
 			Picture:  s.Picture,
 		})
 	}
-	return result, nil
+
+	// mendapatkan nilai total user
+	var totalPage int
+	tableNameUser := "product_models"
+	columnNameUser := "deleted_at"
+	queryuser := fmt.Sprintf("SELECT COUNT(*) AS null_count FROM %s WHERE %s IS NULL", tableNameUser, columnNameUser)
+	err := pq.db.Raw(queryuser).Scan(&totalPage).Error
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	if totalPage/limit == 0 {
+		totalPage = totalPage / limit
+	} else {
+		totalPage = totalPage / limit
+		totalPage++
+	}
+	return result, totalPage, err
 }
 
 func (gq ProductQuery) InsertProduct(UserID uint, newProduct product.Product) (product.Product, error) {
