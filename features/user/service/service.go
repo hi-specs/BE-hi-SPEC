@@ -33,7 +33,7 @@ func (us *UserService) Login(email string, password string) (user.User, error) {
 		if strings.Contains(err.Error(), "not found") {
 			return user.User{}, errors.New("data tidak ditemukan")
 		}
-		return user.User{}, errors.New("terjadi kesalahan pada sistem")
+		return user.User{}, errors.New("data tidak ditemukan")
 	}
 
 	err = us.hash.Compare(result.Password, password)
@@ -54,10 +54,10 @@ func (us *UserService) Register(newUser user.User) (user.User, error) {
 		return user.User{}, errors.New("name cannot be empty")
 	}
 	if newUser.Address == "" {
-		return user.User{}, errors.New("password cannot be empty")
+		return user.User{}, errors.New("address cannot be empty")
 	}
 	if newUser.PhoneNumber == "" {
-		return user.User{}, errors.New("Phone number cannot be empty")
+		return user.User{}, errors.New("Phone Number cannot be empty")
 	}
 	if newUser.Password == "" {
 		return user.User{}, errors.New("password cannot be empty")
@@ -180,10 +180,6 @@ func (us *UserService) DelFavorite(token *golangjwt.Token, favoriteID uint) erro
 		return errors.New("failed to delete the favorite")
 	}
 
-	// if err != nil {
-	// 	return err
-	// }
-	// // exitingUser, err := us.repo.GetUserByID(userID)
 	if err != nil {
 		return errors.New("failed to retrieve the user for deletion")
 	}
