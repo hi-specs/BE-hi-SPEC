@@ -126,11 +126,12 @@ func (tq *TransactionQuery) Checkout(userID uint, ProductID int, TotalPrice int)
 	return result, nil
 }
 
-func (tq *TransactionQuery) TransactionList() ([]transaction.TransactionList, error) {
+func (tq *TransactionQuery) TransactionList(page, limit int) ([]transaction.TransactionList, int, error) {
 	var tm []TransactionModel
-
-	err := tq.db.Find(&tm).Error
-
+	offset := (page - 1) * limit
+	if err := tq.db.Offset(offset).Limit(limit).Find(&tm).Error; err != nil {
+		return nil, 0, err
+	}
 	var result []transaction.TransactionList
 	for _, resp := range tm {
 		results := transaction.TransactionList{
@@ -145,7 +146,25 @@ func (tq *TransactionQuery) TransactionList() ([]transaction.TransactionList, er
 		}
 		result = append(result, results)
 	}
-	return result, err
+
+	// mendapatkan nilai total transaction
+	var totalPage int
+	tableNameUser := "transaction_models"
+	columnNameUser := "deleted_at"
+	queryuser := fmt.Sprintf("SELECT COUNT(*) AS null_count FROM %s WHERE %s IS NULL", tableNameUser, columnNameUser)
+	err := tq.db.Raw(queryuser).Scan(&totalPage).Error
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	if totalPage%limit == 0 {
+		totalPage = totalPage / limit
+	} else {
+		totalPage = totalPage / limit
+		totalPage++
+	}
+
+	return result, totalPage, err
 }
 
 func (tq *TransactionQuery) GetTransaction(transactionID uint) (*transaction.TransactionList, error) {
