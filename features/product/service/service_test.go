@@ -245,3 +245,41 @@ func TestCariProduct(t *testing.T) {
 		repo.AssertExpectations(t)
 	})
 }
+
+func TestTalkToGpt(t *testing.T) {
+	repo := mocks.NewRepository(t)
+	productService := service.New(repo)
+
+	t.Run("Success Case", func(t *testing.T) {
+		var userID = uint(1)
+		var str, _ = jwt.GenerateJWT(userID)
+		var token, _ = gojwt.Parse(str, func(t *gojwt.Token) (interface{}, error) {
+			return []byte("$!1gnK3yyy!!!"), nil
+		})
+		mockUserID := uint(1)
+		mockNewProduct := product.Product{
+			Name:      "TestProduct",
+			Category:  "Test",
+			CPU:       "Test",
+			RAM:       "Test",
+			Display:   "Test Display",
+			Storage:   "Test Storage",
+			Thickness: "Test Thickness",
+			Weight:    "Test",
+			Bluetooth: "Test",
+			HDMI:      "Test",
+			Price:     10000000,
+			Picture:   "Picture.jpg",
+		}
+
+		repo.On("InsertProduct", mockUserID, mockNewProduct).Return(mockNewProduct, nil).Once()
+
+		result, err := productService.TalkToGpt(token, mockNewProduct)
+
+		assert.Nil(t, err)
+		assert.Equal(t, mockNewProduct, result)
+
+		repo.AssertExpectations(t)
+	})
+
+}
