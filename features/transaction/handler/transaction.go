@@ -3,6 +3,7 @@ package handler
 import (
 	"BE-hi-SPEC/features/product"
 	"BE-hi-SPEC/features/transaction"
+	"BE-hi-SPEC/features/user/handler"
 	"BE-hi-SPEC/helper/responses"
 	"context"
 	"net/http"
@@ -172,5 +173,75 @@ func (th *TransactionHandler) MidtransCallback() echo.HandlerFunc {
 
 		return responses.PrintResponse(c, http.StatusOK, "Detail Of Midtrans Callback", result)
 
+	}
+}
+
+func (th *TransactionHandler) UserTransaction() echo.HandlerFunc {
+	return func(c echo.Context) error {
+		userID, err := strconv.ParseUint(c.Param("id"), 10, 64)
+		if err != nil {
+			return c.JSON(http.StatusBadRequest, map[string]interface{}{
+				"message": "ID user tidak valid",
+			})
+		}
+		result, err := th.s.UserTransaction(uint(userID))
+
+		if err != nil {
+			c.Logger().Error("ERROR Register, explain:", err.Error())
+			var statusCode = http.StatusInternalServerError
+			var message = "terjadi permasalahan ketika memproses data"
+
+			if strings.Contains(err.Error(), "terdaftar") {
+				statusCode = http.StatusBadRequest
+				message = "data yang diinputkan sudah terdaftar ada sistem"
+			}
+
+			return c.JSON(statusCode, map[string]any{
+				"message": message,
+			})
+		}
+
+		// mengambil data nama product
+		listProd := result.Product
+		var products []string
+		for _, prod := range listProd {
+			products = append(products, prod.Name)
+		}
+
+		// slicing data transaksi
+		var nota []UserNota
+		for x, trans := range result.Transaction {
+			nota = append(nota, UserNota{
+				ID:         trans.ID,
+				Nota:       trans.Nota,
+				TotalPrice: trans.TotalPrice,
+				Status:     trans.Status,
+				Token:      trans.Token,
+				Url:        trans.Url,
+				Product:    products[x],
+			},
+			)
+		}
+
+		// slicing data user
+		dataUser := result.User
+		var user handler.GetUserResponse
+		user.Address = dataUser.Address
+		user.Avatar = dataUser.Avatar
+		user.Email = dataUser.Email
+		user.ID = dataUser.ID
+		user.PhoneNumber = dataUser.PhoneNumber
+		user.Time = dataUser.CreatedAt
+		user.Name = dataUser.Name
+
+		// slicing responses
+		var responses UserTransactionResponse
+		responses.User = user
+		responses.Nota = nota
+
+		return c.JSON(http.StatusOK, map[string]interface{}{
+			"message": "Data Transaction By User",
+			"data":    responses,
+		})
 	}
 }
