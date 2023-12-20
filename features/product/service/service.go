@@ -7,6 +7,7 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"fmt"
 
 	golangjwt "github.com/golang-jwt/jwt/v5"
 	openai "github.com/sashabaranov/go-openai"
@@ -69,10 +70,10 @@ func (ps *ProductServices) TalkToGpt(token *golangjwt.Token, newProduct product.
 			},
 		},
 	)
-	// if err != nil {
-	// 	fmt.Printf("ChatCompletion error: %v\n", err)
-	// 	return
-	// }
+	if err != nil {
+		fmt.Printf("ChatCompletion error: %v\n", err)
+		return product.Product{}, err
+	}
 
 	err = json.Unmarshal([]byte(resp.Choices[0].Message.Content), &newProduct)
 	// fmt.Println(resp.Choices[0].Message.Content)
