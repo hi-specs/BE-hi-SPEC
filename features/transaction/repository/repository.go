@@ -1,15 +1,16 @@
 package repository
 
 import (
+	"BE-hi-SPEC/features/product"
 	p "BE-hi-SPEC/features/product"
 	pr "BE-hi-SPEC/features/product/repository"
+	"BE-hi-SPEC/features/transaction"
+	"BE-hi-SPEC/features/user"
 	"BE-hi-SPEC/helper/midtrans"
 	"errors"
-	"strconv"
-
-	"BE-hi-SPEC/features/transaction"
 	"fmt"
 	"log"
+	"strconv"
 
 	"gorm.io/gorm"
 )
@@ -224,6 +225,39 @@ func (tq *TransactionQuery) MidtransCallback(transactionID string) (*transaction
 		Url:           tm.Url,
 		Nota:          tm.Nota,
 	}
+
+	return result, nil
+}
+
+func (tq *TransactionQuery) UserTransaction(userID uint) (transaction.UserTransaction, error) {
+	var tl []transaction.Transaction
+	var pl []product.Product
+	var user user.User
+
+	// mendapatkan detail user
+	tq.db.Table("user_models").Where("id = ?", userID).Find(&user)
+
+	// mendapatkan list product
+	var productID []int
+	tq.db.Table("transaction_models").Where("user_id = ?", userID).Select("product_id").Find(&productID)
+	for _, prod := range productID {
+		tmp := new(product.Product)
+		tq.db.Table("product_models").Where("id = ?", prod).Find(&tmp)
+		pl = append(pl, *tmp)
+	}
+
+	// mendapatkan list transaksi
+	var transID []int
+	tq.db.Table("transaction_models").Where("user_id = ?", userID).Select("id").Find(&transID)
+	for _, trans := range transID {
+		tmp := new(transaction.Transaction)
+		tq.db.Table("transaction_models").Where("id = ?", trans).Find(&tmp)
+		tl = append(tl, *tmp)
+	}
+	var result transaction.UserTransaction
+	result.User = user
+	result.Product = pl
+	result.Transaction = tl
 
 	return result, nil
 }

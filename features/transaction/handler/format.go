@@ -1,5 +1,9 @@
 package handler
 
+import (
+	"BE-hi-SPEC/features/user/handler"
+)
+
 type Total struct {
 	TotalProduct     int `json:"total_product"`
 	TotalUser        int `json:"total_user"`
@@ -38,4 +42,19 @@ type TransactionResponse struct {
 
 type MidtransCallBack struct {
 	OrderID string `json:"order_id"`
+}
+
+type UserNota struct {
+	ID         int    `json:"transaction_id"`
+	Nota       string `json:"nota"`
+	Product    string `json:"product_name"`
+	TotalPrice int    `json:"total_price"`
+	Status     string `json:"status"`
+	Token      string `json:"token"`
+	Url        string `json:"url"`
+}
+
+type UserTransactionResponse struct {
+	User handler.GetUserResponse `json:"user" form:"user"`
+	Nota []UserNota              `json:"nota" form:"nota"`
 }

@@ -48,6 +48,7 @@ func RouteTransaction(e *echo.Echo, th transaction.Handler) {
 	e.POST("/transaction", th.Checkout(), echojwt.JWT([]byte("$!1gnK3yyy!!!")))
 	e.GET("/transactions", th.TransactionList())
 	e.GET("/transaction/:id", th.GetTransaction())
+	e.GET("/transaction/user/:id", th.UserTransaction())
 
 	e.POST("/midtrans/callback", th.MidtransCallback())
 }

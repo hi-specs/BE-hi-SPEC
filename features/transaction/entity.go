@@ -2,6 +2,7 @@ package transaction
 
 import (
 	"BE-hi-SPEC/features/product"
+	"BE-hi-SPEC/features/user"
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
@@ -36,12 +37,19 @@ type TransactionList struct {
 	Url           string    `json:"url"`
 }
 
+type UserTransaction struct {
+	User        user.User
+	Product     []product.Product
+	Transaction []Transaction
+}
+
 type Handler interface {
 	AdminDashboard() echo.HandlerFunc
 	Checkout() echo.HandlerFunc
 	TransactionList() echo.HandlerFunc
 	GetTransaction() echo.HandlerFunc
 	MidtransCallback() echo.HandlerFunc
+	UserTransaction() echo.HandlerFunc
 }
 
 type Repository interface {
@@ -50,6 +58,7 @@ type Repository interface {
 	TransactionList(page, limit int) ([]TransactionList, int, error)
 	GetTransaction(transactionID uint) (*TransactionList, error)
 	MidtransCallback(transactionID string) (*TransactionList, error)
+	UserTransaction(userID uint) (UserTransaction, error)
 }
 
 type Service interface {
@@ -58,4 +67,5 @@ type Service interface {
 	TransactionList(page, limit int) ([]TransactionList, int, error)
 	GetTransaction(transactionID uint) (TransactionList, error)
 	MidtransCallback(transactionID string) (TransactionList, error)
+	UserTransaction(userID uint) (UserTransaction, error)
 }

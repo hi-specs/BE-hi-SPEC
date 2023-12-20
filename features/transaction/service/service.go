@@ -47,3 +47,8 @@ func (ts *TransactionServices) MidtransCallback(transactionID string) (transacti
 	result, err := ts.repo.MidtransCallback(transactionID)
 	return *result, err
 }
+
+func (ts *TransactionServices) UserTransaction(userID uint) (transaction.UserTransaction, error) {
+	result, err := ts.repo.UserTransaction(userID)
+	return result, err
+}
