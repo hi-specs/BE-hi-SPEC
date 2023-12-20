@@ -463,7 +463,7 @@ func (ph *ProductHandler) DelProduct() echo.HandlerFunc {
 			})
 		}
 		return c.JSON(http.StatusOK, map[string]any{
-			"message": "delete product successful",
+			"message": "Delete Product Success",
 		})
 	}
 }
