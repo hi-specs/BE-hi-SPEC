@@ -2,6 +2,7 @@ package respository
 
 import (
 	"BE-hi-SPEC/features/product"
+	gpt "BE-hi-SPEC/helper/chatgpt"
 	"errors"
 	"fmt"
 	"log"
@@ -232,6 +233,13 @@ func (pq *ProductQuery) GetAllProduct(page int, limit int) ([]product.Product, i
 }
 
 func (gq ProductQuery) InsertProduct(UserID uint, newProduct product.Product) (product.Product, error) {
+	gpt := gpt.GptAPI(newProduct.Name)
+	pic := newProduct.Picture
+	cat := newProduct.Category
+	newProduct = gpt
+	newProduct.Picture = pic
+	newProduct.Category = cat
+
 	var inputDB = new(ProductModel)
 	inputDB.Name = newProduct.Name
 	inputDB.CPU = newProduct.CPU

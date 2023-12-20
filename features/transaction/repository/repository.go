@@ -130,7 +130,7 @@ func (tq *TransactionQuery) Checkout(userID uint, ProductID int, TotalPrice int)
 func (tq *TransactionQuery) TransactionList(page, limit int) ([]transaction.TransactionList, int, error) {
 	var tm []TransactionModel
 	offset := (page - 1) * limit
-	if err := tq.db.Offset(offset).Limit(limit).Find(&tm).Error; err != nil {
+	if err := tq.db.Offset(offset).Limit(limit).Order("created_at DESC").Find(&tm).Error; err != nil {
 		return nil, 0, err
 	}
 	var result []transaction.TransactionList
