@@ -25,7 +25,7 @@ func RouteUser(e *echo.Echo, uc user.Handler) {
 	e.GET("/users", uc.All(), echojwt.JWT([]byte("$!1gnK3yyy!!!")))
 	e.POST("/login", uc.Login())
 	e.POST("/register", uc.Register())
-	e.GET("/user/:id", uc.GetUser())
+	e.GET("/user/:id", uc.GetUser(), echojwt.JWT([]byte("$!1gnK3yyy!!!")))
 	e.PATCH("/user/:id", uc.Update(), echojwt.JWT([]byte("$!1gnK3yyy!!!")))
 	e.DELETE("/user/:id", uc.Delete(), echojwt.JWT([]byte("$!1gnK3yyy!!!")))
 	e.POST("/user/fav/:id", uc.AddFavorite(), echojwt.JWT([]byte("$!1gnK3yyy!!!")))
@@ -49,6 +49,7 @@ func RouteTransaction(e *echo.Echo, th transaction.Handler) {
 	e.GET("/transactions", th.TransactionList())
 	e.GET("/transaction/:id", th.GetTransaction())
 	e.GET("/transaction/user/:id", th.UserTransaction())
+	// e.POST("/transaction/download/:id", th.DownloadTransaction(), echojwt.JWT([]byte("$!1gnK3yyy!!!")))
 
 	e.POST("/midtrans/callback", th.MidtransCallback())
 }
