@@ -51,7 +51,7 @@ type Service interface {
 	HapusUser(token *jwt.Token, userID uint) error
 	GetAllUser(token *jwt.Token, page int, limit int) ([]User, int, error)
 	AddFavorite(token *jwt.Token, productID uint) (Favorite, error)
-	GetUser(userID uint) (Favorite, error)
+	GetUser(token *jwt.Token) (Favorite, error)
 	DelFavorite(token *jwt.Token, favoriteID uint) error
 	SearchUser(token *jwt.Token, name string, page int, limit int) ([]User, int, error)
 }
