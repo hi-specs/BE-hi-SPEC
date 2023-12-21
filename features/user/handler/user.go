@@ -61,7 +61,7 @@ func (uc *UserController) Login() echo.HandlerFunc {
 			})
 		}
 
-		strToken, err := jwt.GenerateJWT(result.ID)
+		strToken, err := jwt.GenerateJWT(result.ID, result.Role)
 		if err != nil {
 			return c.JSON(http.StatusInternalServerError, map[string]any{
 				"message": "terjadi permasalahan ketika mengenkripsi data",
@@ -72,6 +72,7 @@ func (uc *UserController) Login() echo.HandlerFunc {
 		response.ID = result.ID
 		response.Email = result.Email
 		response.Password = result.Password
+		response.Role = result.Role
 		response.Token = strToken
 
 		return c.JSON(http.StatusOK, map[string]any{
@@ -324,11 +325,19 @@ func (uc *UserController) All() echo.HandlerFunc {
 		if limit <= 0 {
 			limit = 10
 		}
-		AllUser, totalPage, err := uc.srv.GetAllUser(page, limit)
+		AllUser, totalPage, err := uc.srv.GetAllUser(c.Get("user").(*gojwt.Token), page, limit)
 		if err != nil {
-			c.Logger().Error("ERROR GetAll, explain:", err.Error())
-			return c.JSON(http.StatusInternalServerError, map[string]interface{}{
-				"message": "terjadi permasalahan ketika memproses data",
+			c.Logger().Error("ERROR SEARCH, explain:", err.Error())
+			var statusCode = http.StatusInternalServerError
+			var message = "Tidak memiliki izin untuk mengakses halaman ini"
+
+			if strings.Contains(err.Error(), "tidak memiliki izin") {
+				statusCode = http.StatusBadRequest
+				message = "tidak memiliki izin"
+			}
+
+			return c.JSON(statusCode, map[string]any{
+				"message": message,
 			})
 		}
 
@@ -343,6 +352,7 @@ func (uc *UserController) All() echo.HandlerFunc {
 				PhoneNumber: result.PhoneNumber,
 				Avatar:      result.Avatar,
 				Time:        result.CreatedAt,
+				Role:        result.Role,
 			}
 			response = append(response, responses)
 		}
@@ -511,9 +521,20 @@ func (uc *UserController) SearchUser() echo.HandlerFunc {
 			limit = 10
 		}
 		name := c.QueryParam("name")
-		users, totalPage, err := uc.srv.SearchUser(name, page, limit)
+		users, totalPage, err := uc.srv.SearchUser(c.Get("user").(*gojwt.Token), name, page, limit)
 		if err != nil {
-			return c.JSON(http.StatusInternalServerError, map[string]string{"error": "Internal Server Error"})
+			c.Logger().Error("ERROR SEARCH, explain:", err.Error())
+			var statusCode = http.StatusInternalServerError
+			var message = "Tidak memiliki izin untuk mengakses halaman ini+"
+
+			if strings.Contains(err.Error(), "tidak memiliki izin") {
+				statusCode = http.StatusBadRequest
+				message = "tidak memiliki izin"
+			}
+
+			return c.JSON(statusCode, map[string]any{
+				"message": message,
+			})
 		}
 		var response []SearchUserResponse
 		for _, result := range users {
@@ -525,6 +546,7 @@ func (uc *UserController) SearchUser() echo.HandlerFunc {
 				Avatar:      result.Avatar,
 				Address:     result.Address,
 				Time:        result.CreatedAt,
+				Role:        result.Role,
 			})
 		}
 		return c.JSON(http.StatusOK, map[string]interface{}{

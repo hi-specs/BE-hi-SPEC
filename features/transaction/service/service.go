@@ -24,11 +24,13 @@ func (ts *TransactionServices) AdminDashboard() (transaction.TransactionDashboar
 }
 
 func (ts *TransactionServices) Checkout(token *golangjwt.Token, ProductID int, TotalPrice int) (transaction.Transaction, error) {
-	userID, err := jwt.ExtractToken(token)
+	userID, rolesUser, err := jwt.ExtractToken(token)
 	if err != nil {
 		return transaction.Transaction{}, errors.New("user does not exist")
 	}
-
+	if rolesUser != "" {
+		return transaction.Transaction{}, err
+	}
 	result, err := ts.repo.Checkout(userID, int(ProductID), TotalPrice)
 	return result, err
 }

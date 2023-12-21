@@ -22,7 +22,7 @@ func InitRoute(e *echo.Echo, uc user.Handler, ph product.Handler, th transaction
 }
 
 func RouteUser(e *echo.Echo, uc user.Handler) {
-	e.GET("/users", uc.All())
+	e.GET("/users", uc.All(), echojwt.JWT([]byte("$!1gnK3yyy!!!")))
 	e.POST("/login", uc.Login())
 	e.POST("/register", uc.Register())
 	e.GET("/user/:id", uc.GetUser())
@@ -30,7 +30,7 @@ func RouteUser(e *echo.Echo, uc user.Handler) {
 	e.DELETE("/user/:id", uc.Delete(), echojwt.JWT([]byte("$!1gnK3yyy!!!")))
 	e.POST("/user/fav/:id", uc.AddFavorite(), echojwt.JWT([]byte("$!1gnK3yyy!!!")))
 	e.DELETE("/user/fav/:id", uc.DelFavorite(), echojwt.JWT([]byte("$!1gnK3yyy!!!")))
-	e.GET("/user/search", uc.SearchUser())
+	e.GET("/user/search", uc.SearchUser(), echojwt.JWT([]byte("$!1gnK3yyy!!!")))
 
 }
 

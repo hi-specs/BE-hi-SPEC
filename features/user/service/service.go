@@ -84,9 +84,12 @@ func (us *UserService) Register(newUser user.User) (user.User, error) {
 
 // UpdateUser implements user.Service.
 func (us *UserService) UpdateUser(token *golangjwt.Token, input user.User) (user.User, error) {
-	userID, err := jwt.ExtractToken(token)
+	userID, rolesUser, err := jwt.ExtractToken(token)
 	if err != nil {
 		return user.User{}, errors.New("harap login")
+	}
+	if rolesUser != "" {
+		return user.User{}, err
 	}
 	if userID != input.ID {
 		return user.User{}, errors.New("id tidak cocok")
@@ -124,8 +127,11 @@ func (us *UserService) UpdateUser(token *golangjwt.Token, input user.User) (user
 
 // HapusUser implements user.Service.
 func (us *UserService) HapusUser(token *golangjwt.Token, userID uint) error {
-	userId, err := jwt.ExtractToken(token)
+	userId, rolesUser, err := jwt.ExtractToken(token)
 	if err != nil {
+		return err
+	}
+	if rolesUser != "" {
 		return err
 	}
 	exitingUser, err := us.repo.GetUserByID(userID)
@@ -143,8 +149,15 @@ func (us *UserService) HapusUser(token *golangjwt.Token, userID uint) error {
 	return nil
 }
 
-func (us *UserService) GetAllUser(page int, limit int) ([]user.User, int, error) {
-	Users, totalPage, err := us.repo.GetAllUser(page, limit)
+func (us *UserService) GetAllUser(token *golangjwt.Token, page int, limit int) ([]user.User, int, error) {
+	userID, rolesUser, err := jwt.ExtractToken(token)
+	if err != nil {
+		return nil, 0, err
+	}
+	if rolesUser != "admin" {
+		return nil, 0, errors.New("unauthorized access: admin role required")
+	}
+	Users, totalPage, err := us.repo.GetAllUser(userID, page, limit)
 	if err != nil {
 		if strings.Contains(err.Error(), "not found") {
 			return Users, 0, errors.New("username tidak ditemukan")
@@ -155,8 +168,11 @@ func (us *UserService) GetAllUser(page int, limit int) ([]user.User, int, error)
 }
 
 func (us *UserService) AddFavorite(token *golangjwt.Token, productID uint) (user.Favorite, error) {
-	userID, err := jwt.ExtractToken(token)
+	userID, rolesUser, err := jwt.ExtractToken(token)
 	if err != nil {
+		return user.Favorite{}, err
+	}
+	if rolesUser != "" {
 		return user.Favorite{}, err
 	}
 	favorites, err := us.repo.AddFavorite(userID, productID)
@@ -186,8 +202,15 @@ func (us *UserService) DelFavorite(token *golangjwt.Token, favoriteID uint) erro
 	return err
 }
 
-func (us *UserService) SearchUser(name string, page int, limit int) ([]user.User, int, error) {
-	result, totalPage, err := us.repo.SearchUser(name, page, limit)
+func (us *UserService) SearchUser(token *golangjwt.Token, name string, page int, limit int) ([]user.User, int, error) {
+	userID, rolesUser, err := jwt.ExtractToken(token)
+	if err != nil {
+		return nil, 0, err
+	}
+	if rolesUser != "admin" {
+		return nil, 0, errors.New("unauthorized access: admin role required")
+	}
+	result, totalPage, err := us.repo.SearchUser(uint(userID), name, page, limit)
 	if err != nil {
 		return nil, 0, errors.New("failed get all user")
 	}

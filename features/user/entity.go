@@ -18,12 +18,18 @@ type User struct {
 	Password    string `json:"password"`
 	NewPassword string `json:"new_password"`
 	Avatar      string `json:"avatar"`
+	Role        string `json:"role"`
 }
 
 type Favorite struct {
 	User     User `json:"user" form:"user"`
 	FavID    []uint
 	Favorite []product.Product `json:"favorite" form:"favorite"`
+}
+
+// Error implements error.
+func (Favorite) Error() string {
+	panic("unimplemented")
 }
 
 type Handler interface {
@@ -43,11 +49,11 @@ type Service interface {
 	Register(newUser User) (User, error)
 	UpdateUser(token *jwt.Token, input User) (User, error)
 	HapusUser(token *jwt.Token, userID uint) error
-	GetAllUser(page int, limit int) ([]User, int, error)
+	GetAllUser(token *jwt.Token, page int, limit int) ([]User, int, error)
 	AddFavorite(token *jwt.Token, productID uint) (Favorite, error)
 	GetUser(userID uint) (Favorite, error)
 	DelFavorite(token *jwt.Token, favoriteID uint) error
-	SearchUser(name string, page int, limit int) ([]User, int, error)
+	SearchUser(token *jwt.Token, name string, page int, limit int) ([]User, int, error)
 }
 
 type Repository interface {
@@ -56,9 +62,9 @@ type Repository interface {
 	UpdateUser(input User) (User, error)
 	GetUserByID(userID uint) (*User, error)
 	DeleteUser(userID uint) error
-	GetAllUser(page int, limit int) ([]User, int, error)
+	GetAllUser(userID uint, page int, limit int) ([]User, int, error)
 	AddFavorite(userID, productID uint) (Favorite, error)
 	GetUser(userID uint) (Favorite, error)
 	DelFavorite(favoriteID uint) error
-	SearchUser(name string, page int, limit int) ([]User, int, error)
+	SearchUser(userID uint, name string, page int, limit int) ([]User, int, error)
 }
