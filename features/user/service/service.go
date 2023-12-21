@@ -88,7 +88,7 @@ func (us *UserService) UpdateUser(token *golangjwt.Token, input user.User) (user
 	if err != nil {
 		return user.User{}, errors.New("harap login")
 	}
-	if rolesUser != "" {
+	if rolesUser == "" {
 		return user.User{}, err
 	}
 	if userID != input.ID {
@@ -131,7 +131,7 @@ func (us *UserService) HapusUser(token *golangjwt.Token, userID uint) error {
 	if err != nil {
 		return err
 	}
-	if rolesUser != "" {
+	if rolesUser == "" {
 		return err
 	}
 	exitingUser, err := us.repo.GetUserByID(userID)
