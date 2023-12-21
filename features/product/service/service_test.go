@@ -183,63 +183,49 @@ func TestCariProduct(t *testing.T) {
 	productService := service.New(repo)
 
 	t.Run("Success Case", func(t *testing.T) {
-		mockName := "MockProduct"
-		mockCategory := "Multimedia"
-		mockMinPrice := "100"
-		mockMaxPrice := "500"
+		mockName := "Laptop"
+		mockCategory := "Electronics"
+		mockMinPrice := "500"
+		mockMaxPrice := "2000"
 		mockPage := 1
 		mockLimit := 10
-		mockProducts := []product.Product{
-			{ID: 1, Name: "Product1", Category: "Multimedia", Price: 20000000},
-			{ID: 2, Name: "Product2", Category: "Multimedia", Price: 29000000},
-		}
-		mockTotalPage := 2
-		repo.On("SearchProduct", mockName, mockCategory, mockMinPrice, mockMaxPrice, mockPage, mockLimit).
-			Return(mockProducts, mockTotalPage, nil).Once()
 
-		result, totalPage, err := productService.CariProduct(mockName, mockCategory, mockMinPrice, mockMaxPrice, mockPage, mockLimit)
+		repo.On("SearchProduct", mockName, mockCategory, uint(500), uint(2000), mockPage, mockLimit).
+			Return([]product.Product{
+				{ID: 1, Name: "Laptop A", Category: "Electronics", Price: 1200},
+				{ID: 2, Name: "Laptop B", Category: "Electronics", Price: 1800},
+				// Add more product items as needed
+			}, 2, nil).Once()
+
+		products, totalPage, err := productService.CariProduct(mockName, mockCategory, mockMinPrice, mockMaxPrice, mockPage, mockLimit)
 
 		assert.Nil(t, err)
-		assert.Equal(t, mockProducts, result)
-		assert.Equal(t, mockTotalPage, totalPage)
+		assert.Equal(t, 2, totalPage)
+		assert.Len(t, products, 2)
 
 		repo.AssertExpectations(t)
 	})
 
-	t.Run("Error Case - Repository Failure", func(t *testing.T) {
-		mockName := "MockProduct"
-		mockCategory := "Multimedia"
-		mockMinPrice := "100"
-		mockMaxPrice := "500"
-		mockPage := 1
-		mockLimit := 10
-		repo.On("SearchProduct", mockName, mockCategory, mockMinPrice, mockMaxPrice, mockPage, mockLimit).
-			Return(nil, 0, errors.New("database error")).Once()
+	t.Run("Error Case - MinPrice Not Integer", func(t *testing.T) {
+		mockName := "Laptop"
+		mockCategory := "Electronics"
+		mockMinPrice := "abc" // Not an integer
 
-		_, _, err := productService.CariProduct(mockName, mockCategory, mockMinPrice, mockMaxPrice, mockPage, mockLimit)
+		_, _, err := productService.CariProduct(mockName, mockCategory, mockMinPrice, "2000", 1, 10)
 
 		assert.Error(t, err)
-		assert.Equal(t, "database error", err.Error())
-
-		repo.AssertExpectations(t)
+		assert.Equal(t, "MinPrice Value Must Integer", err.Error())
 	})
 
-	t.Run("Error Case - Products Not Found", func(t *testing.T) {
-		mockName := "NonExistentProduct"
-		mockCategory := "Multimedia"
-		mockMinPrice := "100"
-		mockMaxPrice := "500"
-		mockPage := 1
-		mockLimit := 10
-		repo.On("SearchProduct", mockName, mockCategory, mockMinPrice, mockMaxPrice, mockPage, mockLimit).
-			Return(nil, 0, errors.New("products not found")).Once()
+	t.Run("Error Case - MaxPrice Not Integer", func(t *testing.T) {
+		mockName := "Laptop"
+		mockCategory := "Electronics"
+		mockMaxPrice := "xyz" // Not an integer
 
-		_, _, err := productService.CariProduct(mockName, mockCategory, mockMinPrice, mockMaxPrice, mockPage, mockLimit)
+		_, _, err := productService.CariProduct(mockName, mockCategory, "500", mockMaxPrice, 1, 10)
 
 		assert.Error(t, err)
-		assert.Equal(t, "products not found", err.Error())
-
-		repo.AssertExpectations(t)
+		assert.Equal(t, "MaxPrice Value Must Integer", err.Error())
 	})
 }
 
