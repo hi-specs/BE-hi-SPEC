@@ -69,8 +69,11 @@ func (ps *ProductServices) SatuProduct(productID uint) (product.Product, error) 
 }
 
 func (ps *ProductServices) TalkToGpt(token *golangjwt.Token, newProduct product.Product) (product.Product, error) {
-	userId, err := jwt.ExtractToken(token)
+	userId, rolesUser, err := jwt.ExtractToken(token)
 	if err != nil {
+		return product.Product{}, err
+	}
+	if rolesUser != "" {
 		return product.Product{}, err
 	}
 

@@ -14,6 +14,7 @@ type LoginResponse struct {
 	Email    string `json:"email"`
 	Password string `json:"password"`
 	Token    string `json:"token"`
+	Role     string `json:"role"`
 }
 
 type RegisterRequest struct {
@@ -60,6 +61,7 @@ type GetUserResponse struct {
 	PhoneNumber string    `json:"phone_number" form:"phone_number"`
 	Avatar      string    `json:"avatar" form:"avatar"`
 	Time        time.Time `json:"time" form:"time"`
+	Role        string    `json:"role"`
 }
 
 type GetAllUserResponse struct {
@@ -99,4 +101,5 @@ type SearchUserResponse struct {
 	Address     string    `json:"address" form:"address"`
 	Time        time.Time `json:"time" form:"time"`
 	PhoneNumber string    `json:"phone_number" form:"phone_number"`
+	Role        string    `json:"role" form:"role"`
 }

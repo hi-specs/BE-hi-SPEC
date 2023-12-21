@@ -18,6 +18,7 @@ type UserModel struct {
 	PhoneNumber string `json:"phone_number" form:"phone_number"`
 	Password    string `json:"password" form:"password"`
 	Avatar      string `json:"avatar" form:"avatar"`
+	Role        string `json:"role" form:"role"`
 }
 
 type FavoriteModel struct {
@@ -48,6 +49,7 @@ func (uq *UserQuery) Login(email string) (user.User, error) {
 	result.ID = userData.ID
 	result.Email = userData.Email
 	result.Password = userData.Password
+	result.Role = userData.Role
 
 	return *result, nil
 }
@@ -60,6 +62,7 @@ func (uq *UserQuery) InsertUser(newUser user.User) (user.User, error) {
 	inputDB.Address = newUser.Address
 	inputDB.PhoneNumber = newUser.PhoneNumber
 	inputDB.Password = newUser.Password
+	inputDB.Role = "user"
 
 	if err := uq.db.Create(&inputDB).Error; err != nil {
 		return user.User{}, err
@@ -161,7 +164,7 @@ func (uq *UserQuery) DeleteUser(userID uint) error {
 	return nil
 }
 
-func (uq *UserQuery) GetAllUser(page int, limit int) ([]user.User, int, error) {
+func (uq *UserQuery) GetAllUser(userID uint, page int, limit int) ([]user.User, int, error) {
 	var Users []UserModel
 	offset := (page - 1) * limit
 	if err := uq.db.Offset(offset).Limit(limit).Find(&Users).Error; err != nil {
@@ -177,6 +180,7 @@ func (uq *UserQuery) GetAllUser(page int, limit int) ([]user.User, int, error) {
 			PhoneNumber: resp.PhoneNumber,
 			Avatar:      resp.Avatar,
 			Model:       resp.Model,
+			Role:        resp.Role,
 		}
 		result = append(result, results)
 	}
@@ -264,7 +268,7 @@ func (uq *UserQuery) DelFavorite(favoriteID uint) error {
 	return nil
 }
 
-func (uq *UserQuery) SearchUser(name string, page int, limit int) ([]user.User, int, error) {
+func (uq *UserQuery) SearchUser(userID uint, name string, page int, limit int) ([]user.User, int, error) {
 	var users []user.User
 	offset := (page - 1) * limit
 	qry := uq.db.Table("user_models").Offset(offset).Limit(limit)
