@@ -1,7 +1,6 @@
 package handler
 
 import (
-	"mime/multipart"
 	"time"
 )
 
@@ -34,14 +33,14 @@ type RegisterResponse struct {
 }
 
 type PutRequest struct {
-	ID          uint           `json:"user_id" form:"user_id"`
-	Name        string         `json:"name" form:"name"`
-	Email       string         `json:"email" form:"email"`
-	Avatar      multipart.File `json:"avatar" form:"avatar"`
-	Address     string         `json:"address" form:"address"`
-	PhoneNumber string         `json:"phone_number" form:"phone_number"`
-	Password    string         `json:"password" form:"password"`
-	NewPassword string         `json:"newpassword" form:"newpassword"`
+	ID          uint   `json:"user_id" form:"user_id"`
+	Name        string `json:"name" form:"name"`
+	Email       string `json:"email" form:"email"`
+	Avatar      string `json:"avatar" form:"avatar"`
+	Address     string `json:"address" form:"address"`
+	PhoneNumber string `json:"phone_number" form:"phone_number"`
+	Password    string `json:"password" form:"password"`
+	NewPassword string `json:"newpassword" form:"newpassword"`
 }
 
 type PutResponse struct {
