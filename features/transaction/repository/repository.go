@@ -60,9 +60,8 @@ func (tq *TransactionQuery) AdminDashboard() (transaction.TransactionDashboard, 
 	// mendapatkan nilai total transaksi yang sukses
 	var transactionCount int
 	tableNameTransaction := "transaction_models"
-	columnNameTransaction := "status"
-	Status := "Success"
-	querytransaction := fmt.Sprintf("SELECT COUNT(*) AS null_count FROM %s WHERE %s = '%s'", tableNameTransaction, columnNameTransaction, Status)
+	columnNameTransaction := "created_at"
+	querytransaction := fmt.Sprintf("SELECT COUNT(*) AS null_count FROM %s WHERE %s IS NOT NULL", tableNameTransaction, columnNameTransaction)
 	err3 := tq.db.Raw(querytransaction).Scan(&transactionCount).Error
 	if err3 != nil {
 		log.Fatal(err)

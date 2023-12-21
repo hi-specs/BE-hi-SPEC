@@ -169,7 +169,7 @@ func (pq *ProductQuery) SearchProduct(name string, category string, minPrice uin
 		qry2 = qry2.Where("deleted_at IS NULL")
 	}
 
-	if err := qry2.Find(&products).Error; err != nil {
+	if err := qry2.Order("created_at DESC").Find(&products).Error; err != nil {
 		return nil, 0, err
 	}
 
@@ -198,7 +198,7 @@ func (pq *ProductQuery) SearchProduct(name string, category string, minPrice uin
 func (pq *ProductQuery) GetAllProduct(page int, limit int) ([]product.Product, int, error) {
 	var products []ProductModel
 	offset := (page - 1) * limit
-	if err := pq.db.Offset(offset).Limit(limit).Find(&products).Error; err != nil {
+	if err := pq.db.Offset(offset).Limit(limit).Order("created_at DESC").Find(&products).Error; err != nil {
 		return nil, 0, err
 	}
 	var result []product.Product
