@@ -40,12 +40,28 @@ func (ts *TransactionServices) TransactionList(page, limit int) ([]transaction.T
 
 func (ts *TransactionServices) GetTransaction(transactionID uint) (transaction.TransactionList, error) {
 	result, err := ts.repo.GetTransaction(transactionID)
-	return *result, err
+	if err != nil {
+		return transaction.TransactionList{}, err
+	}
+
+	if result == nil {
+		return transaction.TransactionList{}, errors.New("transaction not found")
+	}
+
+	return *result, nil
 }
 
 func (ts *TransactionServices) MidtransCallback(transactionID string) (transaction.TransactionList, error) {
 	result, err := ts.repo.MidtransCallback(transactionID)
-	return *result, err
+	if err != nil {
+		return transaction.TransactionList{}, err
+	}
+
+	if result == nil {
+		return transaction.TransactionList{}, errors.New("transaction not found")
+	}
+
+	return *result, nil
 }
 
 func (ts *TransactionServices) UserTransaction(userID uint) (transaction.UserTransaction, error) {
