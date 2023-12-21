@@ -1,18 +1,15 @@
 package service_test
 
 import (
+	"BE-hi-SPEC/features/product"
+	"BE-hi-SPEC/features/product/mocks"
+	"BE-hi-SPEC/features/product/service"
+	"BE-hi-SPEC/helper/jwt"
 	"errors"
 	"testing"
 
-	"BE-hi-SPEC/features/product"
-	"BE-hi-SPEC/helper/jwt"
-
-	"github.com/stretchr/testify/assert"
-
-	"BE-hi-SPEC/features/product/mocks"
-	"BE-hi-SPEC/features/product/service"
-
 	gojwt "github.com/golang-jwt/jwt/v5"
+	"github.com/stretchr/testify/assert"
 )
 
 var userID = uint(1)
@@ -188,8 +185,8 @@ func TestCariProduct(t *testing.T) {
 	t.Run("Success Case", func(t *testing.T) {
 		mockName := "MockProduct"
 		mockCategory := "Multimedia"
-		mockMinPrice := uint(100)
-		mockMaxPrice := uint(500)
+		mockMinPrice := "100"
+		mockMaxPrice := "500"
 		mockPage := 1
 		mockLimit := 10
 		mockProducts := []product.Product{
@@ -212,8 +209,8 @@ func TestCariProduct(t *testing.T) {
 	t.Run("Error Case - Repository Failure", func(t *testing.T) {
 		mockName := "MockProduct"
 		mockCategory := "Multimedia"
-		mockMinPrice := uint(100)
-		mockMaxPrice := uint(500)
+		mockMinPrice := "100"
+		mockMaxPrice := "500"
 		mockPage := 1
 		mockLimit := 10
 		repo.On("SearchProduct", mockName, mockCategory, mockMinPrice, mockMaxPrice, mockPage, mockLimit).
@@ -230,8 +227,8 @@ func TestCariProduct(t *testing.T) {
 	t.Run("Error Case - Products Not Found", func(t *testing.T) {
 		mockName := "NonExistentProduct"
 		mockCategory := "Multimedia"
-		mockMinPrice := uint(100)
-		mockMaxPrice := uint(500)
+		mockMinPrice := "100"
+		mockMaxPrice := "500"
 		mockPage := 1
 		mockLimit := 10
 		repo.On("SearchProduct", mockName, mockCategory, mockMinPrice, mockMaxPrice, mockPage, mockLimit).

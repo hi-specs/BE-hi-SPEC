@@ -208,28 +208,30 @@ func (ph *ProductHandler) UpdateProduct() echo.HandlerFunc {
 // SearchAll implements product.Handler.
 func (ph *ProductHandler) SearchAll() echo.HandlerFunc {
 	return func(c echo.Context) error {
+		minPrice := c.QueryParam("minprice")
+		maxPrice := c.QueryParam("maxprice")
 		page, err := strconv.Atoi(c.QueryParam("page"))
 		if page <= 0 {
 			page = 1
 		}
-		limit, _ := strconv.Atoi(c.QueryParam("limit"))
+		limit, err := strconv.Atoi(c.QueryParam("limit"))
 		if limit <= 0 {
 			limit = 10
 		}
-		var minPrice int
-		var maxPrice int
+		// var minPrice int
+		// var maxPrice int
 		name := c.QueryParam("name")
 		category := c.QueryParam("category")
 
-		minPrice, _ = strconv.Atoi(c.QueryParam("minprice"))
-		if minPrice <= 0 {
-			minPrice = 1
-		}
-		maxPrice, _ = strconv.Atoi(c.QueryParam("maxprice"))
+		// minPrice, _ = strconv.Atoi(c.QueryParam("minprice"))
+		// if minPrice <= 0 {
+		// 	minPrice = 1
+		// }
+		// maxPrice, _ = strconv.Atoi(c.QueryParam("maxprice"))
 
-		products, totalPage, err := ph.s.CariProduct(name, category, uint(minPrice), uint(maxPrice), page, limit)
+		products, totalPage, err := ph.s.CariProduct(name, category, minPrice, maxPrice, page, limit)
 		if err != nil {
-			return c.JSON(http.StatusInternalServerError, map[string]string{"error": "Internal Server Error"})
+			return c.JSON(http.StatusInternalServerError, map[string]string{"error": err.Error()})
 		}
 		var response []SearchResponse
 		for _, result := range products {
