@@ -79,6 +79,7 @@ type GetUser struct {
 	Avatar      string `json:"avatar"`
 	PhoneNumber string `json:"phone_number"`
 	Address     string `json:"address"`
+	Role        string `json:"role"`
 }
 type GetAllFavoriteProduct struct {
 	FavID   uint   `json:"favorite_id"`

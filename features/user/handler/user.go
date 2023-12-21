@@ -367,7 +367,7 @@ func (uc *UserController) All() echo.HandlerFunc {
 func (uc *UserController) AddFavorite() echo.HandlerFunc {
 	return func(c echo.Context) error {
 
-		productID, err := strconv.ParseUint(c.Param("id"), 10, 64)
+		productID, err := strconv.Atoi(c.Param("id"))
 		if err != nil {
 			return c.JSON(http.StatusBadRequest, map[string]interface{}{
 				"message": "Product ID tidak valid",
@@ -384,6 +384,11 @@ func (uc *UserController) AddFavorite() echo.HandlerFunc {
 			if strings.Contains(err.Error(), "terdaftar") {
 				statusCode = http.StatusBadRequest
 				message = "data yang diinputkan sudah terdaftar ada sistem"
+			}
+
+			if strings.Contains(err.Error(), "tidak memiliki izin") {
+				statusCode = http.StatusBadRequest
+				message = "tidak memiliki izin"
 			}
 
 			return c.JSON(statusCode, map[string]any{
@@ -422,13 +427,7 @@ func (uc *UserController) AddFavorite() echo.HandlerFunc {
 
 func (uc *UserController) GetUser() echo.HandlerFunc {
 	return func(c echo.Context) error {
-		userID, err := strconv.ParseUint(c.Param("id"), 10, 64)
-		if err != nil {
-			return c.JSON(http.StatusBadRequest, map[string]interface{}{
-				"message": "ID user tidak valid",
-			})
-		}
-		result, err := uc.srv.GetUser(uint(userID))
+		result, err := uc.srv.GetUser(c.Get("user").(*gojwt.Token))
 
 		if err != nil {
 			c.Logger().Error("ERROR Register, explain:", err.Error())
@@ -453,6 +452,7 @@ func (uc *UserController) GetUser() echo.HandlerFunc {
 		responses.User.Address = result.User.Address
 		responses.User.ID = result.User.ID
 		responses.User.Avatar = result.User.Avatar
+		responses.User.Role = result.User.Role
 
 		var prod []GetAllFavoriteProduct
 		for x, result := range result.Favorite {
@@ -468,7 +468,7 @@ func (uc *UserController) GetUser() echo.HandlerFunc {
 		responses.Product = prod
 
 		return c.JSON(http.StatusOK, map[string]interface{}{
-			"message": "Success Get All data User",
+			"message": "Success Get data User",
 			"data":    responses,
 		})
 
