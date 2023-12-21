@@ -4,6 +4,7 @@ import (
 	"BE-hi-SPEC/features/product"
 	"BE-hi-SPEC/helper/jwt"
 	"errors"
+	"strconv"
 
 	golangjwt "github.com/golang-jwt/jwt/v5"
 )
@@ -29,8 +30,28 @@ func (ps *ProductServices) UpdateProduct(productID uint, input product.Product) 
 }
 
 // CariProduct implements product.Service.
-func (ps *ProductServices) CariProduct(name string, category string, minPrice uint, maxPrice uint, page, limit int) ([]product.Product, int, error) {
-	products, totalPage, err := ps.repo.SearchProduct(name, category, minPrice, maxPrice, page, limit)
+func (ps *ProductServices) CariProduct(name string, category string, minPrice string, maxPrice string, page, limit int) ([]product.Product, int, error) {
+	// checking value of minPrice
+	if minPrice == "" {
+		minPrice = "0"
+	}
+	minp, err := strconv.Atoi(minPrice)
+	if minp == 0 {
+		minp = 1
+	}
+	if err != nil {
+		return []product.Product{}, 0, errors.New("MinPrice Value Must Integer")
+	}
+
+	// checking value of maxPrice
+	if maxPrice == "" {
+		maxPrice = "0"
+	}
+	maxp, err := strconv.Atoi(maxPrice)
+	if err != nil {
+		return []product.Product{}, 0, errors.New("MaxPrice Value Must Integer")
+	}
+	products, totalPage, err := ps.repo.SearchProduct(name, category, uint(minp), uint(maxp), page, limit)
 	if err != nil {
 		return nil, 0, err
 	}

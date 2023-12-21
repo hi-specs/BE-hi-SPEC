@@ -33,7 +33,7 @@ type Service interface {
 	TalkToGpt(token *jwt.Token, newProduct Product) (Product, error)
 	SemuaProduct(page, limit int) ([]Product, int, error)
 	SatuProduct(productID uint) (Product, error)
-	CariProduct(name string, category string, minPrice uint, maxPrice uint, page int, limit int) ([]Product, int, error)
+	CariProduct(name string, category string, minPrice string, maxPrice string, page int, limit int) ([]Product, int, error)
 	UpdateProduct(productID uint, input Product) (Product, error)
 	DelProduct(productID uint) error
 }
