@@ -134,11 +134,14 @@ func (us *UserService) HapusUser(token *golangjwt.Token, userID uint) error {
 	if rolesUser == "" {
 		return err
 	}
+	if rolesUser != "admin" && userId != userID {
+		return errors.New("you don't have permission to delete this user")
+	}
 	exitingUser, err := us.repo.GetUserByID(userID)
 	if err != nil {
 		return errors.New("failed to retrieve the user for deletion")
 	}
-	if exitingUser.ID != userId {
+	if exitingUser.ID != userId && rolesUser != "admin" {
 		return errors.New("you don't have permission to delete this user")
 	}
 	err = us.repo.DeleteUser(userID)

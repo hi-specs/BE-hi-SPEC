@@ -39,8 +39,8 @@ func RouteProduct(e *echo.Echo, ph product.Handler) {
 	e.GET("/products", ph.GetAll())
 	e.GET("/product/:id", ph.GetProductDetail())
 	e.GET("/product/search", ph.SearchAll())
-	e.PATCH("/product/:id", ph.UpdateProduct())
-	e.DELETE("/product/:id", ph.DelProduct())
+	e.PATCH("/product/:id", ph.UpdateProduct(), echojwt.JWT([]byte("$!1gnK3yyy!!!")))
+	e.DELETE("/product/:id", ph.DelProduct(), echojwt.JWT([]byte("$!1gnK3yyy!!!")))
 }
 
 func RouteTransaction(e *echo.Echo, th transaction.Handler) {

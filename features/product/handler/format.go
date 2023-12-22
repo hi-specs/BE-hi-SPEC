@@ -1,6 +1,7 @@
 package handler
 
 type PutProductRequest struct {
+	ID        uint   `json:"id" form:"id"`
 	Category  string `json:"category" form:"category"`
 	Name      string `json:"name" form:"name"`
 	CPU       string `json:"cpu" form:"cpu"`

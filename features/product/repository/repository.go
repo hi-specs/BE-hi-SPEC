@@ -37,9 +37,9 @@ func New(db *gorm.DB) product.Repository {
 }
 
 // UpdateProduct implements product.Repository.
-func (pq *ProductQuery) UpdateProduct(productID uint, input product.Product) (product.Product, error) {
+func (pq *ProductQuery) UpdateProduct(UserID uint, productID uint, input product.Product) (product.Product, error) {
 	var proses ProductModel
-	if err := pq.db.First(&proses, input.ID).Error; err != nil {
+	if err := pq.db.First(&proses, productID).Error; err != nil {
 		return product.Product{}, err
 	}
 
@@ -283,7 +283,7 @@ func (pq *ProductQuery) GetProductID(productID uint) (*product.Product, error) {
 	return result, nil
 }
 
-func (pq *ProductQuery) DelProduct(productID uint) error {
+func (pq *ProductQuery) DelProduct(UserID uint, productID uint) error {
 	var prod = new(ProductModel)
 	if err := pq.db.Where("id", productID).Find(&prod).Error; err != nil {
 		return err
