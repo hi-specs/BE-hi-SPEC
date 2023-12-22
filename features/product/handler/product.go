@@ -58,35 +58,35 @@ func (ph *ProductHandler) UpdateProduct() echo.HandlerFunc {
 						"message": "ID user tidak valid",
 					})
 				}
-				var inputProcess = new(product.Product)
-				inputProcess.Picture = ""
-				inputProcess.ID = uint(productID)
-				inputProcess.Category = input.Category
-				inputProcess.Name = input.Name
-				inputProcess.CPU = input.CPU
-				inputProcess.RAM = input.RAM
-				inputProcess.Display = input.Display
-				inputProcess.Storage = input.Storage
-				inputProcess.Thickness = input.Thickness
-				inputProcess.Weight = input.Weight
-				inputProcess.Bluetooth = input.Bluetooth
-				inputProcess.HDMI = input.HDMI
-				inputProcess.Price = input.Price
+				updatedProduct := product.Product{
+					ID:        input.ID,
+					Category:  input.Category,
+					Name:      input.Name,
+					CPU:       input.CPU,
+					RAM:       input.RAM,
+					Display:   input.Display,
+					Storage:   input.Storage,
+					Thickness: input.Thickness,
+					Weight:    input.Weight,
+					Bluetooth: input.Bluetooth,
+					HDMI:      input.HDMI,
+					Price:     input.Price,
+					Picture:   "",
+				}
 
-				result, err := ph.s.UpdateProduct(uint(productID), *inputProcess)
+				result, err := ph.s.UpdateProduct(c.Get("user").(*golangjwt.Token), uint(productID), updatedProduct)
 
 				if err != nil {
-					c.Logger().Error("ERROR Register, explain:", err.Error())
+					c.Logger().Error("ERROR Updating Product, explain:", err.Error())
 					var statusCode = http.StatusInternalServerError
 					var message = "terjadi permasalahan ketika memproses data"
 
-					if strings.Contains(err.Error(), "terdaftar") {
-						statusCode = http.StatusBadRequest
-						message = "data yang diinputkan sudah terdaftar ada sistem"
-					}
-					if strings.Contains(err.Error(), "yang lama") {
-						statusCode = http.StatusBadRequest
-						message = "harap masukkan password yang lama jika ingin mengganti password"
+					if strings.Contains(err.Error(), "admin role required") {
+						statusCode = http.StatusUnauthorized
+						message = "Anda tidak memiliki izin untuk mengupdate produk"
+					} else if strings.Contains(err.Error(), "product tidak ditemukan") {
+						statusCode = http.StatusNotFound
+						message = "Produk tidak ditemukan"
 					}
 
 					return c.JSON(statusCode, map[string]any{
@@ -147,35 +147,35 @@ func (ph *ProductHandler) UpdateProduct() echo.HandlerFunc {
 			}
 		}
 
-		var inputProcess = new(product.Product)
-		inputProcess.Picture = link
-		inputProcess.ID = uint(productID)
-		inputProcess.Category = input.Category
-		inputProcess.Name = input.Name
-		inputProcess.CPU = input.CPU
-		inputProcess.RAM = input.RAM
-		inputProcess.Display = input.Display
-		inputProcess.Storage = input.Storage
-		inputProcess.Thickness = input.Thickness
-		inputProcess.Weight = input.Weight
-		inputProcess.Bluetooth = input.Bluetooth
-		inputProcess.HDMI = input.HDMI
-		inputProcess.Price = input.Price
+		updatedProduct := product.Product{
+			ID:        input.ID,
+			Category:  input.Category,
+			Name:      input.Name,
+			CPU:       input.CPU,
+			RAM:       input.RAM,
+			Display:   input.Display,
+			Storage:   input.Storage,
+			Thickness: input.Thickness,
+			Weight:    input.Weight,
+			Bluetooth: input.Bluetooth,
+			HDMI:      input.HDMI,
+			Price:     input.Price,
+			Picture:   link,
+		}
 
-		result, err := ph.s.UpdateProduct(uint(productID), *inputProcess)
+		result, err := ph.s.UpdateProduct(c.Get("user").(*golangjwt.Token), uint(productID), updatedProduct)
 
 		if err != nil {
-			c.Logger().Error("ERROR Register, explain:", err.Error())
+			c.Logger().Error("ERROR Updating Product, explain:", err.Error())
 			var statusCode = http.StatusInternalServerError
 			var message = "terjadi permasalahan ketika memproses data"
 
-			if strings.Contains(err.Error(), "terdaftar") {
-				statusCode = http.StatusBadRequest
-				message = "data yang diinputkan sudah terdaftar ada sistem"
-			}
-			if strings.Contains(err.Error(), "yang lama") {
-				statusCode = http.StatusBadRequest
-				message = "harap masukkan password yang lama jika ingin mengganti password"
+			if strings.Contains(err.Error(), "admin role required") {
+				statusCode = http.StatusUnauthorized
+				message = "Anda tidak memiliki izin untuk mengupdate produk"
+			} else if strings.Contains(err.Error(), "product tidak ditemukan") {
+				statusCode = http.StatusNotFound
+				message = "Produk tidak ditemukan"
 			}
 
 			return c.JSON(statusCode, map[string]any{
@@ -424,6 +424,14 @@ func (ph *ProductHandler) Add() echo.HandlerFunc {
 				message = "data yang diinputkan sudah terdaftar ada sistem"
 			}
 
+			if strings.Contains(err.Error(), "tidak memiliki izin") {
+				statusCode = http.StatusNotFound
+				message = "product tidak ditemukan"
+			} else if strings.Contains(err.Error(), "tidak memiliki izin") {
+				statusCode = http.StatusForbidden
+				message = "Anda tidak memiliki izin untuk menghapus user ini"
+			}
+
 			return responses.PrintResponse(c, statusCode, message, nil)
 		}
 
@@ -457,11 +465,23 @@ func (ph *ProductHandler) DelProduct() echo.HandlerFunc {
 			})
 		}
 
-		errDel := ph.s.DelProduct(uint(productID))
+		errDel := ph.s.DelProduct(c.Get("user").(*golangjwt.Token), uint(productID))
 
 		if errDel != nil {
-			return c.JSON(http.StatusBadRequest, map[string]any{
-				"message": "product tidak ditemukan",
+			c.Logger().Error("ERROR Deleting Product, explain:", errDel.Error())
+			var statusCode = http.StatusInternalServerError
+			var message = "terjadi permasalahan ketika memproses data"
+
+			if strings.Contains(errDel.Error(), "admin role required") {
+				statusCode = http.StatusUnauthorized
+				message = "Anda tidak memiliki izin untuk menghapus produk"
+			} else if strings.Contains(errDel.Error(), "product tidak ditemukan") {
+				statusCode = http.StatusNotFound
+				message = "Produk tidak ditemukan"
+			}
+
+			return c.JSON(statusCode, map[string]interface{}{
+				"message": message,
 			})
 		}
 		return c.JSON(http.StatusOK, map[string]any{

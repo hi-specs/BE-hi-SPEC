@@ -20,8 +20,18 @@ func New(r product.Repository) product.Service {
 }
 
 // UpdateProduct implements product.Service.
-func (ps *ProductServices) UpdateProduct(productID uint, input product.Product) (product.Product, error) {
-	result, err := ps.repo.UpdateProduct(productID, input)
+func (ps *ProductServices) UpdateProduct(token *golangjwt.Token, productID uint, input product.Product) (product.Product, error) {
+	userId, rolesUser, err := jwt.ExtractToken(token)
+	if err != nil {
+		return product.Product{}, err
+	}
+	if rolesUser == "" {
+		return product.Product{}, err
+	}
+	if rolesUser != "admin" {
+		return product.Product{}, errors.New("unauthorized access: admin role required")
+	}
+	result, err := ps.repo.UpdateProduct(userId, productID, input)
 	if err != nil {
 		return product.Product{}, errors.New("failed to update the product")
 	}
@@ -73,8 +83,11 @@ func (ps *ProductServices) TalkToGpt(token *golangjwt.Token, newProduct product.
 	if err != nil {
 		return product.Product{}, err
 	}
-	if rolesUser != "" {
+	if rolesUser == "" {
 		return product.Product{}, err
+	}
+	if rolesUser != "admin" {
+		return product.Product{}, errors.New("unauthorized access: admin role required")
 	}
 
 	if err != nil {
@@ -95,7 +108,14 @@ func (ps *ProductServices) SemuaProduct(page int, limit int) ([]product.Product,
 	return result, totalPage, err
 }
 
-func (ps *ProductServices) DelProduct(productID uint) error {
-	err := ps.repo.DelProduct(productID)
+func (ps *ProductServices) DelProduct(token *golangjwt.Token, productID uint) error {
+	userId, rolesUser, err := jwt.ExtractToken(token)
+	if err != nil {
+		return err
+	}
+	if rolesUser != "admin" {
+		return errors.New("unauthorized access: admin role required")
+	}
+	err = ps.repo.DelProduct(userId, productID)
 	return err
 }
