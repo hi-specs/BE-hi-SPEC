@@ -34,15 +34,15 @@ type Service interface {
 	SemuaProduct(page, limit int) ([]Product, int, error)
 	SatuProduct(productID uint) (Product, error)
 	CariProduct(name string, category string, minPrice string, maxPrice string, page int, limit int) ([]Product, int, error)
-	UpdateProduct(productID uint, input Product) (Product, error)
-	DelProduct(productID uint) error
+	UpdateProduct(token *jwt.Token, productID uint, input Product) (Product, error)
+	DelProduct(token *jwt.Token, productID uint) error
 }
 
 type Repository interface {
 	InsertProduct(UserID uint, newProduct Product) (Product, error)
 	GetAllProduct(page, limit int) ([]Product, int, error)
 	GetProductID(productID uint) (*Product, error)
-	UpdateProduct(productID uint, input Product) (Product, error)
+	UpdateProduct(UserID uint, productID uint, input Product) (Product, error)
 	SearchProduct(name string, category string, minPrice uint, maxPrice uint, page int, limit int) ([]Product, int, error)
-	DelProduct(productID uint) error
+	DelProduct(UserID uint, productID uint) error
 }
