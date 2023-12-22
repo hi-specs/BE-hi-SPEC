@@ -157,12 +157,23 @@ func (th *TransactionHandler) GetTransaction() echo.HandlerFunc {
 				"message": "ID user tidak valid",
 			})
 		}
-		result, err := th.s.GetTransaction(uint(transactionID))
+		result, err := th.s.GetTransaction(c.Get("user").(*golangjwt.Token), uint(transactionID))
 
 		if err != nil {
-			c.Logger().Error("Error fetching product: ", err.Error())
-			return c.JSON(http.StatusInternalServerError, map[string]interface{}{
-				"message": "Failed to retrieve product data",
+			c.Logger().Error("ERROR Get User Transaction, explain:", err.Error())
+			var statusCode = http.StatusInternalServerError
+			var message = "terjadi permasalahan ketika melihat data ini"
+
+			if strings.Contains(err.Error(), "tidak ditemukan") {
+				statusCode = http.StatusNotFound
+				message = "user tidak ditemukan"
+			} else if strings.Contains(err.Error(), "admin role required") {
+				statusCode = http.StatusForbidden
+				message = "Anda tidak memiliki izin untuk melihat data ini"
+			}
+
+			return c.JSON(statusCode, map[string]interface{}{
+				"message": message,
 			})
 		}
 
@@ -200,7 +211,7 @@ func (th *TransactionHandler) UserTransaction() echo.HandlerFunc {
 				"message": "ID user tidak valid",
 			})
 		}
-		result, err := th.s.UserTransaction(uint(userID))
+		result, err := th.s.UserTransaction(c.Get("user").(*golangjwt.Token), uint(userID))
 
 		if err != nil {
 			c.Logger().Error("ERROR Register, explain:", err.Error())
@@ -210,6 +221,9 @@ func (th *TransactionHandler) UserTransaction() echo.HandlerFunc {
 			if strings.Contains(err.Error(), "terdaftar") {
 				statusCode = http.StatusBadRequest
 				message = "data yang diinputkan sudah terdaftar ada sistem"
+			} else if strings.Contains(err.Error(), "admin role required") {
+				statusCode = http.StatusForbidden
+				message = "Anda tidak memiliki izin untuk melihat data ini"
 			}
 
 			return c.JSON(statusCode, map[string]any{

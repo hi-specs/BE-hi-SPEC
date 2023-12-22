@@ -186,7 +186,7 @@ func (tq *TransactionQuery) TransactionList(page, limit int) ([]transaction.Tran
 	return result, totalPage, err
 }
 
-func (tq *TransactionQuery) GetTransaction(transactionID uint) (*transaction.TransactionList, error) {
+func (tq *TransactionQuery) GetTransaction(userID uint, transactionID uint) (*transaction.TransactionList, error) {
 	var tm TransactionModel
 	if err := tq.db.First(&tm, transactionID).Error; err != nil {
 		return nil, err
@@ -247,7 +247,7 @@ func (tq *TransactionQuery) MidtransCallback(transactionID string) (*transaction
 	return result, nil
 }
 
-func (tq *TransactionQuery) UserTransaction(userID uint) (transaction.UserTransaction, error) {
+func (tq *TransactionQuery) UserTransaction(userId int, userID uint) (transaction.UserTransaction, error) {
 	var tl []transaction.Transaction
 	var pl []product.Product
 	var user user.User

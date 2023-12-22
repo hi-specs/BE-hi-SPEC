@@ -38,7 +38,7 @@ func (ts *TransactionServices) Checkout(token *golangjwt.Token, ProductID int, T
 	if err != nil {
 		return transaction.Transaction{}, errors.New("user does not exist")
 	}
-	if rolesUser != "" {
+	if rolesUser == "" {
 		return transaction.Transaction{}, err
 	}
 	result, err := ts.repo.Checkout(userID, int(ProductID), TotalPrice)
@@ -54,8 +54,15 @@ func (ts *TransactionServices) TransactionList(token *golangjwt.Token, page, lim
 	return result, totalPage, err
 }
 
-func (ts *TransactionServices) GetTransaction(transactionID uint) (transaction.TransactionList, error) {
-	result, err := ts.repo.GetTransaction(transactionID)
+func (ts *TransactionServices) GetTransaction(token *golangjwt.Token, transactionID uint) (transaction.TransactionList, error) {
+	userId, rolesUser, err := jwt.ExtractToken(token)
+	if err != nil {
+		return transaction.TransactionList{}, errors.New("user does not exist")
+	}
+	if rolesUser != "admin" {
+		return transaction.TransactionList{}, errors.New("unauthorized access: admin role required")
+	}
+	result, err := ts.repo.GetTransaction(userId, transactionID)
 	if err != nil {
 		return transaction.TransactionList{}, err
 	}
@@ -80,8 +87,15 @@ func (ts *TransactionServices) MidtransCallback(transactionID string) (transacti
 	return *result, nil
 }
 
-func (ts *TransactionServices) UserTransaction(userID uint) (transaction.UserTransaction, error) {
-	result, err := ts.repo.UserTransaction(userID)
+func (ts *TransactionServices) UserTransaction(token *golangjwt.Token, userID uint) (transaction.UserTransaction, error) {
+	userId, rolesUser, err := jwt.ExtractToken(token)
+	if err != nil {
+		return transaction.UserTransaction{}, errors.New("user does not exist")
+	}
+	if rolesUser != "admin" {
+		return transaction.UserTransaction{}, errors.New("unauthorized access: admin role required")
+	}
+	result, err := ts.repo.UserTransaction(int(userId), userID)
 	return result, err
 }
 
