@@ -44,7 +44,7 @@ func RouteProduct(e *echo.Echo, ph product.Handler) {
 }
 
 func RouteTransaction(e *echo.Echo, th transaction.Handler) {
-	e.GET("/dashboard", th.AdminDashboard())
+	e.GET("/dashboard", th.AdminDashboard(), echojwt.JWT([]byte("$!1gnK3yyy!!!")))
 	e.POST("/transaction", th.Checkout(), echojwt.JWT([]byte("$!1gnK3yyy!!!")))
 	e.GET("/transactions", th.TransactionList())
 	e.GET("/transaction/:id", th.GetTransaction())

@@ -38,7 +38,7 @@ func New(db *gorm.DB) transaction.Repository {
 	}
 }
 
-func (tq *TransactionQuery) AdminDashboard() (transaction.TransactionDashboard, error) {
+func (tq *TransactionQuery) AdminDashboard(userID uint, page int, limit int) (transaction.TransactionDashboard, int, error) {
 	// mendapatkan nilai total product
 	var productCount int
 	tableName := "product_models"
@@ -70,8 +70,9 @@ func (tq *TransactionQuery) AdminDashboard() (transaction.TransactionDashboard, 
 	}
 
 	var products []pr.ProductModel
-	if err4 := tq.db.Find(&products).Error; err != nil {
-		return transaction.TransactionDashboard{}, err4
+	offset := (page - 1) * limit
+	if err := tq.db.Table("product_models").Offset(offset).Limit(limit).Find(&products).Error; err != nil {
+		return transaction.TransactionDashboard{}, 0, err
 	}
 	var prod []p.Product
 	for _, s := range products {
@@ -91,7 +92,23 @@ func (tq *TransactionQuery) AdminDashboard() (transaction.TransactionDashboard, 
 	result.TotalTransaction = transactionCount
 	result.Product = prod
 
-	return *result, err
+	var totalPage int
+	tableName2 := "transaction_models"
+	columnName2 := "deleted_at"
+	queryuser2 := fmt.Sprintf("SELECT COUNT(*) AS null_count FROM %s WHERE %s IS NULL", tableName2, columnName2)
+	err5 := tq.db.Raw(queryuser2).Scan(&totalPage).Error
+	if err != nil {
+		log.Fatal(err5)
+	}
+
+	if totalPage%limit == 0 {
+		totalPage = totalPage / limit
+	} else {
+		totalPage = totalPage / limit
+		totalPage++
+	}
+
+	return *result, totalPage, err
 }
 
 func (tq *TransactionQuery) Checkout(userID uint, ProductID int, TotalPrice int) (transaction.Transaction, error) {
