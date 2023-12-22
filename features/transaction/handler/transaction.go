@@ -34,12 +34,11 @@ func New(s transaction.Service, cld *cloudinary.Cloudinary, ctx context.Context,
 
 func (th *TransactionHandler) AdminDashboard() echo.HandlerFunc {
 	return func(c echo.Context) error {
-		result, err := th.s.AdminDashboard()
+		result, err := th.s.AdminDashboard(c.Get("user").(*gojwt.Token))
 
 		if err != nil {
-			c.Logger().Error("Error fetching product: ", err.Error())
-			return c.JSON(http.StatusInternalServerError, map[string]interface{}{
-				"message": "Failed to retrieve product data",
+			return c.JSON(http.StatusUnauthorized, map[string]any{
+				"message": err.Error(),
 			})
 		}
 
@@ -116,11 +115,10 @@ func (th *TransactionHandler) TransactionList() echo.HandlerFunc {
 		if limit <= 0 {
 			limit = 10
 		}
-		result, totalPage, err := th.s.TransactionList(page, limit)
+		result, totalPage, err := th.s.TransactionList(c.Get("user").(*gojwt.Token), page, limit)
 		if err != nil {
-			c.Logger().Error("Error fetching transaction: ", err.Error())
-			return c.JSON(http.StatusInternalServerError, map[string]interface{}{
-				"message": "Failed to retrieve product data",
+			return c.JSON(http.StatusUnauthorized, map[string]any{
+				"message": err.Error(),
 			})
 		}
 
