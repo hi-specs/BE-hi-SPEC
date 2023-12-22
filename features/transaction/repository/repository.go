@@ -6,6 +6,8 @@ import (
 	pr "BE-hi-SPEC/features/product/repository"
 	"BE-hi-SPEC/features/transaction"
 	"BE-hi-SPEC/features/user"
+	ur "BE-hi-SPEC/features/user/repository"
+	"BE-hi-SPEC/helper/gofpdf"
 	"BE-hi-SPEC/helper/midtrans"
 	"errors"
 	"fmt"
@@ -259,4 +261,37 @@ func (tq *TransactionQuery) UserTransaction(userID uint) (transaction.UserTransa
 	result.Transaction = tl
 
 	return result, nil
+}
+
+func (tq *TransactionQuery) DownloadTransaction(userID uint, transactionID uint) error {
+	var trans TransactionModel
+	var user ur.UserModel
+	var prod pr.ProductModel
+	// get transaction detail
+	if err := tq.db.Table("transaction_models").Where("id = ?", transactionID).Find(&trans).Error; err != nil {
+		return err
+	}
+
+	// get product detail
+	if err := tq.db.Table("product_models").Where("id = ?", trans.ProductID).Find(&prod).Error; err != nil {
+		return err
+	}
+
+	// get user detail
+	if err := tq.db.Table("user_models").Where("id = ?", trans.UserID).Find(&user).Error; err != nil {
+		return err
+	}
+
+	if userID != trans.UserID {
+		return errors.New("no authorized")
+	}
+	fmt.Println(trans, user, prod)
+	// Convert TransactionModel to gofpdf.TM
+	// tm := gofpdf.TM(trans)
+	// um := gofpdf.UM(user)
+	// pm := gofpdf.PM(prod)
+	gofpdf.GeneratePDF(gofpdf.TM(trans), gofpdf.PM(prod), gofpdf.UM(user))
+	fmt.Println(trans)
+
+	return nil
 }

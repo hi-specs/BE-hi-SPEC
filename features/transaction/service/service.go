@@ -70,3 +70,15 @@ func (ts *TransactionServices) UserTransaction(userID uint) (transaction.UserTra
 	result, err := ts.repo.UserTransaction(userID)
 	return result, err
 }
+
+func (ts *TransactionServices) DownloadTransaction(token *golangjwt.Token, transactionID uint) error {
+	userID, _, err := jwt.ExtractToken(token)
+	if err != nil {
+		return err
+	}
+	err2 := ts.repo.DownloadTransaction(userID, transactionID)
+	if err2 != nil {
+		return err2
+	}
+	return nil
+}
