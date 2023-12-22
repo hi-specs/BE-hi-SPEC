@@ -133,7 +133,7 @@ func (th *TransactionHandler) TransactionList() echo.HandlerFunc {
 		if limit <= 0 {
 			limit = 10
 		}
-		result, totalPage, err := th.s.TransactionList(c.Get("user").(*gojwt.Token), page, limit)
+		result, totalPage, err := th.s.TransactionList(c.Get("user").(*golangjwt.Token), page, limit)
 		if err != nil {
 			return c.JSON(http.StatusUnauthorized, map[string]any{
 				"message": err.Error(),
