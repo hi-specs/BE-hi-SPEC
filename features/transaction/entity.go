@@ -54,7 +54,7 @@ type Handler interface {
 }
 
 type Repository interface {
-	AdminDashboard() (TransactionDashboard, error)
+	AdminDashboard(userID uint, page int, limit int) (TransactionDashboard, int, error)
 	Checkout(userID uint, ProductID int, ProductPrice int) (Transaction, error)
 	TransactionList(page, limit int) ([]TransactionList, int, error)
 	GetTransaction(transactionID uint) (*TransactionList, error)
@@ -64,7 +64,7 @@ type Repository interface {
 }
 
 type Service interface {
-	AdminDashboard(token *jwt.Token) (TransactionDashboard, error)
+	AdminDashboard(token *jwt.Token, page int, limit int) (TransactionDashboard, int, error)
 	Checkout(token *jwt.Token, ProductID int, ProductPrice int) (Transaction, error)
 	TransactionList(token *jwt.Token, page, limit int) ([]TransactionList, int, error)
 	GetTransaction(transactionID uint) (TransactionList, error)

@@ -11,7 +11,7 @@ import (
 	"strings"
 
 	"github.com/cloudinary/cloudinary-go/v2"
-	gojwt "github.com/golang-jwt/jwt/v5"
+	golangjwt "github.com/golang-jwt/jwt/v5"
 	"github.com/labstack/echo/v4"
 )
 
@@ -34,11 +34,28 @@ func New(s transaction.Service, cld *cloudinary.Cloudinary, ctx context.Context,
 
 func (th *TransactionHandler) AdminDashboard() echo.HandlerFunc {
 	return func(c echo.Context) error {
-		result, err := th.s.AdminDashboard(c.Get("user").(*gojwt.Token))
+		page, err := strconv.Atoi(c.QueryParam("page"))
+		if page <= 0 {
+			page = 1
+		}
+		limit, _ := strconv.Atoi(c.QueryParam("limit"))
+		if limit <= 0 {
+			limit = 10
+		}
+		result, totalPage, err := th.s.AdminDashboard(c.Get("user").(*golangjwt.Token), page, limit)
 
 		if err != nil {
-			return c.JSON(http.StatusUnauthorized, map[string]any{
-				"message": err.Error(),
+			c.Logger().Error("ERROR Fetch Transaction Dashboard, explain:", err.Error())
+			var statusCode = http.StatusInternalServerError
+			var message = "terjadi permasalahan ketika memproses data"
+
+			if strings.Contains(err.Error(), "admin role required") {
+				statusCode = http.StatusUnauthorized
+				message = "Anda tidak memiliki izin untuk mengakses halaman ini"
+			}
+
+			return c.JSON(statusCode, map[string]interface{}{
+				"message": message,
 			})
 		}
 
@@ -60,8 +77,9 @@ func (th *TransactionHandler) AdminDashboard() echo.HandlerFunc {
 		response.Product = responses
 
 		return c.JSON(http.StatusOK, map[string]interface{}{
-			"message": "Success fetching all data for transaction dashboard",
-			"data":    response,
+			"message":    "Success fetching all data for transaction dashboard",
+			"data":       response,
+			"pagination": map[string]interface{}{"page": page, "limit": limit, "total_page": totalPage},
 		})
 	}
 }
@@ -75,7 +93,7 @@ func (th *TransactionHandler) Checkout() echo.HandlerFunc {
 			})
 		}
 
-		result, err := th.s.Checkout(c.Get("user").(*gojwt.Token), input.ProductID, input.TotalPrice)
+		result, err := th.s.Checkout(c.Get("user").(*golangjwt.Token), input.ProductID, input.TotalPrice)
 
 		if err != nil {
 			c.Logger().Error("terjadi kesalahan", err.Error())
@@ -255,7 +273,7 @@ func (th *TransactionHandler) DownloadTransaction() echo.HandlerFunc {
 			})
 		}
 
-		err2 := th.s.DownloadTransaction(c.Get("user").(*gojwt.Token), uint(transactionID))
+		err2 := th.s.DownloadTransaction(c.Get("user").(*golangjwt.Token), uint(transactionID))
 		if err2 != nil {
 
 			return c.JSON(http.StatusBadRequest, map[string]any{

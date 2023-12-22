@@ -18,13 +18,19 @@ func New(r transaction.Repository) transaction.Service {
 	}
 }
 
-func (ts *TransactionServices) AdminDashboard(token *golangjwt.Token) (transaction.TransactionDashboard, error) {
-	_, rolesUser, err := jwt.ExtractToken(token)
-	if rolesUser != "admin" {
-		return transaction.TransactionDashboard{}, errors.New("you are not authorized")
+func (ts *TransactionServices) AdminDashboard(token *golangjwt.Token, page int, limit int) (transaction.TransactionDashboard, int, error) {
+	userId, rolesUser, err := jwt.ExtractToken(token)
+	if err != nil {
+		return transaction.TransactionDashboard{}, 0, err
 	}
-	result, err := ts.repo.AdminDashboard()
-	return result, err
+	if rolesUser != "admin" {
+		return transaction.TransactionDashboard{}, 0, errors.New("unauthorized access: admin role required")
+	}
+	result, totalPage, err := ts.repo.AdminDashboard(userId, page, limit)
+	if err != nil {
+		return transaction.TransactionDashboard{}, 0, errors.New("failed get all product")
+	}
+	return result, totalPage, err
 }
 
 func (ts *TransactionServices) Checkout(token *golangjwt.Token, ProductID int, TotalPrice int) (transaction.Transaction, error) {
