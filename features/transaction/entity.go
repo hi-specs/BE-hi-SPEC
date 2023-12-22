@@ -50,6 +50,7 @@ type Handler interface {
 	GetTransaction() echo.HandlerFunc
 	MidtransCallback() echo.HandlerFunc
 	UserTransaction() echo.HandlerFunc
+	DownloadTransaction() echo.HandlerFunc
 }
 
 type Repository interface {
@@ -59,6 +60,7 @@ type Repository interface {
 	GetTransaction(transactionID uint) (*TransactionList, error)
 	MidtransCallback(transactionID string) (*TransactionList, error)
 	UserTransaction(userID uint) (UserTransaction, error)
+	DownloadTransaction(userID, transactionID uint) error
 }
 
 type Service interface {
@@ -68,4 +70,5 @@ type Service interface {
 	GetTransaction(transactionID uint) (TransactionList, error)
 	MidtransCallback(transactionID string) (TransactionList, error)
 	UserTransaction(userID uint) (UserTransaction, error)
+	DownloadTransaction(token *jwt.Token, transactionID uint) error
 }

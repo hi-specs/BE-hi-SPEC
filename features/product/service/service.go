@@ -73,7 +73,7 @@ func (ps *ProductServices) TalkToGpt(token *golangjwt.Token, newProduct product.
 	if err != nil {
 		return product.Product{}, err
 	}
-	if rolesUser != "" {
+	if rolesUser != "admin" {
 		return product.Product{}, err
 	}
 

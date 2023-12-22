@@ -245,3 +245,29 @@ func (th *TransactionHandler) UserTransaction() echo.HandlerFunc {
 		})
 	}
 }
+
+func (th *TransactionHandler) DownloadTransaction() echo.HandlerFunc {
+	return func(c echo.Context) error {
+		transactionID, err := strconv.ParseUint(c.Param("id"), 10, 64)
+
+		if err != nil {
+			return c.JSON(http.StatusBadRequest, map[string]interface{}{
+				"message": "ID user tidak valid",
+				"data":    err,
+			})
+		}
+
+		err2 := th.s.DownloadTransaction(c.Get("user").(*gojwt.Token), uint(transactionID))
+		if err2 != nil {
+
+			return c.JSON(http.StatusBadRequest, map[string]any{
+				"message": err2.Error(),
+			})
+		}
+
+		c.Attachment("helper/gofpdf/invoice.pdf", "invoice.pdf")
+		return c.JSON(http.StatusOK, map[string]any{
+			"message": "Download Transaction Successful",
+		})
+	}
+}
