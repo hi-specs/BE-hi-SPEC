@@ -45,7 +45,11 @@ func (ts *TransactionServices) Checkout(token *golangjwt.Token, ProductID int, T
 	return result, err
 }
 
-func (ts *TransactionServices) TransactionList(page, limit int) ([]transaction.TransactionList, int, error) {
+func (ts *TransactionServices) TransactionList(token *golangjwt.Token, page, limit int) ([]transaction.TransactionList, int, error) {
+	_, rolesUser, err := jwt.ExtractToken(token)
+	if rolesUser != "admin" {
+		return []transaction.TransactionList{}, 0, errors.New("you are not authorized")
+	}
 	result, totalPage, err := ts.repo.TransactionList(page, limit)
 	return result, totalPage, err
 }

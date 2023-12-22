@@ -133,11 +133,10 @@ func (th *TransactionHandler) TransactionList() echo.HandlerFunc {
 		if limit <= 0 {
 			limit = 10
 		}
-		result, totalPage, err := th.s.TransactionList(page, limit)
+		result, totalPage, err := th.s.TransactionList(c.Get("user").(*gojwt.Token), page, limit)
 		if err != nil {
-			c.Logger().Error("Error fetching transaction: ", err.Error())
-			return c.JSON(http.StatusInternalServerError, map[string]interface{}{
-				"message": "Failed to retrieve product data",
+			return c.JSON(http.StatusUnauthorized, map[string]any{
+				"message": err.Error(),
 			})
 		}
 

@@ -66,7 +66,7 @@ type Repository interface {
 type Service interface {
 	AdminDashboard(token *jwt.Token, page int, limit int) (TransactionDashboard, int, error)
 	Checkout(token *jwt.Token, ProductID int, ProductPrice int) (Transaction, error)
-	TransactionList(page, limit int) ([]TransactionList, int, error)
+	TransactionList(token *jwt.Token, page, limit int) ([]TransactionList, int, error)
 	GetTransaction(transactionID uint) (TransactionList, error)
 	MidtransCallback(transactionID string) (TransactionList, error)
 	UserTransaction(userID uint) (UserTransaction, error)
