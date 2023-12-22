@@ -18,7 +18,11 @@ func New(r transaction.Repository) transaction.Service {
 	}
 }
 
-func (ts *TransactionServices) AdminDashboard() (transaction.TransactionDashboard, error) {
+func (ts *TransactionServices) AdminDashboard(token *golangjwt.Token) (transaction.TransactionDashboard, error) {
+	_, rolesUser, err := jwt.ExtractToken(token)
+	if rolesUser != "admin" {
+		return transaction.TransactionDashboard{}, errors.New("you are not authorized")
+	}
 	result, err := ts.repo.AdminDashboard()
 	return result, err
 }
@@ -35,7 +39,11 @@ func (ts *TransactionServices) Checkout(token *golangjwt.Token, ProductID int, T
 	return result, err
 }
 
-func (ts *TransactionServices) TransactionList(page, limit int) ([]transaction.TransactionList, int, error) {
+func (ts *TransactionServices) TransactionList(token *golangjwt.Token, page, limit int) ([]transaction.TransactionList, int, error) {
+	_, rolesUser, err := jwt.ExtractToken(token)
+	if rolesUser != "admin" {
+		return []transaction.TransactionList{}, 0, errors.New("you are not authorized")
+	}
 	result, totalPage, err := ts.repo.TransactionList(page, limit)
 	return result, totalPage, err
 }

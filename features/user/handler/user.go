@@ -328,7 +328,7 @@ func (uc *UserController) All() echo.HandlerFunc {
 		AllUser, totalPage, err := uc.srv.GetAllUser(c.Get("user").(*gojwt.Token), page, limit)
 		if err != nil {
 			c.Logger().Error("ERROR SEARCH, explain:", err.Error())
-			var statusCode = http.StatusInternalServerError
+			var statusCode = http.StatusUnauthorized
 			var message = "Tidak memiliki izin untuk mengakses halaman ini"
 
 			if strings.Contains(err.Error(), "tidak memiliki izin") {
