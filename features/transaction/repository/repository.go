@@ -27,6 +27,7 @@ type TransactionModel struct {
 	Status     string
 	Token      string
 	Url        string
+	Pdf        string
 }
 
 type TransactionQuery struct {
@@ -337,6 +338,7 @@ func (tq *TransactionQuery) DownloadTransaction(userID uint, transactionID uint)
 	if userID != trans.UserID {
 		return errors.New("no authorized")
 	}
+
 	fmt.Println(trans, user, prod)
 	// Convert TransactionModel to gofpdf.TM
 	// tm := gofpdf.TM(trans)
@@ -344,6 +346,25 @@ func (tq *TransactionQuery) DownloadTransaction(userID uint, transactionID uint)
 	// pm := gofpdf.PM(prod)
 	gofpdf.GeneratePDF(gofpdf.TM(trans), gofpdf.PM(prod), gofpdf.UM(user))
 	fmt.Println(trans)
+
+	return nil
+}
+
+func (tq *TransactionQuery) UpdatePdfTransaction(link string, transactionID uint) error {
+	var trans TransactionModel
+
+	// get transaction detail
+	if err := tq.db.Table("transaction_models").Where("id = ?", transactionID).Find(&trans).Error; err != nil {
+		return err
+	}
+
+	// input pdf link to struct
+	trans.Pdf = link
+
+	// save transaction to database
+	if err2 := tq.db.Save(&trans).Error; err2 != nil {
+		return err2
+	}
 
 	return nil
 }

@@ -19,6 +19,7 @@ type TM struct {
 	Status     string
 	Token      string
 	Url        string
+	Pdf        string
 }
 type PM struct {
 	gorm.Model
@@ -57,7 +58,7 @@ func GeneratePDF(tm TM, pm PM, um UM) {
 	pdf.SetFont("Arial", "", 30)
 	pdf.Cell(180, 10, fmt.Sprintln("hi-SPEC"))
 	pdf.SetFont("Arial", "", 11)
-	pdf.Image("helper/gofpdf/hispec.png", 70, 10, 0, 0, false, "", 0, "")
+	pdf.Image("helper/gofpdf/hispec.png", 10, 24, 0, 0, false, "", 0, "")
 	pdf.SetX(-20)
 	pdf.Cell(0, 10, fmt.Sprint("INVOICE"))
 	pdf.Ln(3)

@@ -91,10 +91,11 @@ func (pq *ProductQuery) UpdateProduct(UserID uint, productID uint, input product
 	if input.Picture != "" {
 		proses.Picture = input.Picture
 	}
-	if err := pq.db.Save(&proses).Error; err != nil {
 
+	if err := pq.db.Save(&proses).Error; err != nil {
 		return product.Product{}, err
 	}
+
 	result := product.Product{
 		ID:        proses.ID,
 		Category:  proses.Category,
