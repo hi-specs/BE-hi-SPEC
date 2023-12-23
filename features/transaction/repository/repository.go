@@ -6,6 +6,7 @@ import (
 	pr "BE-hi-SPEC/features/product/repository"
 	"BE-hi-SPEC/features/transaction"
 	"BE-hi-SPEC/features/user"
+	"BE-hi-SPEC/features/user/repository"
 	ur "BE-hi-SPEC/features/user/repository"
 	"BE-hi-SPEC/helper/gofpdf"
 	"BE-hi-SPEC/helper/midtrans"
@@ -147,11 +148,42 @@ func (tq *TransactionQuery) Checkout(userID uint, ProductID int, TotalPrice int)
 
 func (tq *TransactionQuery) TransactionList(page, limit int) ([]transaction.TransactionList, int, error) {
 	var tm []TransactionModel
+	var result []transaction.TransactionList
 	offset := (page - 1) * limit
 	if err := tq.db.Offset(offset).Limit(limit).Order("created_at DESC").Find(&tm).Error; err != nil {
 		return nil, 0, err
 	}
-	var result []transaction.TransactionList
+
+	// get list of user ID
+	var userID []int
+	for _, result := range tm {
+		userID = append(userID, int(result.UserID))
+	}
+
+	// get list of user
+	var User []ur.UserModel
+	for _, result := range userID {
+		tmp := new(repository.UserModel)
+		tq.db.Table("user_models").Where("id = ?", result).Find(&tmp)
+		User = append(User, *tmp)
+	}
+
+	// get list of product ID
+	var productID []int
+	for _, result := range tm {
+		productID = append(productID, int(result.ProductID))
+	}
+
+	// get list of product
+	var Product []pr.ProductModel
+	for _, result := range productID {
+		tmp := new(pr.ProductModel)
+		tq.db.Table("product_models").Where("id = ?", result).Find(&tmp)
+		Product = append(Product, *tmp)
+	}
+
+	// slicing data that we have, into the struct for return
+
 	for _, resp := range tm {
 		results := transaction.TransactionList{
 			TransactionID: int(resp.ID),
@@ -162,10 +194,13 @@ func (tq *TransactionQuery) TransactionList(page, limit int) ([]transaction.Tran
 			Token:         resp.Token,
 			Url:           resp.Url,
 			Nota:          resp.Nota,
+			Users:         User,
+			Products:      Product,
 		}
 		result = append(result, results)
 	}
 
+	// fmt.Println(len(tm), len(User))
 	// mendapatkan nilai total transaction
 	var totalPage int
 	tableNameUser := "transaction_models"

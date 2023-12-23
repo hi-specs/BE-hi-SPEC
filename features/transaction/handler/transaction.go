@@ -2,8 +2,10 @@ package handler
 
 import (
 	"BE-hi-SPEC/features/product"
+	pr "BE-hi-SPEC/features/product/repository"
 	"BE-hi-SPEC/features/transaction"
 	"BE-hi-SPEC/features/user/handler"
+	"BE-hi-SPEC/features/user/repository"
 	"BE-hi-SPEC/helper/responses"
 	"context"
 	"net/http"
@@ -140,10 +142,66 @@ func (th *TransactionHandler) TransactionList() echo.HandlerFunc {
 			})
 		}
 
+		// slicing data user
+		var User []repository.UserModel
+		var UserName []string
+		var UserPicture []string
+		for _, result := range result {
+			User = append(User, result.Users...)
+		}
+		for _, result := range User {
+			UserName = append(UserName, result.Name)
+			UserPicture = append(UserPicture, result.Avatar)
+		}
+
+		// slicing data product
+		var Product []pr.ProductModel
+		var ProductName []string
+		var ProductPicture []string
+
+		for _, result := range result {
+			Product = append(Product, result.Products...)
+		}
+
+		for _, result := range Product {
+			ProductName = append(ProductName, result.Name)
+			ProductPicture = append(ProductPicture, result.Picture)
+		}
+
+		// slicing data transaction
+		var Transaction []TransactionList
+		for _, result := range result {
+			Transaction = append(Transaction, TransactionList{
+				TransactionID: result.TransactionID,
+				Nota:          result.Nota,
+				ProductID:     result.ProductID,
+				TotalPrice:    result.TotalPrice,
+				Status:        result.Status,
+				Timestamp:     result.Timestamp,
+				Token:         result.Token,
+				Url:           result.Url,
+			})
+		}
+
+		// slicing data to response
+		var responses []TransactionsResponse
+		for x, result := range result {
+			responses = append(responses, TransactionsResponse{
+				UserPicture:    UserPicture[x],
+				UserName:       UserName[x],
+				NameProduct:    ProductName[x],
+				PictureProduct: ProductPicture[x],
+				Nota:           result.Nota,
+				TotalPrice:     uint(result.TotalPrice),
+				Timestamp:      result.Timestamp,
+				Status:         result.Status,
+			})
+		}
+
 		return c.JSON(http.StatusOK, map[string]interface{}{
-			"message":    "Get All Transaction Successful",
-			"data":       result,
-			"pagination": map[string]interface{}{"page": page, "limit": limit, "total_page": totalPage},
+			"message":      "Get All Transaction Successful",
+			"transactions": responses,
+			"pagination":   map[string]interface{}{"page": page, "limit": limit, "total_page": totalPage},
 		})
 
 	}
