@@ -235,7 +235,7 @@ func (uq *UserQuery) GetUser(userID uint) (user.Favorite, error) {
 	uq.db.Table("user_models").Where("id = ?", userID).Find(&User)
 
 	var FavList []uint
-	uq.db.Table("favorite_models").Where("user_id = ? AND deleted_at IS NULL", userID).Select("product_id").Find(&FavList)
+	uq.db.Table("favorite_models").Where("user_id = ? AND deleted_at IS NULL", userID).Select("product_id").Order("created_at DESC").Find(&FavList)
 	var Favorite []product.Product
 
 	for _, fav := range FavList {
@@ -245,12 +245,32 @@ func (uq *UserQuery) GetUser(userID uint) (user.Favorite, error) {
 	}
 
 	var FavID []uint
-	uq.db.Table("favorite_models").Where("user_id = ? AND deleted_at IS NULL", userID).Select("id").Find(&FavID)
+	uq.db.Table("favorite_models").Where("user_id = ? AND deleted_at IS NULL", userID).Select("id").Order("created_at DESC").Find(&FavID)
+
+	// get list transaction of user
+	var trans []user.Transaction
+	uq.db.Table("transaction_models").Where("user_id = ?", userID).Order("created_at DESC").Find(&trans)
+
+	// slicing product id on transaction
+	var prods []int
+	for _, result := range trans {
+		prods = append(prods, int(result.ProductID))
+	}
+
+	// get list product on user transaction
+	var TransProducts []product.Product
+	for _, prod := range prods {
+		tmp := new(product.Product)
+		uq.db.Table("product_models").Where("id = ?", prod).Find(&tmp)
+		TransProducts = append(TransProducts, *tmp)
+	}
 
 	var result user.Favorite
 	result.FavID = FavID
 	result.Favorite = Favorite
 	result.User = User
+	result.Transaction = trans
+	result.TransProducts = TransProducts
 
 	return result, nil
 }

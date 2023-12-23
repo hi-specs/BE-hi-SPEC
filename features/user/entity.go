@@ -21,10 +21,23 @@ type User struct {
 	Role        string `json:"role"`
 }
 
+type Transaction struct {
+	gorm.Model
+	Nota       string
+	ProductID  uint
+	UserID     uint
+	TotalPrice uint
+	Status     string
+	Token      string
+	Url        string
+}
+
 type Favorite struct {
-	User     User `json:"user" form:"user"`
-	FavID    []uint
-	Favorite []product.Product `json:"favorite" form:"favorite"`
+	User          User
+	FavID         []uint
+	Favorite      []product.Product
+	Transaction   []Transaction
+	TransProducts []product.Product
 }
 
 // Error implements error.
