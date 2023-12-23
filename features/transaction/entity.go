@@ -65,6 +65,7 @@ type Repository interface {
 	MidtransCallback(transactionID string) (*TransactionList, error)
 	UserTransaction(userId int, userID uint) (UserTransaction, error)
 	DownloadTransaction(userID, transactionID uint) error
+	UpdatePdfTransaction(link string, transactionID uint) error
 }
 
 type Service interface {
@@ -75,4 +76,5 @@ type Service interface {
 	MidtransCallback(transactionID string) (TransactionList, error)
 	UserTransaction(token *jwt.Token, userID uint) (UserTransaction, error)
 	DownloadTransaction(token *jwt.Token, transactionID uint) error
+	UpdatePdfTransaction(link string, transactionID uint) error
 }

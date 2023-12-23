@@ -7,8 +7,10 @@ import (
 	"BE-hi-SPEC/features/user/handler"
 	"BE-hi-SPEC/features/user/repository"
 	"BE-hi-SPEC/helper/responses"
+	"BE-hi-SPEC/utils/cld"
 	"context"
 	"net/http"
+	"os"
 	"strconv"
 	"strings"
 
@@ -345,6 +347,7 @@ func (th *TransactionHandler) DownloadTransaction() echo.HandlerFunc {
 			})
 		}
 
+		// go to service
 		err2 := th.s.DownloadTransaction(c.Get("user").(*golangjwt.Token), uint(transactionID))
 		if err2 != nil {
 
@@ -353,9 +356,21 @@ func (th *TransactionHandler) DownloadTransaction() echo.HandlerFunc {
 			})
 		}
 
-		c.Attachment("helper/gofpdf/invoice.pdf", "invoice.pdf")
+		// open file
+		pdf := "helper/gofpdf/invoice.pdf"
+		File, _ := os.Open(pdf)
+		defer File.Close()
+
+		// upload to cloudinary
+		link, err := cld.UploadImage(th.cl, th.ct, File, th.folder)
+
+		// update database
+		th.s.UpdatePdfTransaction(link, uint(transactionID))
+
+		// c.Attachment("helper/gofpdf/invoice.pdf", "invoice.pdf")
 		return c.JSON(http.StatusOK, map[string]any{
 			"message": "Download Transaction Successful",
+			"url":     link,
 		})
 	}
 }

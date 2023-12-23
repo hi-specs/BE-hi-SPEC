@@ -110,3 +110,11 @@ func (ts *TransactionServices) DownloadTransaction(token *golangjwt.Token, trans
 	}
 	return nil
 }
+
+func (ts *TransactionServices) UpdatePdfTransaction(link string, transactionID uint) error {
+	err := ts.repo.UpdatePdfTransaction(link, transactionID)
+	if err != nil {
+		return err
+	}
+	return nil
+}
