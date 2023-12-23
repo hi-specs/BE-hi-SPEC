@@ -13,12 +13,14 @@ import (
 type UserService struct {
 	repo user.Repository
 	hash enkrip.HashInterface
+	jwt  jwt.JWTService
 }
 
-func New(r user.Repository, h enkrip.HashInterface) user.Service {
+func New(r user.Repository, h enkrip.HashInterface, j jwt.JWTService) user.Service {
 	return &UserService{
 		repo: r,
 		hash: h,
+		jwt:  j,
 	}
 }
 
@@ -98,18 +100,8 @@ func (us *UserService) UpdateUser(token *golangjwt.Token, input user.User) (user
 		if err != nil {
 			return user.User{}, errors.New("user tidak ditemukan")
 		}
-		// if input.Password != "" {
-		// 	err = us.hash.Compare(base.Password, input.Password)
-
-		// 	if err != nil {
-		// 		return user.User{}, errors.New("password salah")
-		// 	}
-		// }
 
 		if input.NewPassword != "" {
-			// if input.Password == "" {
-			// 	return user.User{}, errors.New("masukkan password yang lama ")
-			// }
 			newpass, err := us.hash.HashPassword(input.NewPassword)
 			if err != nil {
 				return user.User{}, errors.New("masukkan password baru dengan benar")
