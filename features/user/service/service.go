@@ -94,7 +94,34 @@ func (us *UserService) UpdateUser(token *golangjwt.Token, input user.User) (user
 
 	// edit user as admin
 	if rolesUser == "admin" {
-		respons, _ := us.repo.UpdateUser(input)
+		base, err := us.repo.GetUserByID(userID)
+		if err != nil {
+			return user.User{}, errors.New("user tidak ditemukan")
+		}
+		if input.Password != "" {
+			err = us.hash.Compare(base.Password, input.Password)
+
+			if err != nil {
+				return user.User{}, errors.New("password salah")
+			}
+		}
+
+		if input.NewPassword != "" {
+			if input.Password == "" {
+				return user.User{}, errors.New("masukkan password yang lama ")
+			}
+			newpass, err := us.hash.HashPassword(input.NewPassword)
+			if err != nil {
+				return user.User{}, errors.New("masukkan password baru dengan benar")
+			}
+			input.NewPassword = newpass
+		}
+
+		respons, err := us.repo.UpdateUser(input)
+		if err != nil {
+
+			return user.User{}, errors.New("kesalahan pada database")
+		}
 		return respons, nil
 	}
 
