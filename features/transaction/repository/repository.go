@@ -71,9 +71,10 @@ func (tq *TransactionQuery) AdminDashboard(userID uint, page int, limit int) (tr
 		log.Fatal(err)
 	}
 
+	// mendapatkan data product
 	var products []pr.ProductModel
 	offset := (page - 1) * limit
-	if err := tq.db.Table("product_models").Offset(offset).Limit(limit).Find(&products).Error; err != nil {
+	if err := tq.db.Table("product_models").Offset(offset).Limit(limit).Order("created_at DESC").Find(&products).Error; err != nil {
 		return transaction.TransactionDashboard{}, 0, err
 	}
 	var prod []p.Product
