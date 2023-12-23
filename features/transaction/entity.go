@@ -2,7 +2,9 @@ package transaction
 
 import (
 	"BE-hi-SPEC/features/product"
+	pr "BE-hi-SPEC/features/product/repository"
 	"BE-hi-SPEC/features/user"
+	"BE-hi-SPEC/features/user/repository"
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
@@ -35,6 +37,8 @@ type TransactionList struct {
 	Timestamp     time.Time `json:"timestamp"`
 	Token         string    `json:"token"`
 	Url           string    `json:"url"`
+	Users         []repository.UserModel
+	Products      []pr.ProductModel
 }
 
 type UserTransaction struct {
