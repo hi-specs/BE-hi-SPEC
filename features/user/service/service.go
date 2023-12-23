@@ -91,9 +91,17 @@ func (us *UserService) UpdateUser(token *golangjwt.Token, input user.User) (user
 	if rolesUser == "" {
 		return user.User{}, err
 	}
+
+	// edit user as admin
+	if rolesUser == "admin" {
+		respons, _ := us.repo.UpdateUser(input)
+		return respons, nil
+	}
+
 	if userID != input.ID {
 		return user.User{}, errors.New("id tidak cocok")
 	}
+
 	base, err := us.repo.GetUserByID(userID)
 	if err != nil {
 		return user.User{}, errors.New("user tidak ditemukan")
