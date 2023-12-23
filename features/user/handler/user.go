@@ -465,7 +465,33 @@ func (uc *UserController) GetUser() echo.HandlerFunc {
 			})
 		}
 
+		tp := result.TransProducts
+		var ProductName []string
+		var ProductPicture []string
+
+		for _, result := range tp {
+			ProductName = append(ProductName, result.Name)
+			ProductPicture = append(ProductPicture, result.Picture)
+		}
+
+		var trans []GetAllTransResponse
+		for x, result := range result.Transaction {
+			trans = append(trans, GetAllTransResponse{
+				Timestamp:      result.UpdatedAt,
+				ProductID:      result.ProductID,
+				TotalPrice:     result.TotalPrice,
+				Nota:           result.Nota,
+				Status:         result.Status,
+				Token:          result.Token,
+				Url:            result.Url,
+				TransactionID:  result.ID,
+				ProductPicture: ProductPicture[x],
+				ProductName:    ProductName[x],
+			})
+		}
+
 		responses.Product = prod
+		responses.Transaction = trans
 
 		return c.JSON(http.StatusOK, map[string]interface{}{
 			"message": "Success Get data User",

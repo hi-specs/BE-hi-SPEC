@@ -90,8 +90,22 @@ type GetAllFavoriteProduct struct {
 }
 
 type GetAllFavoriteResponse struct {
-	User    GetUser                 `json:"user"`
-	Product []GetAllFavoriteProduct `json:"my_favorite"`
+	User        GetUser                 `json:"user"`
+	Product     []GetAllFavoriteProduct `json:"my_favorite"`
+	Transaction []GetAllTransResponse   `json:"transaction"`
+}
+
+type GetAllTransResponse struct {
+	ProductPicture string    `json:"product_picture" form:"product_picture"`
+	ProductName    string    `json:"product_name" form:"product_name"`
+	Nota           string    `json:"nota" form:"nota"`
+	TotalPrice     uint      `json:"total_price" form:"total_price"`
+	Timestamp      time.Time `json:"timestamp" form:"timestamp"`
+	Status         string    `json:"status" form:"status"`
+	TransactionID  uint      `json:"transaction_id" form:"transaction_id"`
+	ProductID      uint      `json:"product_id" form:"product_id"`
+	Token          string    `json:"token" form:"token"`
+	Url            string    `json:"url" form:"url"`
 }
 
 type SearchUserResponse struct {
