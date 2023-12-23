@@ -94,22 +94,22 @@ func (us *UserService) UpdateUser(token *golangjwt.Token, input user.User) (user
 
 	// edit user as admin
 	if rolesUser == "admin" {
-		base, err := us.repo.GetUserByID(userID)
+		_, err := us.repo.GetUserByID(userID)
 		if err != nil {
 			return user.User{}, errors.New("user tidak ditemukan")
 		}
-		if input.Password != "" {
-			err = us.hash.Compare(base.Password, input.Password)
+		// if input.Password != "" {
+		// 	err = us.hash.Compare(base.Password, input.Password)
 
-			if err != nil {
-				return user.User{}, errors.New("password salah")
-			}
-		}
+		// 	if err != nil {
+		// 		return user.User{}, errors.New("password salah")
+		// 	}
+		// }
 
 		if input.NewPassword != "" {
-			if input.Password == "" {
-				return user.User{}, errors.New("masukkan password yang lama ")
-			}
+			// if input.Password == "" {
+			// 	return user.User{}, errors.New("masukkan password yang lama ")
+			// }
 			newpass, err := us.hash.HashPassword(input.NewPassword)
 			if err != nil {
 				return user.User{}, errors.New("masukkan password baru dengan benar")
@@ -125,6 +125,7 @@ func (us *UserService) UpdateUser(token *golangjwt.Token, input user.User) (user
 		return respons, nil
 	}
 
+	// -----------------
 	if userID != input.ID {
 		return user.User{}, errors.New("id tidak cocok")
 	}
