@@ -598,24 +598,82 @@ func TestUpdateUser(t *testing.T) {
 
 	userService := service.New(repoMock, hashMock, jwtMock)
 
-	// t.Run("Admin User - Successful Update User", func(t *testing.T) {
-	// 	token := &golangjwt.Token{}
-	// 	jwtMock.On("ExtractToken", token).Return(uint(123), "admin", nil).Once()
-	// 	input := user.User{ID: uint(123), Name: "UpdatedUser", NewPassword: "newpass"}
-	// 	baseUser := user.User{ID: uint(123), Name: "User123", Password: "oldpass"}
-	// 	repoMock.On("GetUserByID", uint(123)).Return(baseUser, nil).Once()
-	// 	hashMock.On("HashPassword", "newpass").Return("hashednewpass", nil).Once()
-	// 	repoMock.On("UpdateUser", input).Return(user.User{ID: uint(123), Name: "UpdatedUser", Password: "hashednewpass"}, nil).Once()
+	t.Run("Admin User - Successful Update User", func(t *testing.T) {
+		token := &golangjwt.Token{}
+		jwtMock.On("ExtractToken", token).Return(uint(123), "admin", nil).Once()
 
-	// 	updatedUser, err := userService.UpdateUser(token, input)
+		input := user.User{ID: uint(123), Name: "UpdatedUser", NewPassword: "newpass"}
+		baseUser := user.User{ID: uint(123), Name: "User123", Password: "oldpass"}
+		repoMock.On("GetUserByID", uint(123)).Return(&baseUser, nil).Once()
+		hashMock.On("HashPassword", "newpass").Return("hashednewpass", nil).Once()
+		input.NewPassword = "hashednewpass"
+		repoMock.On("UpdateUser", input).Return(user.User{ID: uint(123), Name: "UpdatedUser", Password: "hashednewpass"}, nil).Once()
 
-	// 	assert.NoError(t, err)
-	// 	assert.Equal(t, user.User{ID: uint(123), Name: "UpdatedUser", Password: "hashednewpass"}, updatedUser)
+		input.NewPassword = "newpass"
+		updatedUser, err := userService.UpdateUser(token, input)
 
-	// 	jwtMock.AssertExpectations(t)
-	// 	repoMock.AssertExpectations(t)
-	// 	hashMock.AssertExpectations(t)
-	// })
+		assert.NoError(t, err)
+		assert.Equal(t, user.User{ID: uint(123), Name: "UpdatedUser", Password: "hashednewpass"}, updatedUser)
+
+		jwtMock.AssertExpectations(t)
+		repoMock.AssertExpectations(t)
+		hashMock.AssertExpectations(t)
+	})
+
+	t.Run("Admin User - Error Updating User in Database", func(t *testing.T) {
+		token := &golangjwt.Token{}
+		jwtMock.On("ExtractToken", token).Return(uint(123), "admin", nil).Once()
+		input := user.User{ID: uint(123), Name: "UpdatedUser", NewPassword: "newpass"}
+		baseUser := user.User{ID: uint(123), Name: "User123", Password: "oldpass"}
+		repoMock.On("GetUserByID", uint(123)).Return(&baseUser, nil).Once()
+		hashMock.On("HashPassword", "newpass").Return("hashednewpass", nil).Once()
+		input.NewPassword = "hashednewpass"
+		repoMock.On("UpdateUser", input).Return(user.User{}, errors.New("failed to update user in database")).Once()
+
+		input.NewPassword = "newpass"
+		updatedUser, err := userService.UpdateUser(token, input)
+
+		assert.Error(t, err)
+		assert.Equal(t, user.User{}, updatedUser)
+		assert.Equal(t, "kesalahan pada database", err.Error())
+
+		jwtMock.AssertExpectations(t)
+		repoMock.AssertExpectations(t)
+		hashMock.AssertExpectations(t)
+	})
+
+	t.Run("Mismatched User ID", func(t *testing.T) {
+		token := &golangjwt.Token{}
+		jwtMock.On("ExtractToken", token).Return(uint(456), "user", nil).Once()
+		input := user.User{ID: uint(789), Name: "UpdatedUser", NewPassword: "newpass"}
+
+		updatedUser, err := userService.UpdateUser(token, input)
+
+		assert.Error(t, err)
+		assert.Equal(t, user.User{}, updatedUser)
+		assert.Equal(t, "id tidak cocok", err.Error())
+
+		jwtMock.AssertExpectations(t)
+		repoMock.AssertExpectations(t)
+		hashMock.AssertExpectations(t)
+	})
+
+	t.Run("Admin User - User Not Found", func(t *testing.T) {
+		token := &golangjwt.Token{}
+		jwtMock.On("ExtractToken", token).Return(uint(123), "admin", nil).Once()
+		input := user.User{ID: uint(123), Name: "UpdatedUser", NewPassword: "newpass"}
+		repoMock.On("GetUserByID", uint(123)).Return(&user.User{}, errors.New("user not found")).Once()
+
+		updatedUser, err := userService.UpdateUser(token, input)
+
+		assert.Error(t, err)
+		assert.Equal(t, user.User{}, updatedUser)
+		assert.Equal(t, "user tidak ditemukan", err.Error())
+
+		jwtMock.AssertExpectations(t)
+		repoMock.AssertExpectations(t)
+		hashMock.AssertExpectations(t)
+	})
 
 	// password := "test_password"
 	// hashedPassword := "hashed_test_password"
