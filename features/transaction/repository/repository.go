@@ -74,7 +74,7 @@ func (tq *TransactionQuery) AdminDashboard(userID uint, page int, limit int) (tr
 	// mendapatkan data product
 	var products []pr.ProductModel
 	offset := (page - 1) * limit
-	if err := tq.db.Table("product_models").Offset(offset).Limit(limit).Order("created_at DESC").Find(&products).Error; err != nil {
+	if err := tq.db.Table("product_models").Offset(offset).Limit(limit).Order("created_at DESC").Where("deleted_at IS NULL").Find(&products).Error; err != nil {
 		return transaction.TransactionDashboard{}, 0, err
 	}
 	var prod []p.Product
@@ -96,7 +96,7 @@ func (tq *TransactionQuery) AdminDashboard(userID uint, page int, limit int) (tr
 	result.Product = prod
 
 	var totalPage int
-	tableName2 := "transaction_models"
+	tableName2 := "product_models"
 	columnName2 := "deleted_at"
 	queryuser2 := fmt.Sprintf("SELECT COUNT(*) AS null_count FROM %s WHERE %s IS NULL", tableName2, columnName2)
 	err5 := tq.db.Raw(queryuser2).Scan(&totalPage).Error
