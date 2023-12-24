@@ -174,12 +174,16 @@ func (uc *UserController) Update() echo.HandlerFunc {
 					var statusCode = http.StatusInternalServerError
 					var message = "terjadi permasalahan ketika memproses data"
 
+					if strings.Contains(err.Error(), "kesalahan pada database") {
+						statusCode = http.StatusNotFound
+						message = "User Tidak Terdaftar"
+					}
 					if strings.Contains(err.Error(), "id tidak cocok") {
-						statusCode = http.StatusBadRequest
+						statusCode = http.StatusUnauthorized
 						message = "Tidak Mempunyai Akses"
 					}
 					if strings.Contains(err.Error(), "terdaftar") {
-						statusCode = http.StatusBadRequest
+						statusCode = http.StatusConflict
 						message = "data yang diinputkan sudah terdaftar ada sistem"
 					}
 					if strings.Contains(err.Error(), "yang lama") {
