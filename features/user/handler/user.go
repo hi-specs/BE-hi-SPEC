@@ -174,6 +174,10 @@ func (uc *UserController) Update() echo.HandlerFunc {
 					var statusCode = http.StatusInternalServerError
 					var message = "terjadi permasalahan ketika memproses data"
 
+					if strings.Contains(err.Error(), "id tidak cocok") {
+						statusCode = http.StatusBadRequest
+						message = "Tidak Mempunyai Akses"
+					}
 					if strings.Contains(err.Error(), "terdaftar") {
 						statusCode = http.StatusBadRequest
 						message = "data yang diinputkan sudah terdaftar ada sistem"
@@ -251,6 +255,10 @@ func (uc *UserController) Update() echo.HandlerFunc {
 			var statusCode = http.StatusInternalServerError
 			var message = "terjadi permasalahan ketika memproses data"
 
+			if strings.Contains(err.Error(), "id tidak cocok") {
+				statusCode = http.StatusUnauthorized
+				message = "Tidak Mempunyai Akses"
+			}
 			if strings.Contains(err.Error(), "terdaftar") {
 				statusCode = http.StatusBadRequest
 				message = "data yang diinputkan sudah terdaftar ada sistem"
