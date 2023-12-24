@@ -13,14 +13,12 @@ import (
 type UserService struct {
 	repo user.Repository
 	hash enkrip.HashInterface
-	jwt  jwt.JWTService
 }
 
-func New(r user.Repository, h enkrip.HashInterface, j jwt.JWTService) user.Service {
+func New(r user.Repository, h enkrip.HashInterface) user.Service {
 	return &UserService{
 		repo: r,
 		hash: h,
-		jwt:  j,
 	}
 }
 
@@ -86,7 +84,7 @@ func (us *UserService) Register(newUser user.User) (user.User, error) {
 
 // UpdateUser implements user.Service.
 func (us *UserService) UpdateUser(token *golangjwt.Token, input user.User) (user.User, error) {
-	userID, rolesUser, err := us.jwt.ExtractToken(token)
+	userID, rolesUser, err := jwt.ExtractToken(token)
 	if err != nil {
 		return user.User{}, errors.New("harap login")
 	}
@@ -94,31 +92,7 @@ func (us *UserService) UpdateUser(token *golangjwt.Token, input user.User) (user
 		return user.User{}, err
 	}
 
-	// edit user as admin
-	if rolesUser == "admin" {
-		_, err := us.repo.GetUserByID(userID)
-		if err != nil {
-			return user.User{}, errors.New("user tidak ditemukan")
-		}
-
-		if input.NewPassword != "" {
-			newpass, err := us.hash.HashPassword(input.NewPassword)
-			if err != nil {
-				return user.User{}, errors.New("masukkan password baru dengan benar")
-			}
-			input.NewPassword = newpass
-		}
-
-		respons, err := us.repo.UpdateUser(input)
-		if err != nil {
-
-			return user.User{}, errors.New("kesalahan pada database")
-		}
-		return respons, nil
-	}
-
-	// -----------------
-	if userID != input.ID {
+	if userID != input.ID && rolesUser != "admin" {
 		return user.User{}, errors.New("id tidak cocok")
 	}
 
@@ -126,7 +100,7 @@ func (us *UserService) UpdateUser(token *golangjwt.Token, input user.User) (user
 	if err != nil {
 		return user.User{}, errors.New("user tidak ditemukan")
 	}
-	if input.Password != "" {
+	if input.Password != "" && rolesUser != "admin" {
 		err = us.hash.Compare(base.Password, input.Password)
 
 		if err != nil {
@@ -135,7 +109,7 @@ func (us *UserService) UpdateUser(token *golangjwt.Token, input user.User) (user
 	}
 
 	if input.NewPassword != "" {
-		if input.Password == "" {
+		if input.Password == "" && rolesUser != "admin" {
 			return user.User{}, errors.New("masukkan password yang lama ")
 		}
 		newpass, err := us.hash.HashPassword(input.NewPassword)
@@ -155,7 +129,7 @@ func (us *UserService) UpdateUser(token *golangjwt.Token, input user.User) (user
 
 // HapusUser implements user.Service.
 func (us *UserService) HapusUser(token *golangjwt.Token, userID uint) error {
-	userId, rolesUser, err := us.jwt.ExtractToken(token)
+	userId, rolesUser, err := jwt.ExtractToken(token)
 	if err != nil {
 		return err
 	}
@@ -181,7 +155,7 @@ func (us *UserService) HapusUser(token *golangjwt.Token, userID uint) error {
 }
 
 func (us *UserService) GetAllUser(token *golangjwt.Token, page int, limit int) ([]user.User, int, error) {
-	userID, rolesUser, err := us.jwt.ExtractToken(token)
+	userID, rolesUser, err := jwt.ExtractToken(token)
 	if err != nil {
 		return nil, 0, err
 	}
@@ -199,7 +173,7 @@ func (us *UserService) GetAllUser(token *golangjwt.Token, page int, limit int) (
 }
 
 func (us *UserService) AddFavorite(token *golangjwt.Token, productID uint) (user.Favorite, error) {
-	userID, rolesUser, err := us.jwt.ExtractToken(token)
+	userID, rolesUser, err := jwt.ExtractToken(token)
 	if err != nil {
 		return user.Favorite{}, err
 	}
@@ -217,7 +191,7 @@ func (us *UserService) AddFavorite(token *golangjwt.Token, productID uint) (user
 }
 
 func (us *UserService) GetUser(token *golangjwt.Token) (user.Favorite, error) {
-	userID, rolesUser, err := us.jwt.ExtractToken(token)
+	userID, rolesUser, err := jwt.ExtractToken(token)
 	if err != nil {
 		return user.Favorite{}, err
 	}
@@ -241,7 +215,7 @@ func (us *UserService) DelFavorite(token *golangjwt.Token, favoriteID uint) erro
 }
 
 func (us *UserService) SearchUser(token *golangjwt.Token, name string, page int, limit int) ([]user.User, int, error) {
-	userID, rolesUser, err := us.jwt.ExtractToken(token)
+	userID, rolesUser, err := jwt.ExtractToken(token)
 	if err != nil {
 		return nil, 0, err
 	}
