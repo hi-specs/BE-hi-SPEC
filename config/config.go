@@ -19,6 +19,9 @@ type AppConfig struct {
 	CLOUDINARY_FOLDER string
 	OPEN_AI_KEY       string
 	MIDTRANS_KEY      string
+	GOMAIL_NAME       string
+	GOMAIL_EMAIL      string
+	GOMAIL_PASS       string
 }
 
 func InitConfig() *AppConfig {
@@ -105,6 +108,15 @@ func readEnv() *AppConfig {
 	}
 	if val, found := os.LookupEnv("MIDTRANS_KEY"); found {
 		data.MIDTRANS_KEY = val
+	}
+	if val, found := os.LookupEnv("GOMAIL_NAME"); found {
+		data.GOMAIL_NAME = val
+	}
+	if val, found := os.LookupEnv("GOMAIL_EMAIL"); found {
+		data.GOMAIL_EMAIL = val
+	}
+	if val, found := os.LookupEnv("GOMAIL_PASS"); found {
+		data.GOMAIL_PASS = val
 	} else {
 		permit = false
 	}

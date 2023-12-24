@@ -9,6 +9,7 @@ import (
 	"BE-hi-SPEC/features/user/repository"
 	ur "BE-hi-SPEC/features/user/repository"
 	"BE-hi-SPEC/helper/gofpdf"
+	"BE-hi-SPEC/helper/gomail"
 	"BE-hi-SPEC/helper/midtrans"
 	"errors"
 	"fmt"
@@ -340,13 +341,13 @@ func (tq *TransactionQuery) DownloadTransaction(userID uint, transactionID uint)
 		return errors.New("no authorized")
 	}
 
-	fmt.Println(trans, user, prod)
+	// fmt.Println(trans, user, prod)
 	// Convert TransactionModel to gofpdf.TM
 	// tm := gofpdf.TM(trans)
 	// um := gofpdf.UM(user)
 	// pm := gofpdf.PM(prod)
 	gofpdf.GeneratePDF(gofpdf.TM(trans), gofpdf.PM(prod), gofpdf.UM(user))
-	fmt.Println(trans)
+	// fmt.Println(trans)
 
 	return nil
 }
@@ -366,6 +367,13 @@ func (tq *TransactionQuery) UpdatePdfTransaction(link string, transactionID uint
 	if err2 := tq.db.Save(&trans).Error; err2 != nil {
 		return err2
 	}
+
+	// get detail user
+	var user ur.UserModel
+	tq.db.Table("user_models").Where("id = ?", trans.UserID).Find(&user)
+
+	// send to buyer email the copy of pdf file
+	gomail.Gomail(user.Email)
 
 	return nil
 }
