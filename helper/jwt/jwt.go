@@ -7,6 +7,11 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 )
 
+type JWTService interface {
+	GenerateJWT(idUser uint, rolesUser string) (string, error)
+	ExtractToken(t *jwt.Token) (uint, string, error)
+}
+
 func GenerateJWT(idUser uint, rolesUser string) (string, error) {
 	var claim = jwt.MapClaims{}
 	claim["id"] = idUser

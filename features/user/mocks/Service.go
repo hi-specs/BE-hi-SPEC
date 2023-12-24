@@ -52,32 +52,32 @@ func (_m *Service) DelFavorite(token *jwt.Token, favoriteID uint) error {
 	return r0
 }
 
-// GetAllUser provides a mock function with given fields: page, limit
-func (_m *Service) GetAllUser(page int, limit int) ([]user.User, int, error) {
-	ret := _m.Called(page, limit)
+// GetAllUser provides a mock function with given fields: token, page, limit
+func (_m *Service) GetAllUser(token *jwt.Token, page int, limit int) ([]user.User, int, error) {
+	ret := _m.Called(token, page, limit)
 
 	var r0 []user.User
 	var r1 int
 	var r2 error
-	if rf, ok := ret.Get(0).(func(int, int) ([]user.User, int, error)); ok {
-		return rf(page, limit)
+	if rf, ok := ret.Get(0).(func(*jwt.Token, int, int) ([]user.User, int, error)); ok {
+		return rf(token, page, limit)
 	}
-	if rf, ok := ret.Get(0).(func(int, int) []user.User); ok {
-		r0 = rf(page, limit)
+	if rf, ok := ret.Get(0).(func(*jwt.Token, int, int) []user.User); ok {
+		r0 = rf(token, page, limit)
 	} else {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).([]user.User)
 		}
 	}
 
-	if rf, ok := ret.Get(1).(func(int, int) int); ok {
-		r1 = rf(page, limit)
+	if rf, ok := ret.Get(1).(func(*jwt.Token, int, int) int); ok {
+		r1 = rf(token, page, limit)
 	} else {
 		r1 = ret.Get(1).(int)
 	}
 
-	if rf, ok := ret.Get(2).(func(int, int) error); ok {
-		r2 = rf(page, limit)
+	if rf, ok := ret.Get(2).(func(*jwt.Token, int, int) error); ok {
+		r2 = rf(token, page, limit)
 	} else {
 		r2 = ret.Error(2)
 	}
@@ -85,23 +85,23 @@ func (_m *Service) GetAllUser(page int, limit int) ([]user.User, int, error) {
 	return r0, r1, r2
 }
 
-// GetUser provides a mock function with given fields: userID
-func (_m *Service) GetUser(userID uint) (user.Favorite, error) {
-	ret := _m.Called(userID)
+// GetUser provides a mock function with given fields: token
+func (_m *Service) GetUser(token *jwt.Token) (user.Favorite, error) {
+	ret := _m.Called(token)
 
 	var r0 user.Favorite
 	var r1 error
-	if rf, ok := ret.Get(0).(func(uint) (user.Favorite, error)); ok {
-		return rf(userID)
+	if rf, ok := ret.Get(0).(func(*jwt.Token) (user.Favorite, error)); ok {
+		return rf(token)
 	}
-	if rf, ok := ret.Get(0).(func(uint) user.Favorite); ok {
-		r0 = rf(userID)
+	if rf, ok := ret.Get(0).(func(*jwt.Token) user.Favorite); ok {
+		r0 = rf(token)
 	} else {
 		r0 = ret.Get(0).(user.Favorite)
 	}
 
-	if rf, ok := ret.Get(1).(func(uint) error); ok {
-		r1 = rf(userID)
+	if rf, ok := ret.Get(1).(func(*jwt.Token) error); ok {
+		r1 = rf(token)
 	} else {
 		r1 = ret.Error(1)
 	}
@@ -171,32 +171,32 @@ func (_m *Service) Register(newUser user.User) (user.User, error) {
 	return r0, r1
 }
 
-// SearchUser provides a mock function with given fields: name, page, limit
-func (_m *Service) SearchUser(name string, page int, limit int) ([]user.User, int, error) {
-	ret := _m.Called(name, page, limit)
+// SearchUser provides a mock function with given fields: token, name, page, limit
+func (_m *Service) SearchUser(token *jwt.Token, name string, page int, limit int) ([]user.User, int, error) {
+	ret := _m.Called(token, name, page, limit)
 
 	var r0 []user.User
 	var r1 int
 	var r2 error
-	if rf, ok := ret.Get(0).(func(string, int, int) ([]user.User, int, error)); ok {
-		return rf(name, page, limit)
+	if rf, ok := ret.Get(0).(func(*jwt.Token, string, int, int) ([]user.User, int, error)); ok {
+		return rf(token, name, page, limit)
 	}
-	if rf, ok := ret.Get(0).(func(string, int, int) []user.User); ok {
-		r0 = rf(name, page, limit)
+	if rf, ok := ret.Get(0).(func(*jwt.Token, string, int, int) []user.User); ok {
+		r0 = rf(token, name, page, limit)
 	} else {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).([]user.User)
 		}
 	}
 
-	if rf, ok := ret.Get(1).(func(string, int, int) int); ok {
-		r1 = rf(name, page, limit)
+	if rf, ok := ret.Get(1).(func(*jwt.Token, string, int, int) int); ok {
+		r1 = rf(token, name, page, limit)
 	} else {
 		r1 = ret.Get(1).(int)
 	}
 
-	if rf, ok := ret.Get(2).(func(string, int, int) error); ok {
-		r2 = rf(name, page, limit)
+	if rf, ok := ret.Get(2).(func(*jwt.Token, string, int, int) error); ok {
+		r2 = rf(token, name, page, limit)
 	} else {
 		r2 = ret.Error(2)
 	}

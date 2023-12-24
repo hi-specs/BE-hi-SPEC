@@ -65,32 +65,32 @@ func (_m *Repository) DeleteUser(userID uint) error {
 	return r0
 }
 
-// GetAllUser provides a mock function with given fields: page, limit
-func (_m *Repository) GetAllUser(page int, limit int) ([]user.User, int, error) {
-	ret := _m.Called(page, limit)
+// GetAllUser provides a mock function with given fields: userID, page, limit
+func (_m *Repository) GetAllUser(userID uint, page int, limit int) ([]user.User, int, error) {
+	ret := _m.Called(userID, page, limit)
 
 	var r0 []user.User
 	var r1 int
 	var r2 error
-	if rf, ok := ret.Get(0).(func(int, int) ([]user.User, int, error)); ok {
-		return rf(page, limit)
+	if rf, ok := ret.Get(0).(func(uint, int, int) ([]user.User, int, error)); ok {
+		return rf(userID, page, limit)
 	}
-	if rf, ok := ret.Get(0).(func(int, int) []user.User); ok {
-		r0 = rf(page, limit)
+	if rf, ok := ret.Get(0).(func(uint, int, int) []user.User); ok {
+		r0 = rf(userID, page, limit)
 	} else {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).([]user.User)
 		}
 	}
 
-	if rf, ok := ret.Get(1).(func(int, int) int); ok {
-		r1 = rf(page, limit)
+	if rf, ok := ret.Get(1).(func(uint, int, int) int); ok {
+		r1 = rf(userID, page, limit)
 	} else {
 		r1 = ret.Get(1).(int)
 	}
 
-	if rf, ok := ret.Get(2).(func(int, int) error); ok {
-		r2 = rf(page, limit)
+	if rf, ok := ret.Get(2).(func(uint, int, int) error); ok {
+		r2 = rf(userID, page, limit)
 	} else {
 		r2 = ret.Error(2)
 	}
@@ -196,32 +196,32 @@ func (_m *Repository) Login(email string) (user.User, error) {
 	return r0, r1
 }
 
-// SearchUser provides a mock function with given fields: name, page, limit
-func (_m *Repository) SearchUser(name string, page int, limit int) ([]user.User, int, error) {
-	ret := _m.Called(name, page, limit)
+// SearchUser provides a mock function with given fields: userID, name, page, limit
+func (_m *Repository) SearchUser(userID uint, name string, page int, limit int) ([]user.User, int, error) {
+	ret := _m.Called(userID, name, page, limit)
 
 	var r0 []user.User
 	var r1 int
 	var r2 error
-	if rf, ok := ret.Get(0).(func(string, int, int) ([]user.User, int, error)); ok {
-		return rf(name, page, limit)
+	if rf, ok := ret.Get(0).(func(uint, string, int, int) ([]user.User, int, error)); ok {
+		return rf(userID, name, page, limit)
 	}
-	if rf, ok := ret.Get(0).(func(string, int, int) []user.User); ok {
-		r0 = rf(name, page, limit)
+	if rf, ok := ret.Get(0).(func(uint, string, int, int) []user.User); ok {
+		r0 = rf(userID, name, page, limit)
 	} else {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).([]user.User)
 		}
 	}
 
-	if rf, ok := ret.Get(1).(func(string, int, int) int); ok {
-		r1 = rf(name, page, limit)
+	if rf, ok := ret.Get(1).(func(uint, string, int, int) int); ok {
+		r1 = rf(userID, name, page, limit)
 	} else {
 		r1 = ret.Get(1).(int)
 	}
 
-	if rf, ok := ret.Get(2).(func(string, int, int) error); ok {
-		r2 = rf(name, page, limit)
+	if rf, ok := ret.Get(2).(func(uint, string, int, int) error); ok {
+		r2 = rf(userID, name, page, limit)
 	} else {
 		r2 = ret.Error(2)
 	}
