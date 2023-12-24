@@ -86,7 +86,7 @@ func (us *UserService) Register(newUser user.User) (user.User, error) {
 
 // UpdateUser implements user.Service.
 func (us *UserService) UpdateUser(token *golangjwt.Token, input user.User) (user.User, error) {
-	userID, rolesUser, err := jwt.ExtractToken(token)
+	userID, rolesUser, err := us.jwt.ExtractToken(token)
 	if err != nil {
 		return user.User{}, errors.New("harap login")
 	}
@@ -155,7 +155,7 @@ func (us *UserService) UpdateUser(token *golangjwt.Token, input user.User) (user
 
 // HapusUser implements user.Service.
 func (us *UserService) HapusUser(token *golangjwt.Token, userID uint) error {
-	userId, rolesUser, err := jwt.ExtractToken(token)
+	userId, rolesUser, err := us.jwt.ExtractToken(token)
 	if err != nil {
 		return err
 	}
@@ -181,7 +181,7 @@ func (us *UserService) HapusUser(token *golangjwt.Token, userID uint) error {
 }
 
 func (us *UserService) GetAllUser(token *golangjwt.Token, page int, limit int) ([]user.User, int, error) {
-	userID, rolesUser, err := jwt.ExtractToken(token)
+	userID, rolesUser, err := us.jwt.ExtractToken(token)
 	if err != nil {
 		return nil, 0, err
 	}
@@ -199,7 +199,7 @@ func (us *UserService) GetAllUser(token *golangjwt.Token, page int, limit int) (
 }
 
 func (us *UserService) AddFavorite(token *golangjwt.Token, productID uint) (user.Favorite, error) {
-	userID, rolesUser, err := jwt.ExtractToken(token)
+	userID, rolesUser, err := us.jwt.ExtractToken(token)
 	if err != nil {
 		return user.Favorite{}, err
 	}
@@ -217,7 +217,7 @@ func (us *UserService) AddFavorite(token *golangjwt.Token, productID uint) (user
 }
 
 func (us *UserService) GetUser(token *golangjwt.Token) (user.Favorite, error) {
-	userID, rolesUser, err := jwt.ExtractToken(token)
+	userID, rolesUser, err := us.jwt.ExtractToken(token)
 	if err != nil {
 		return user.Favorite{}, err
 	}
@@ -241,7 +241,7 @@ func (us *UserService) DelFavorite(token *golangjwt.Token, favoriteID uint) erro
 }
 
 func (us *UserService) SearchUser(token *golangjwt.Token, name string, page int, limit int) ([]user.User, int, error) {
-	userID, rolesUser, err := jwt.ExtractToken(token)
+	userID, rolesUser, err := us.jwt.ExtractToken(token)
 	if err != nil {
 		return nil, 0, err
 	}
