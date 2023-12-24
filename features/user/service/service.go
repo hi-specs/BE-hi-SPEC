@@ -92,41 +92,7 @@ func (us *UserService) UpdateUser(token *golangjwt.Token, input user.User) (user
 		return user.User{}, err
 	}
 
-	// edit user as admin
-	if rolesUser == "admin" {
-		_, err := us.repo.GetUserByID(userID)
-		if err != nil {
-			return user.User{}, errors.New("user tidak ditemukan")
-		}
-		// if input.Password != "" {
-		// 	err = us.hash.Compare(base.Password, input.Password)
-
-		// 	if err != nil {
-		// 		return user.User{}, errors.New("password salah")
-		// 	}
-		// }
-
-		if input.NewPassword != "" {
-			// if input.Password == "" {
-			// 	return user.User{}, errors.New("masukkan password yang lama ")
-			// }
-			newpass, err := us.hash.HashPassword(input.NewPassword)
-			if err != nil {
-				return user.User{}, errors.New("masukkan password baru dengan benar")
-			}
-			input.NewPassword = newpass
-		}
-
-		respons, err := us.repo.UpdateUser(input)
-		if err != nil {
-
-			return user.User{}, errors.New("kesalahan pada database")
-		}
-		return respons, nil
-	}
-
-	// -----------------
-	if userID != input.ID {
+	if userID != input.ID && rolesUser != "admin" {
 		return user.User{}, errors.New("id tidak cocok")
 	}
 
@@ -134,7 +100,7 @@ func (us *UserService) UpdateUser(token *golangjwt.Token, input user.User) (user
 	if err != nil {
 		return user.User{}, errors.New("user tidak ditemukan")
 	}
-	if input.Password != "" {
+	if input.Password != "" && rolesUser != "admin" {
 		err = us.hash.Compare(base.Password, input.Password)
 
 		if err != nil {
@@ -143,7 +109,7 @@ func (us *UserService) UpdateUser(token *golangjwt.Token, input user.User) (user
 	}
 
 	if input.NewPassword != "" {
-		if input.Password == "" {
+		if input.Password == "" && rolesUser != "admin" {
 			return user.User{}, errors.New("masukkan password yang lama ")
 		}
 		newpass, err := us.hash.HashPassword(input.NewPassword)
