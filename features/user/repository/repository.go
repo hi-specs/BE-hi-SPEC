@@ -167,7 +167,7 @@ func (uq *UserQuery) DeleteUser(userID uint) error {
 func (uq *UserQuery) GetAllUser(userID uint, page int, limit int) ([]user.User, int, error) {
 	var Users []UserModel
 	offset := (page - 1) * limit
-	if err := uq.db.Offset(offset).Limit(limit).Find(&Users).Error; err != nil {
+	if err := uq.db.Offset(offset).Limit(limit).Order("created_at DESC").Find(&Users).Error; err != nil {
 		return nil, 0, err
 	}
 	var result []user.User
