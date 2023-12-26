@@ -89,7 +89,7 @@ func (us *UserService) UpdateUser(token *golangjwt.Token, input user.User) (user
 		return user.User{}, errors.New("harap login")
 	}
 	if rolesUser == "" {
-		return user.User{}, err
+		return user.User{}, errors.New("roles kosong")
 	}
 
 	if userID != input.ID && rolesUser != "admin" {
@@ -134,7 +134,7 @@ func (us *UserService) HapusUser(token *golangjwt.Token, userID uint) error {
 		return err
 	}
 	if rolesUser == "" {
-		return err
+		return errors.New("you don't have permission to delete this user")
 	}
 	if rolesUser != "admin" && userId != userID {
 		return errors.New("you don't have permission to delete this user")
@@ -164,9 +164,6 @@ func (us *UserService) GetAllUser(token *golangjwt.Token, page int, limit int) (
 	}
 	Users, totalPage, err := us.repo.GetAllUser(userID, page, limit)
 	if err != nil {
-		if strings.Contains(err.Error(), "not found") {
-			return Users, 0, errors.New("username tidak ditemukan")
-		}
 		return Users, 0, errors.New("terjadi kesalahan pada sistem")
 	}
 	return Users, totalPage, nil
@@ -178,7 +175,7 @@ func (us *UserService) AddFavorite(token *golangjwt.Token, productID uint) (user
 		return user.Favorite{}, err
 	}
 	if rolesUser == "" {
-		return user.Favorite{}, err
+		return user.Favorite{}, errors.New("roles kosong")
 	}
 	favorites, err := us.repo.AddFavorite(userID, productID)
 	if err != nil {
@@ -196,7 +193,7 @@ func (us *UserService) GetUser(token *golangjwt.Token) (user.Favorite, error) {
 		return user.Favorite{}, err
 	}
 	if rolesUser == "" {
-		return user.Favorite{}, err
+		return user.Favorite{}, errors.New("roles kosong")
 	}
 	favorites, err := us.repo.GetUser(uint(userID))
 	return favorites, err
@@ -208,9 +205,6 @@ func (us *UserService) DelFavorite(token *golangjwt.Token, favoriteID uint) erro
 		return errors.New("failed to delete the favorite")
 	}
 
-	if err != nil {
-		return errors.New("failed to retrieve the user for deletion")
-	}
 	return err
 }
 
@@ -224,7 +218,7 @@ func (us *UserService) SearchUser(token *golangjwt.Token, name string, page int,
 	}
 	result, totalPage, err := us.repo.SearchUser(uint(userID), name, page, limit)
 	if err != nil {
-		return nil, 0, errors.New("failed get all user")
+		return nil, 0, errors.New("failed get user")
 	}
 	return result, totalPage, nil
 }
