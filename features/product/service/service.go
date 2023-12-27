@@ -23,10 +23,10 @@ func New(r product.Repository) product.Service {
 func (ps *ProductServices) UpdateProduct(token *golangjwt.Token, productID uint, input product.Product) (product.Product, error) {
 	userId, rolesUser, err := jwt.ExtractToken(token)
 	if err != nil {
-		return product.Product{}, err
+		return product.Product{}, errors.New("token error")
 	}
 	if rolesUser == "" {
-		return product.Product{}, err
+		return product.Product{}, errors.New("role cannot empty")
 	}
 	if rolesUser != "admin" {
 		return product.Product{}, errors.New("unauthorized access: admin role required")
@@ -75,7 +75,7 @@ func (ps *ProductServices) SatuProduct(productID uint) (product.Product, error) 
 	if err != nil {
 		return product.Product{}, errors.New("failed get product")
 	}
-	return *result, nil
+	return *result, err
 }
 
 func (ps *ProductServices) TalkToGpt(token *golangjwt.Token, newProduct product.Product) (product.Product, error) {
@@ -99,7 +99,7 @@ func (ps *ProductServices) TalkToGpt(token *golangjwt.Token, newProduct product.
 func (ps *ProductServices) SemuaProduct(page int, limit int) ([]product.Product, int, error) {
 	result, totalPage, err := ps.repo.GetAllProduct(page, limit)
 	if err != nil {
-		return nil, 0, errors.New("failed get all product")
+		return []product.Product{}, 0, errors.New("failed get all product")
 	}
 	return result, totalPage, err
 }
@@ -107,7 +107,7 @@ func (ps *ProductServices) SemuaProduct(page int, limit int) ([]product.Product,
 func (ps *ProductServices) DelProduct(token *golangjwt.Token, productID uint) error {
 	userId, rolesUser, err := jwt.ExtractToken(token)
 	if err != nil {
-		return err
+		return errors.New("token error")
 	}
 	if rolesUser != "admin" {
 		return errors.New("unauthorized access: admin role required")
