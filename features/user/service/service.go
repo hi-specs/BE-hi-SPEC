@@ -110,7 +110,7 @@ func (us *UserService) UpdateUser(token *golangjwt.Token, input user.User) (user
 
 	if input.NewPassword != "" {
 		if input.Password == "" && rolesUser != "admin" {
-			return user.User{}, errors.New("masukkan password yang lama ")
+			return user.User{}, errors.New("masukkan password yang lama")
 		}
 		newpass, err := us.hash.HashPassword(input.NewPassword)
 		if err != nil {

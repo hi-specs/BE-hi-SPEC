@@ -744,4 +744,115 @@ func TestUpdateUser(t *testing.T) {
 
 		repoMock.AssertExpectations(t)
 	})
+
+	t.Run("Failed Case Empty User ID", func(t *testing.T) {
+		var userID = uint(1)
+		var rolesUser = "admin"
+		var str, _ = golangjwt.GenerateJWT(userID, rolesUser)
+		var token, _ = jwt.Parse(str, func(t *jwt.Token) (interface{}, error) {
+			return []byte("$!1gnK3yyy!!!"), nil
+		})
+		input := user.User{ID: uint(9), Name: "UpdatedUser", NewPassword: "newpass"}
+
+		repoMock.On("GetUserByID", userID).Return(nil, errors.New("user tidak ditemukan")).Once()
+
+		users, err := userService.UpdateUser(token, input)
+
+		assert.Error(t, err)
+		assert.Equal(t, user.User{}, users)
+
+	})
+
+	t.Run("Failed Case Wrong Password Admin required", func(t *testing.T) {
+		var userID = uint(1)
+		var rolesUser = "user"
+		var str, _ = golangjwt.GenerateJWT(userID, rolesUser)
+		var token, _ = jwt.Parse(str, func(t *jwt.Token) (interface{}, error) {
+			return []byte("$!1gnK3yyy!!!"), nil
+		})
+
+		input := user.User{ID: uint(1), Password: "wrongpass"}
+		baseUser := user.User{ID: uint(1), Name: "User123", Password: "hashedpass"}
+
+		repoMock.On("GetUserByID", uint(1)).Return(&baseUser, nil).Once()
+
+		enkrip.On("Compare", baseUser.Password, input.Password).Return(errors.New("password salah")).Once()
+
+		users, err := userService.UpdateUser(token, input)
+
+		assert.Error(t, err)
+		assert.Equal(t, user.User{}, users)
+
+		repoMock.AssertExpectations(t)
+		enkrip.AssertExpectations(t)
+
+	})
+
+	t.Run("Failed Case Empty Old Password", func(t *testing.T) {
+		var userID = uint(1)
+		var rolesUser = "user"
+		var str, _ = golangjwt.GenerateJWT(userID, rolesUser)
+		var token, _ = jwt.Parse(str, func(t *jwt.Token) (interface{}, error) {
+			return []byte("$!1gnK3yyy!!!"), nil
+		})
+		input := user.User{ID: uint(1), Password: "", NewPassword: "user123"}
+		baseUser := user.User{ID: uint(1), Name: "User123", Password: ""}
+
+		repoMock.On("GetUserByID", uint(1)).Return(&baseUser, nil).Once()
+
+		users, err := userService.UpdateUser(token, input)
+
+		assert.Error(t, err)
+		assert.Equal(t, user.User{}, users)
+
+		repoMock.AssertExpectations(t)
+	})
+
+	t.Run("Failed Case New Password nil", func(t *testing.T) {
+		var userID = uint(1)
+		var rolesUser = "user"
+		var str, _ = golangjwt.GenerateJWT(userID, rolesUser)
+		var token, _ = jwt.Parse(str, func(t *jwt.Token) (interface{}, error) {
+			return []byte("$!1gnK3yyy!!!"), nil
+		})
+		input := user.User{ID: uint(1), Password: "user123", NewPassword: "testis123"}
+		baseUser := user.User{ID: uint(1), Name: "User123", Password: "user123", NewPassword: ""}
+
+		repoMock.On("GetUserByID", uint(1)).Return(&baseUser, nil).Once()
+
+		enkrip.On("Compare", baseUser.Password, input.Password).Return(nil).Once()
+		enkrip.On("HashPassword", input.NewPassword).Return("", errors.New("masukkan password baru dengan benar")).Once()
+
+		users, err := userService.UpdateUser(token, input)
+
+		assert.Error(t, err)
+		assert.Equal(t, user.User{}, users)
+
+		repoMock.AssertExpectations(t)
+		enkrip.AssertExpectations(t)
+	})
+
+	t.Run("Failed Case New Input Nil", func(t *testing.T) {
+		var userID = uint(1)
+		var rolesUser = "admin"
+		var str, _ = golangjwt.GenerateJWT(userID, rolesUser)
+		var token, _ = jwt.Parse(str, func(t *jwt.Token) (interface{}, error) {
+			return []byte("$!1gnK3yyy!!!"), nil
+		})
+		input := user.User{ID: uint(1), Password: "user123", NewPassword: "testis123"}
+		baseUser := user.User{ID: uint(1), Name: "User123", Password: "user123", NewPassword: ""}
+
+		repoMock.On("GetUserByID", uint(1)).Return(&baseUser, nil).Once()
+		repoMock.On("UpdateUser", input).Return(input, errors.New("kesalahan pada database")).Once()
+
+		enkrip.On("HashPassword", input.NewPassword).Return(input.NewPassword, nil).Once()
+
+		users, err := userService.UpdateUser(token, input)
+
+		assert.Error(t, err)
+		assert.Equal(t, user.User{}, users)
+
+		repoMock.AssertExpectations(t)
+		enkrip.AssertExpectations(t)
+	})
 }
