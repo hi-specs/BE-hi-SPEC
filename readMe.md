@@ -26,7 +26,7 @@ hi'Spec is a website that helps you choose the right laptop according to your ne
 
 
 ## 📍 ERD
-![ERD_Hi'Spec (1)](https://github.com/hi-specs/BE-hi-SPEC/assets/50069221/e1302740-e0e9-49cc-b16d-c48698fac2a4)
+![ERD_Hi'Spec drawio (4)](https://github.com/hi-specs/BE-hi-SPEC/assets/73748420/7cc2e299-7872-4cfd-ac71-f22280c19cee)
 
 
 ## 🏃 Run Locally
