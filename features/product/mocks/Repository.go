@@ -13,13 +13,13 @@ type Repository struct {
 	mock.Mock
 }
 
-// DelProduct provides a mock function with given fields: productID
-func (_m *Repository) DelProduct(productID uint) error {
-	ret := _m.Called(productID)
+// DelProduct provides a mock function with given fields: UserID, productID
+func (_m *Repository) DelProduct(UserID uint, productID uint) error {
+	ret := _m.Called(UserID, productID)
 
 	var r0 error
-	if rf, ok := ret.Get(0).(func(uint) error); ok {
-		r0 = rf(productID)
+	if rf, ok := ret.Get(0).(func(uint, uint) error); ok {
+		r0 = rf(UserID, productID)
 	} else {
 		r0 = ret.Error(0)
 	}
@@ -143,23 +143,23 @@ func (_m *Repository) SearchProduct(name string, category string, minPrice uint,
 	return r0, r1, r2
 }
 
-// UpdateProduct provides a mock function with given fields: productID, input
-func (_m *Repository) UpdateProduct(productID uint, input product.Product) (product.Product, error) {
-	ret := _m.Called(productID, input)
+// UpdateProduct provides a mock function with given fields: UserID, productID, input
+func (_m *Repository) UpdateProduct(UserID uint, productID uint, input product.Product) (product.Product, error) {
+	ret := _m.Called(UserID, productID, input)
 
 	var r0 product.Product
 	var r1 error
-	if rf, ok := ret.Get(0).(func(uint, product.Product) (product.Product, error)); ok {
-		return rf(productID, input)
+	if rf, ok := ret.Get(0).(func(uint, uint, product.Product) (product.Product, error)); ok {
+		return rf(UserID, productID, input)
 	}
-	if rf, ok := ret.Get(0).(func(uint, product.Product) product.Product); ok {
-		r0 = rf(productID, input)
+	if rf, ok := ret.Get(0).(func(uint, uint, product.Product) product.Product); ok {
+		r0 = rf(UserID, productID, input)
 	} else {
 		r0 = ret.Get(0).(product.Product)
 	}
 
-	if rf, ok := ret.Get(1).(func(uint, product.Product) error); ok {
-		r1 = rf(productID, input)
+	if rf, ok := ret.Get(1).(func(uint, uint, product.Product) error); ok {
+		r1 = rf(UserID, productID, input)
 	} else {
 		r1 = ret.Error(1)
 	}

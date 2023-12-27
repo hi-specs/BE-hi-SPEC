@@ -15,16 +15,16 @@ type Service struct {
 }
 
 // CariProduct provides a mock function with given fields: name, category, minPrice, maxPrice, page, limit
-func (_m *Service) CariProduct(name string, category string, minPrice uint, maxPrice uint, page int, limit int) ([]product.Product, int, error) {
+func (_m *Service) CariProduct(name string, category string, minPrice string, maxPrice string, page int, limit int) ([]product.Product, int, error) {
 	ret := _m.Called(name, category, minPrice, maxPrice, page, limit)
 
 	var r0 []product.Product
 	var r1 int
 	var r2 error
-	if rf, ok := ret.Get(0).(func(string, string, uint, uint, int, int) ([]product.Product, int, error)); ok {
+	if rf, ok := ret.Get(0).(func(string, string, string, string, int, int) ([]product.Product, int, error)); ok {
 		return rf(name, category, minPrice, maxPrice, page, limit)
 	}
-	if rf, ok := ret.Get(0).(func(string, string, uint, uint, int, int) []product.Product); ok {
+	if rf, ok := ret.Get(0).(func(string, string, string, string, int, int) []product.Product); ok {
 		r0 = rf(name, category, minPrice, maxPrice, page, limit)
 	} else {
 		if ret.Get(0) != nil {
@@ -32,13 +32,13 @@ func (_m *Service) CariProduct(name string, category string, minPrice uint, maxP
 		}
 	}
 
-	if rf, ok := ret.Get(1).(func(string, string, uint, uint, int, int) int); ok {
+	if rf, ok := ret.Get(1).(func(string, string, string, string, int, int) int); ok {
 		r1 = rf(name, category, minPrice, maxPrice, page, limit)
 	} else {
 		r1 = ret.Get(1).(int)
 	}
 
-	if rf, ok := ret.Get(2).(func(string, string, uint, uint, int, int) error); ok {
+	if rf, ok := ret.Get(2).(func(string, string, string, string, int, int) error); ok {
 		r2 = rf(name, category, minPrice, maxPrice, page, limit)
 	} else {
 		r2 = ret.Error(2)
@@ -47,13 +47,13 @@ func (_m *Service) CariProduct(name string, category string, minPrice uint, maxP
 	return r0, r1, r2
 }
 
-// DelProduct provides a mock function with given fields: productID
-func (_m *Service) DelProduct(productID uint) error {
-	ret := _m.Called(productID)
+// DelProduct provides a mock function with given fields: token, productID
+func (_m *Service) DelProduct(token *jwt.Token, productID uint) error {
+	ret := _m.Called(token, productID)
 
 	var r0 error
-	if rf, ok := ret.Get(0).(func(uint) error); ok {
-		r0 = rf(productID)
+	if rf, ok := ret.Get(0).(func(*jwt.Token, uint) error); ok {
+		r0 = rf(token, productID)
 	} else {
 		r0 = ret.Error(0)
 	}
@@ -142,23 +142,23 @@ func (_m *Service) TalkToGpt(token *jwt.Token, newProduct product.Product) (prod
 	return r0, r1
 }
 
-// UpdateProduct provides a mock function with given fields: productID, input
-func (_m *Service) UpdateProduct(productID uint, input product.Product) (product.Product, error) {
-	ret := _m.Called(productID, input)
+// UpdateProduct provides a mock function with given fields: token, productID, input
+func (_m *Service) UpdateProduct(token *jwt.Token, productID uint, input product.Product) (product.Product, error) {
+	ret := _m.Called(token, productID, input)
 
 	var r0 product.Product
 	var r1 error
-	if rf, ok := ret.Get(0).(func(uint, product.Product) (product.Product, error)); ok {
-		return rf(productID, input)
+	if rf, ok := ret.Get(0).(func(*jwt.Token, uint, product.Product) (product.Product, error)); ok {
+		return rf(token, productID, input)
 	}
-	if rf, ok := ret.Get(0).(func(uint, product.Product) product.Product); ok {
-		r0 = rf(productID, input)
+	if rf, ok := ret.Get(0).(func(*jwt.Token, uint, product.Product) product.Product); ok {
+		r0 = rf(token, productID, input)
 	} else {
 		r0 = ret.Get(0).(product.Product)
 	}
 
-	if rf, ok := ret.Get(1).(func(uint, product.Product) error); ok {
-		r1 = rf(productID, input)
+	if rf, ok := ret.Get(1).(func(*jwt.Token, uint, product.Product) error); ok {
+		r1 = rf(token, productID, input)
 	} else {
 		r1 = ret.Error(1)
 	}
