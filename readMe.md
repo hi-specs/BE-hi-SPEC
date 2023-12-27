@@ -20,8 +20,10 @@ hi'Spec is a website that helps you choose the right laptop according to your ne
 ![MySQL Badge](https://img.shields.io/badge/MySQL-4479A1?logo=mysql&logoColor=fff&style=flat-square)
 ![JSON Web Tokens Badge](https://img.shields.io/badge/JSON%20Web%20Tokens-000?logo=jsonwebtokens&logoColor=fff&style=flat-square)
 
+
 ## 🚀 TechStack
 ![TectStack](https://github.com/hi-specs/BE-hi-SPEC/assets/73748420/e1769dd4-464b-4d56-9de3-1a65b598b495)
+
 
 ## 📍 ERD
 ![ERD_Hi'Spec (1)](https://github.com/hi-specs/BE-hi-SPEC/assets/50069221/e1302740-e0e9-49cc-b16d-c48698fac2a4)
