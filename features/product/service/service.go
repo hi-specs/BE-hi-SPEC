@@ -81,23 +81,18 @@ func (ps *ProductServices) SatuProduct(productID uint) (product.Product, error) 
 func (ps *ProductServices) TalkToGpt(token *golangjwt.Token, newProduct product.Product) (product.Product, error) {
 	userId, rolesUser, err := jwt.ExtractToken(token)
 	if err != nil {
-		return product.Product{}, err
-	}
-  
-	if rolesUser != "admin" {
-		return product.Product{}, err
+		return product.Product{}, errors.New("Token Error")
 	}
 	if rolesUser != "admin" {
 		return product.Product{}, errors.New("unauthorized access: admin role required")
 	}
 
+	result, err := ps.repo.InsertProduct(userId, newProduct)
 	if err != nil {
-		return product.Product{}, err
+		return product.Product{}, errors.New("Inputan tidak boleh kosong")
 	}
 
-	result, err := ps.repo.InsertProduct(userId, newProduct)
-
-	return result, nil
+	return result, err
 }
 
 // SemuaProduct implements product.Service.

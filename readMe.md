@@ -22,6 +22,7 @@ hi'Spec is a website that helps you choose the right laptop according to your ne
 ## ERD
 ![ERD_Hi'Spec (1)](https://github.com/hi-specs/BE-hi-SPEC/assets/50069221/e1302740-e0e9-49cc-b16d-c48698fac2a4)
 
+
 ## Run Locally
 
 Clone the project
@@ -34,6 +35,12 @@ Go to the project directory
 
 ```bash
 cd BE-hi-SPEC
+```
+
+Install dependency
+
+```bash
+go mod tidy
 ```
 
 ## Open Api 
