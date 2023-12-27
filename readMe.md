@@ -7,6 +7,7 @@ hi'Spec is a website that helps you choose the right laptop according to your ne
 
 ## Build App & Database
 ![OpenAI Badge](https://img.shields.io/badge/OpenAI-412991?logo=openai&logoColor=fff&style=flat-square)
+![Github Badge](https://img.shields.io/badge/Github-black?logo=github)
 ![Midtrans Badge](https://img.shields.io/badge/Midtrans-blue?logo=midtrans)
 ![Go Badge](https://img.shields.io/badge/Go-00ADD8?logo=go&logoColor=fff&style=flat-square)
 ![Ubuntu Badge](https://img.shields.io/badge/Ubuntu-E95420?logo=ubuntu&logoColor=fff&style=flat-square)
@@ -134,3 +135,6 @@ Several commands make use of Locations features, as shown below.
 | GET | /transaction/download/{id}  | Transaction ID | + | Download transaction detail. |
 
 </details>
+
+## Author
+
