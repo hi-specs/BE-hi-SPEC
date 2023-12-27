@@ -36,6 +36,12 @@ Go to the project directory
 cd BE-hi-SPEC
 ```
 
+Install dependency
+
+```bash
+go mod tidy
+```
+
 ## Open Api 
 
 If you're interested in using our Open Api, this is an example of how to do so.
