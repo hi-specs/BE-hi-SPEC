@@ -149,7 +149,7 @@ func (tq *TransactionQuery) Checkout(userID uint, ProductID int, TotalPrice int)
 	return result, nil
 }
 
-func (tq *TransactionQuery) TransactionList(page, limit int) ([]transaction.TransactionList, int, error) {
+func (tq *TransactionQuery) TransactionList(userId uint, page, limit int) ([]transaction.TransactionList, int, error) {
 	var tm []TransactionModel
 	var result []transaction.TransactionList
 	offset := (page - 1) * limit
