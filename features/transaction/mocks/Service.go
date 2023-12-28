@@ -14,28 +14,35 @@ type Service struct {
 	mock.Mock
 }
 
-// AdminDashboard provides a mock function with given fields:
-func (_m *Service) AdminDashboard() (transaction.TransactionDashboard, error) {
-	ret := _m.Called()
+// AdminDashboard provides a mock function with given fields: token, page, limit
+func (_m *Service) AdminDashboard(token *jwt.Token, page int, limit int) (transaction.TransactionDashboard, int, error) {
+	ret := _m.Called(token, page, limit)
 
 	var r0 transaction.TransactionDashboard
-	var r1 error
-	if rf, ok := ret.Get(0).(func() (transaction.TransactionDashboard, error)); ok {
-		return rf()
+	var r1 int
+	var r2 error
+	if rf, ok := ret.Get(0).(func(*jwt.Token, int, int) (transaction.TransactionDashboard, int, error)); ok {
+		return rf(token, page, limit)
 	}
-	if rf, ok := ret.Get(0).(func() transaction.TransactionDashboard); ok {
-		r0 = rf()
+	if rf, ok := ret.Get(0).(func(*jwt.Token, int, int) transaction.TransactionDashboard); ok {
+		r0 = rf(token, page, limit)
 	} else {
 		r0 = ret.Get(0).(transaction.TransactionDashboard)
 	}
 
-	if rf, ok := ret.Get(1).(func() error); ok {
-		r1 = rf()
+	if rf, ok := ret.Get(1).(func(*jwt.Token, int, int) int); ok {
+		r1 = rf(token, page, limit)
 	} else {
-		r1 = ret.Error(1)
+		r1 = ret.Get(1).(int)
 	}
 
-	return r0, r1
+	if rf, ok := ret.Get(2).(func(*jwt.Token, int, int) error); ok {
+		r2 = rf(token, page, limit)
+	} else {
+		r2 = ret.Error(2)
+	}
+
+	return r0, r1, r2
 }
 
 // Checkout provides a mock function with given fields: token, ProductID, ProductPrice
@@ -62,23 +69,37 @@ func (_m *Service) Checkout(token *jwt.Token, ProductID int, ProductPrice int) (
 	return r0, r1
 }
 
-// GetTransaction provides a mock function with given fields: transactionID
-func (_m *Service) GetTransaction(transactionID uint) (transaction.TransactionList, error) {
-	ret := _m.Called(transactionID)
+// DownloadTransaction provides a mock function with given fields: token, transactionID
+func (_m *Service) DownloadTransaction(token *jwt.Token, transactionID uint) error {
+	ret := _m.Called(token, transactionID)
+
+	var r0 error
+	if rf, ok := ret.Get(0).(func(*jwt.Token, uint) error); ok {
+		r0 = rf(token, transactionID)
+	} else {
+		r0 = ret.Error(0)
+	}
+
+	return r0
+}
+
+// GetTransaction provides a mock function with given fields: token, transactionID
+func (_m *Service) GetTransaction(token *jwt.Token, transactionID uint) (transaction.TransactionList, error) {
+	ret := _m.Called(token, transactionID)
 
 	var r0 transaction.TransactionList
 	var r1 error
-	if rf, ok := ret.Get(0).(func(uint) (transaction.TransactionList, error)); ok {
-		return rf(transactionID)
+	if rf, ok := ret.Get(0).(func(*jwt.Token, uint) (transaction.TransactionList, error)); ok {
+		return rf(token, transactionID)
 	}
-	if rf, ok := ret.Get(0).(func(uint) transaction.TransactionList); ok {
-		r0 = rf(transactionID)
+	if rf, ok := ret.Get(0).(func(*jwt.Token, uint) transaction.TransactionList); ok {
+		r0 = rf(token, transactionID)
 	} else {
 		r0 = ret.Get(0).(transaction.TransactionList)
 	}
 
-	if rf, ok := ret.Get(1).(func(uint) error); ok {
-		r1 = rf(transactionID)
+	if rf, ok := ret.Get(1).(func(*jwt.Token, uint) error); ok {
+		r1 = rf(token, transactionID)
 	} else {
 		r1 = ret.Error(1)
 	}
@@ -110,32 +131,32 @@ func (_m *Service) MidtransCallback(transactionID string) (transaction.Transacti
 	return r0, r1
 }
 
-// TransactionList provides a mock function with given fields: page, limit
-func (_m *Service) TransactionList(page int, limit int) ([]transaction.TransactionList, int, error) {
-	ret := _m.Called(page, limit)
+// TransactionList provides a mock function with given fields: token, page, limit
+func (_m *Service) TransactionList(token *jwt.Token, page int, limit int) ([]transaction.TransactionList, int, error) {
+	ret := _m.Called(token, page, limit)
 
 	var r0 []transaction.TransactionList
 	var r1 int
 	var r2 error
-	if rf, ok := ret.Get(0).(func(int, int) ([]transaction.TransactionList, int, error)); ok {
-		return rf(page, limit)
+	if rf, ok := ret.Get(0).(func(*jwt.Token, int, int) ([]transaction.TransactionList, int, error)); ok {
+		return rf(token, page, limit)
 	}
-	if rf, ok := ret.Get(0).(func(int, int) []transaction.TransactionList); ok {
-		r0 = rf(page, limit)
+	if rf, ok := ret.Get(0).(func(*jwt.Token, int, int) []transaction.TransactionList); ok {
+		r0 = rf(token, page, limit)
 	} else {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).([]transaction.TransactionList)
 		}
 	}
 
-	if rf, ok := ret.Get(1).(func(int, int) int); ok {
-		r1 = rf(page, limit)
+	if rf, ok := ret.Get(1).(func(*jwt.Token, int, int) int); ok {
+		r1 = rf(token, page, limit)
 	} else {
 		r1 = ret.Get(1).(int)
 	}
 
-	if rf, ok := ret.Get(2).(func(int, int) error); ok {
-		r2 = rf(page, limit)
+	if rf, ok := ret.Get(2).(func(*jwt.Token, int, int) error); ok {
+		r2 = rf(token, page, limit)
 	} else {
 		r2 = ret.Error(2)
 	}
@@ -143,23 +164,37 @@ func (_m *Service) TransactionList(page int, limit int) ([]transaction.Transacti
 	return r0, r1, r2
 }
 
-// UserTransaction provides a mock function with given fields: userID
-func (_m *Service) UserTransaction(userID uint) (transaction.UserTransaction, error) {
-	ret := _m.Called(userID)
+// UpdatePdfTransaction provides a mock function with given fields: link, transactionID
+func (_m *Service) UpdatePdfTransaction(link string, transactionID uint) error {
+	ret := _m.Called(link, transactionID)
+
+	var r0 error
+	if rf, ok := ret.Get(0).(func(string, uint) error); ok {
+		r0 = rf(link, transactionID)
+	} else {
+		r0 = ret.Error(0)
+	}
+
+	return r0
+}
+
+// UserTransaction provides a mock function with given fields: token, userID
+func (_m *Service) UserTransaction(token *jwt.Token, userID uint) (transaction.UserTransaction, error) {
+	ret := _m.Called(token, userID)
 
 	var r0 transaction.UserTransaction
 	var r1 error
-	if rf, ok := ret.Get(0).(func(uint) (transaction.UserTransaction, error)); ok {
-		return rf(userID)
+	if rf, ok := ret.Get(0).(func(*jwt.Token, uint) (transaction.UserTransaction, error)); ok {
+		return rf(token, userID)
 	}
-	if rf, ok := ret.Get(0).(func(uint) transaction.UserTransaction); ok {
-		r0 = rf(userID)
+	if rf, ok := ret.Get(0).(func(*jwt.Token, uint) transaction.UserTransaction); ok {
+		r0 = rf(token, userID)
 	} else {
 		r0 = ret.Get(0).(transaction.UserTransaction)
 	}
 
-	if rf, ok := ret.Get(1).(func(uint) error); ok {
-		r1 = rf(userID)
+	if rf, ok := ret.Get(1).(func(*jwt.Token, uint) error); ok {
+		r1 = rf(token, userID)
 	} else {
 		r1 = ret.Error(1)
 	}

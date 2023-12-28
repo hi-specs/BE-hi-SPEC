@@ -13,28 +13,35 @@ type Repository struct {
 	mock.Mock
 }
 
-// AdminDashboard provides a mock function with given fields:
-func (_m *Repository) AdminDashboard() (transaction.TransactionDashboard, error) {
-	ret := _m.Called()
+// AdminDashboard provides a mock function with given fields: userID, page, limit
+func (_m *Repository) AdminDashboard(userID uint, page int, limit int) (transaction.TransactionDashboard, int, error) {
+	ret := _m.Called(userID, page, limit)
 
 	var r0 transaction.TransactionDashboard
-	var r1 error
-	if rf, ok := ret.Get(0).(func() (transaction.TransactionDashboard, error)); ok {
-		return rf()
+	var r1 int
+	var r2 error
+	if rf, ok := ret.Get(0).(func(uint, int, int) (transaction.TransactionDashboard, int, error)); ok {
+		return rf(userID, page, limit)
 	}
-	if rf, ok := ret.Get(0).(func() transaction.TransactionDashboard); ok {
-		r0 = rf()
+	if rf, ok := ret.Get(0).(func(uint, int, int) transaction.TransactionDashboard); ok {
+		r0 = rf(userID, page, limit)
 	} else {
 		r0 = ret.Get(0).(transaction.TransactionDashboard)
 	}
 
-	if rf, ok := ret.Get(1).(func() error); ok {
-		r1 = rf()
+	if rf, ok := ret.Get(1).(func(uint, int, int) int); ok {
+		r1 = rf(userID, page, limit)
 	} else {
-		r1 = ret.Error(1)
+		r1 = ret.Get(1).(int)
 	}
 
-	return r0, r1
+	if rf, ok := ret.Get(2).(func(uint, int, int) error); ok {
+		r2 = rf(userID, page, limit)
+	} else {
+		r2 = ret.Error(2)
+	}
+
+	return r0, r1, r2
 }
 
 // Checkout provides a mock function with given fields: userID, ProductID, ProductPrice
@@ -61,25 +68,39 @@ func (_m *Repository) Checkout(userID uint, ProductID int, ProductPrice int) (tr
 	return r0, r1
 }
 
-// GetTransaction provides a mock function with given fields: transactionID
-func (_m *Repository) GetTransaction(transactionID uint) (*transaction.TransactionList, error) {
-	ret := _m.Called(transactionID)
+// DownloadTransaction provides a mock function with given fields: userID, transactionID
+func (_m *Repository) DownloadTransaction(userID uint, transactionID uint) error {
+	ret := _m.Called(userID, transactionID)
+
+	var r0 error
+	if rf, ok := ret.Get(0).(func(uint, uint) error); ok {
+		r0 = rf(userID, transactionID)
+	} else {
+		r0 = ret.Error(0)
+	}
+
+	return r0
+}
+
+// GetTransaction provides a mock function with given fields: userID, transactionID
+func (_m *Repository) GetTransaction(userID uint, transactionID uint) (*transaction.TransactionList, error) {
+	ret := _m.Called(userID, transactionID)
 
 	var r0 *transaction.TransactionList
 	var r1 error
-	if rf, ok := ret.Get(0).(func(uint) (*transaction.TransactionList, error)); ok {
-		return rf(transactionID)
+	if rf, ok := ret.Get(0).(func(uint, uint) (*transaction.TransactionList, error)); ok {
+		return rf(userID, transactionID)
 	}
-	if rf, ok := ret.Get(0).(func(uint) *transaction.TransactionList); ok {
-		r0 = rf(transactionID)
+	if rf, ok := ret.Get(0).(func(uint, uint) *transaction.TransactionList); ok {
+		r0 = rf(userID, transactionID)
 	} else {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).(*transaction.TransactionList)
 		}
 	}
 
-	if rf, ok := ret.Get(1).(func(uint) error); ok {
-		r1 = rf(transactionID)
+	if rf, ok := ret.Get(1).(func(uint, uint) error); ok {
+		r1 = rf(userID, transactionID)
 	} else {
 		r1 = ret.Error(1)
 	}
@@ -113,32 +134,32 @@ func (_m *Repository) MidtransCallback(transactionID string) (*transaction.Trans
 	return r0, r1
 }
 
-// TransactionList provides a mock function with given fields: page, limit
-func (_m *Repository) TransactionList(page int, limit int) ([]transaction.TransactionList, int, error) {
-	ret := _m.Called(page, limit)
+// TransactionList provides a mock function with given fields: userId, page, limit
+func (_m *Repository) TransactionList(userId uint, page int, limit int) ([]transaction.TransactionList, int, error) {
+	ret := _m.Called(userId, page, limit)
 
 	var r0 []transaction.TransactionList
 	var r1 int
 	var r2 error
-	if rf, ok := ret.Get(0).(func(int, int) ([]transaction.TransactionList, int, error)); ok {
-		return rf(page, limit)
+	if rf, ok := ret.Get(0).(func(uint, int, int) ([]transaction.TransactionList, int, error)); ok {
+		return rf(userId, page, limit)
 	}
-	if rf, ok := ret.Get(0).(func(int, int) []transaction.TransactionList); ok {
-		r0 = rf(page, limit)
+	if rf, ok := ret.Get(0).(func(uint, int, int) []transaction.TransactionList); ok {
+		r0 = rf(userId, page, limit)
 	} else {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).([]transaction.TransactionList)
 		}
 	}
 
-	if rf, ok := ret.Get(1).(func(int, int) int); ok {
-		r1 = rf(page, limit)
+	if rf, ok := ret.Get(1).(func(uint, int, int) int); ok {
+		r1 = rf(userId, page, limit)
 	} else {
 		r1 = ret.Get(1).(int)
 	}
 
-	if rf, ok := ret.Get(2).(func(int, int) error); ok {
-		r2 = rf(page, limit)
+	if rf, ok := ret.Get(2).(func(uint, int, int) error); ok {
+		r2 = rf(userId, page, limit)
 	} else {
 		r2 = ret.Error(2)
 	}
@@ -146,23 +167,37 @@ func (_m *Repository) TransactionList(page int, limit int) ([]transaction.Transa
 	return r0, r1, r2
 }
 
-// UserTransaction provides a mock function with given fields: userID
-func (_m *Repository) UserTransaction(userID uint) (transaction.UserTransaction, error) {
-	ret := _m.Called(userID)
+// UpdatePdfTransaction provides a mock function with given fields: link, transactionID
+func (_m *Repository) UpdatePdfTransaction(link string, transactionID uint) error {
+	ret := _m.Called(link, transactionID)
+
+	var r0 error
+	if rf, ok := ret.Get(0).(func(string, uint) error); ok {
+		r0 = rf(link, transactionID)
+	} else {
+		r0 = ret.Error(0)
+	}
+
+	return r0
+}
+
+// UserTransaction provides a mock function with given fields: userId, userID
+func (_m *Repository) UserTransaction(userId int, userID uint) (transaction.UserTransaction, error) {
+	ret := _m.Called(userId, userID)
 
 	var r0 transaction.UserTransaction
 	var r1 error
-	if rf, ok := ret.Get(0).(func(uint) (transaction.UserTransaction, error)); ok {
-		return rf(userID)
+	if rf, ok := ret.Get(0).(func(int, uint) (transaction.UserTransaction, error)); ok {
+		return rf(userId, userID)
 	}
-	if rf, ok := ret.Get(0).(func(uint) transaction.UserTransaction); ok {
-		r0 = rf(userID)
+	if rf, ok := ret.Get(0).(func(int, uint) transaction.UserTransaction); ok {
+		r0 = rf(userId, userID)
 	} else {
 		r0 = ret.Get(0).(transaction.UserTransaction)
 	}
 
-	if rf, ok := ret.Get(1).(func(uint) error); ok {
-		r1 = rf(userID)
+	if rf, ok := ret.Get(1).(func(int, uint) error); ok {
+		r1 = rf(userId, userID)
 	} else {
 		r1 = ret.Error(1)
 	}

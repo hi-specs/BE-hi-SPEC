@@ -60,7 +60,7 @@ type Handler interface {
 type Repository interface {
 	AdminDashboard(userID uint, page int, limit int) (TransactionDashboard, int, error)
 	Checkout(userID uint, ProductID int, ProductPrice int) (Transaction, error)
-	TransactionList(page, limit int) ([]TransactionList, int, error)
+	TransactionList(userId uint, page, limit int) ([]TransactionList, int, error)
 	GetTransaction(userID uint, transactionID uint) (*TransactionList, error)
 	MidtransCallback(transactionID string) (*TransactionList, error)
 	UserTransaction(userId int, userID uint) (UserTransaction, error)
