@@ -257,8 +257,17 @@ func (th *TransactionHandler) MidtransCallback() echo.HandlerFunc {
 				"message": "Failed to retrieve product data",
 			})
 		}
+		var response TransactionList
+		response.TransactionID = result.TransactionID
+		response.Nota = result.Nota
+		response.ProductID = result.ProductID
+		response.TotalPrice = result.TotalPrice
+		response.Status = result.Status
+		response.Timestamp = result.Timestamp
+		response.Token = result.Token
+		response.Url = result.Url
 
-		return responses.PrintResponse(c, http.StatusOK, "Detail Of Midtrans Callback", result)
+		return responses.PrintResponse(c, http.StatusOK, "Detail Of Midtrans Callback", response)
 
 	}
 }
