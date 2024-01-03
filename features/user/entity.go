@@ -78,6 +78,6 @@ type Repository interface {
 	GetAllUser(userID uint, page int, limit int) ([]User, int, error)
 	AddFavorite(userID, productID uint) (Favorite, error)
 	GetUser(userID uint) (Favorite, error)
-	DelFavorite(favoriteID uint) error
+	DelFavorite(favoriteID uint, userID uint) error
 	SearchUser(userID uint, name string, page int, limit int) ([]User, int, error)
 }

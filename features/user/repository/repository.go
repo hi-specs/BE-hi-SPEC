@@ -275,12 +275,17 @@ func (uq *UserQuery) GetUser(userID uint) (user.Favorite, error) {
 	return result, nil
 }
 
-func (uq *UserQuery) DelFavorite(favoriteID uint) error {
+func (uq *UserQuery) DelFavorite(favoriteID uint, userID uint) error {
 	var Fav FavoriteModel
 
 	if err := uq.db.First(&Fav, favoriteID).Error; err != nil {
 		return err
 	}
+
+	if Fav.UserID != userID {
+		return errors.New("tidak memiliki izin")
+	}
+
 	if err := uq.db.Delete(&Fav).Error; err != nil {
 		return err
 	}
@@ -291,7 +296,7 @@ func (uq *UserQuery) DelFavorite(favoriteID uint) error {
 func (uq *UserQuery) SearchUser(userID uint, name string, page int, limit int) ([]user.User, int, error) {
 	var users []user.User
 	offset := (page - 1) * limit
-	qry := uq.db.Table("user_models").Offset(offset).Limit(limit)
+	qry := uq.db.Table("user_models").Order("created_at DESC").Offset(offset).Limit(limit)
 
 	if name != "" {
 		qry = qry.Where("name like ?", "%"+name+"%")

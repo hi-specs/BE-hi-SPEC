@@ -533,7 +533,7 @@ func (uc *UserController) DelFavorite() echo.HandlerFunc {
 				statusCode = http.StatusNotFound
 				message = "favorite tidak ditemukan"
 			} else if strings.Contains(err.Error(), "tidak memiliki izin") {
-				statusCode = http.StatusForbidden
+				statusCode = http.StatusUnauthorized
 				message = "Anda tidak memiliki izin untuk menghapus favorite ini"
 			}
 
