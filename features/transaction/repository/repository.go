@@ -181,7 +181,7 @@ func (tq *TransactionQuery) TransactionList(userId uint, page, limit int) ([]tra
 	var Product []pr.ProductModel
 	for _, result := range productID {
 		tmp := new(pr.ProductModel)
-		tq.db.Table("product_models").Where("id = ?", result).Find(&tmp)
+		tq.db.Table("product_models").Where("id = ? & created_at is NOT NULL", result).Find(&tmp)
 		Product = append(Product, *tmp)
 	}
 
