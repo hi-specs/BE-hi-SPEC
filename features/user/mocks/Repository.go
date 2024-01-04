@@ -37,13 +37,13 @@ func (_m *Repository) AddFavorite(userID uint, productID uint) (user.Favorite, e
 	return r0, r1
 }
 
-// DelFavorite provides a mock function with given fields: favoriteID
-func (_m *Repository) DelFavorite(favoriteID uint) error {
-	ret := _m.Called(favoriteID)
+// DelFavorite provides a mock function with given fields: favoriteID, userID
+func (_m *Repository) DelFavorite(favoriteID uint, userID uint) error {
+	ret := _m.Called(favoriteID, userID)
 
 	var r0 error
-	if rf, ok := ret.Get(0).(func(uint) error); ok {
-		r0 = rf(favoriteID)
+	if rf, ok := ret.Get(0).(func(uint, uint) error); ok {
+		r0 = rf(favoriteID, userID)
 	} else {
 		r0 = ret.Error(0)
 	}

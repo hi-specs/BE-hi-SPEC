@@ -322,7 +322,7 @@ func (uc *UserController) Delete() echo.HandlerFunc {
 		}
 
 		return c.JSON(http.StatusOK, map[string]interface{}{
-			"message": "Success Deleted Data User",
+			"message": "Delete User Successful",
 		})
 	}
 }
@@ -430,8 +430,8 @@ func (uc *UserController) AddFavorite() echo.HandlerFunc {
 		responses.Product = prod
 
 		return c.JSON(http.StatusOK, map[string]interface{}{
-			"message": "Success Adding Favourite Data",
-			"data":    responses,
+			"message": "Add Favorite Successful",
+			// "data":    responses,
 		})
 
 	}
@@ -533,7 +533,7 @@ func (uc *UserController) DelFavorite() echo.HandlerFunc {
 				statusCode = http.StatusNotFound
 				message = "favorite tidak ditemukan"
 			} else if strings.Contains(err.Error(), "tidak memiliki izin") {
-				statusCode = http.StatusForbidden
+				statusCode = http.StatusUnauthorized
 				message = "Anda tidak memiliki izin untuk menghapus favorite ini"
 			}
 
@@ -543,7 +543,7 @@ func (uc *UserController) DelFavorite() echo.HandlerFunc {
 		}
 
 		return c.JSON(http.StatusOK, map[string]interface{}{
-			"message": "Success Deleted Favourite data",
+			"message": "Delete Favorite Successful",
 		})
 	}
 }

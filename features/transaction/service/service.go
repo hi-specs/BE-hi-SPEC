@@ -76,9 +76,9 @@ func (ts *TransactionServices) GetTransaction(token *golangjwt.Token, transactio
 		return transaction.TransactionList{}, errors.New("Repository error")
 	}
 
-	if result == nil {
-		return transaction.TransactionList{}, errors.New("transaction not found")
-	}
+	// if result == nil {
+	// 	return transaction.TransactionList{}, errors.New("transaction not found")
+	// }
 
 	return *result, nil
 }

@@ -200,12 +200,14 @@ func (us *UserService) GetUser(token *golangjwt.Token) (user.Favorite, error) {
 }
 
 func (us *UserService) DelFavorite(token *golangjwt.Token, favoriteID uint) error {
-	err := us.repo.DelFavorite(favoriteID)
+	userId, _, _ := jwt.ExtractToken(token)
+
+	err := us.repo.DelFavorite(favoriteID, userId)
 	if err != nil {
-		return errors.New("failed to delete the favorite")
+		return err
 	}
 
-	return err
+	return nil
 }
 
 func (us *UserService) SearchUser(token *golangjwt.Token, name string, page int, limit int) ([]user.User, int, error) {
