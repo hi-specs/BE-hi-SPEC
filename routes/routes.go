@@ -22,7 +22,6 @@ func InitRoute(e *echo.Echo, uc user.Handler, ph product.Handler, th transaction
 }
 
 func RouteUser(e *echo.Echo, uc user.Handler) {
-	// e.GET("/users", uc.All(), echojwt.JWT([]byte("$!1gnK3yyy!!!")))
 	e.GET("/admin/users", uc.SearchUser(), echojwt.JWT([]byte("$!1gnK3yyy!!!")))
 
 	e.POST("/login", uc.Login())
@@ -42,7 +41,6 @@ func RouteProduct(e *echo.Echo, ph product.Handler) {
 	e.GET("/products/:id", ph.GetProductDetail())
 	e.PATCH("/products/:id", ph.UpdateProduct(), echojwt.JWT([]byte("$!1gnK3yyy!!!")))
 	e.DELETE("/products/:id", ph.DelProduct(), echojwt.JWT([]byte("$!1gnK3yyy!!!")))
-	// e.GET("/products", ph.GetAll())
 }
 
 func RouteTransaction(e *echo.Echo, th transaction.Handler) {
@@ -53,6 +51,5 @@ func RouteTransaction(e *echo.Echo, th transaction.Handler) {
 	e.GET("/transactions/:id", th.GetTransaction(), echojwt.JWT([]byte("$!1gnK3yyy!!!")))
 	e.GET("/transactions/:id/download", th.DownloadTransaction(), echojwt.JWT([]byte("$!1gnK3yyy!!!")))
 
-	// e.GET("/users/:id/transactions", th.UserTransaction(), echojwt.JWT([]byte("$!1gnK3yyy!!!")))
 	e.POST("/midtrans/callback", th.MidtransCallback())
 }
