@@ -178,13 +178,13 @@ func (tq *TransactionQuery) TransactionList(userId uint, page, limit int) ([]tra
 	}
 
 	// get list of product
-	var Product []pr.ProductModel
+	var Product []p.Product
 	for _, result := range productID {
-		tmp := new(pr.ProductModel)
+		tmp := new(p.Product)
 		tq.db.Table("product_models").Where("id = ?", result).Find(&tmp)
 		Product = append(Product, *tmp)
 	}
-
+	fmt.Println(Product)
 	// slicing data that we have, into the struct for return
 
 	for _, resp := range tm {
