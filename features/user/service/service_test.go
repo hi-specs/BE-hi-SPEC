@@ -500,7 +500,7 @@ func TestDelFavorite(t *testing.T) {
 			return []byte("$!1gnK3yyy!!!"), nil
 		})
 		favoriteID := uint(1)
-		repoMock.On("DelFavorite", favoriteID).Return(nil).Once()
+		repoMock.On("DelFavorite", favoriteID, userID).Return(nil).Once()
 
 		err := userService.DelFavorite(token, favoriteID)
 
@@ -517,12 +517,12 @@ func TestDelFavorite(t *testing.T) {
 		})
 		favoriteID := uint(456)
 
-		repoMock.On("DelFavorite", favoriteID).Return(errors.New("failed to delete favorite")).Once()
+		repoMock.On("DelFavorite", favoriteID, userID).Return(errors.New("failed to delete favorite")).Once()
 
 		err := userService.DelFavorite(token, favoriteID)
 
 		assert.Error(t, err)
-		assert.Equal(t, "failed to delete the favorite", err.Error())
+		assert.Equal(t, "failed to delete favorite", err.Error())
 		repoMock.AssertExpectations(t)
 	})
 }
