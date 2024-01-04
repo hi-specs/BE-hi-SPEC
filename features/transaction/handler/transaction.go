@@ -2,7 +2,6 @@ package handler
 
 import (
 	"BE-hi-SPEC/features/product"
-	pr "BE-hi-SPEC/features/product/repository"
 	"BE-hi-SPEC/features/transaction"
 	"BE-hi-SPEC/features/user/handler"
 	"BE-hi-SPEC/features/user/repository"
@@ -157,7 +156,7 @@ func (th *TransactionHandler) TransactionList() echo.HandlerFunc {
 		}
 
 		// slicing data product
-		var Product []pr.ProductModel
+		var Product []product.Product
 		var ProductName []string
 		var ProductPicture []string
 
